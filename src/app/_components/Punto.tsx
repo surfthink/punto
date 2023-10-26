@@ -90,7 +90,7 @@ function canBeOpened(board: PlaceDetails[][], x: number, y: number) {
   console.log(`${leftest + width - 6} =< x <  ${leftest + 6}`);
   console.log(`y ${highest + height - 6} =< y < ${highest + 6}`);
 
-  if (x < 0 || y < 0 || x > board.length || y > board.length) {
+  if (x < 0 || y < 0 || x >= board.length || y >= board.length) {
     return false;
   }
   if (leftest + width - 6 > x || x >= leftest + 6) {
