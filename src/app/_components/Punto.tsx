@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Board from "./Board";
+import Hand from "./Hand";
 
 export type Color = "red" | "yellow" | "green" | "blue";
 
@@ -142,6 +143,7 @@ export default function Punto() {
   return (
     <>
       <Board board={board} handlePlacement={handlePlacement}></Board>
+      <Hand color="blue" value={3}></Hand>
     </>
   );
 }

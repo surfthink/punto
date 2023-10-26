@@ -19,8 +19,14 @@ export default function Board({ board, handlePlacement }: BoardProps) {
     <div className={`grid ${numGridColsString(board[0].length)} gap-4 w-full`}>
       {board.map((row, i) =>
         row.map((place, j) => {
-          if (place.state == "filled" && place.value) {
-            return <PlacedCard value={place.value} key={`x:${j} y:${i}`} />;
+          if (place.state == "filled" && place.value && place.color) {
+            return (
+              <PlacedCard
+                value={place.value}
+                color={place.color}
+                key={`x:${j} y:${i}`}
+              />
+            );
           }
           if (place.state == "open") {
             return (
