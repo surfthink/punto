@@ -1,7 +1,7 @@
 export default function ClosedPlace() {
   return (
-    <div className="border border-gray-500">
-      <p>Closed</p>
+    <div className="border border-gray-900">
+      <br></br>
     </div>
   );
 }

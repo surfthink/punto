@@ -16,7 +16,7 @@ interface BoardProps {
 
 export default function Board({ board, handlePlacement }: BoardProps) {
   return (
-    <div className={`grid ${numGridColsString(board[0].length)} gap-4 w-full`}>
+    <div className={`grid ${numGridColsString(board[0].length)} w-full`}>
       {board.map((row, i) =>
         row.map((place, j) => {
           if (place.state == "filled" && place.value && place.color) {
