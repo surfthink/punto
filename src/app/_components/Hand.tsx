@@ -1,4 +1,4 @@
-import { Color } from "./Punto";
+import { Color } from "./GameLogic";
 
 interface HandProps {
   //needs to be told the card information

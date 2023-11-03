@@ -1,4 +1,4 @@
-import { Color } from "./Punto";
+import { Color } from "./GameLogic";
 
 interface PlacedCardProps {
   value: number;

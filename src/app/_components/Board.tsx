@@ -4,14 +4,11 @@ import { MouseEventHandler } from "react";
 import ClosedPlace from "./ClosedPlace";
 import OpenPlace from "./OpenPlace";
 import PlacedCard from "./PlacedCard";
-import { Color, PlaceDetails } from "./Punto";
+import { Color, PlaceDetails } from "./GameLogic";
 
 interface BoardProps {
   board: PlaceDetails[][];
-  handlePlacement: (
-    xpos: number,
-    ypos: number
-  ) => MouseEventHandler<HTMLDivElement>; //it would be nice to have this function take in placement information
+  handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>; //it would be nice to have this function take in placement information
 }
 
 export default function Board({ board, handlePlacement }: BoardProps) {
@@ -19,16 +16,16 @@ export default function Board({ board, handlePlacement }: BoardProps) {
     <div className={`grid ${numGridColsString(board[0].length)} w-full`}>
       {board.map((row, i) =>
         row.map((place, j) => {
-          if (place.state == "filled" && place.value && place.color) {
+          if (!!place.card) {
             return (
               <PlacedCard
-                value={place.value}
-                color={place.color}
+                value={place.card.value}
+                color={place.card.color}
                 key={`x:${j} y:${i}`}
               />
             );
           }
-          if (place.state == "open") {
+          if (!place.card && place.state == "open") {
             return (
               <OpenPlace
                 key={`x:${j} y:${i}`}
@@ -36,7 +33,7 @@ export default function Board({ board, handlePlacement }: BoardProps) {
               />
             );
           }
-          if (place.state == "closed") {
+          if (!place.card && place.state == "closed") {
             return <ClosedPlace key={`x:${j} y:${i}`} />;
           }
         })

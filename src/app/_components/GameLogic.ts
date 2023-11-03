@@ -43,7 +43,6 @@ function place(
     }
   }
   const finalBoard = closeInvalidOpenPlaces(board);
-
   return finalBoard;
 }
 
