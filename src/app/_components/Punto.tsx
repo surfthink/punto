@@ -15,12 +15,13 @@ function shuffle<T>(array: T[]) {
 
 function initDecks(colors: Color[]) {
   const decks: Decks = {} as Decks;
-  console.log(colors);
   colors.forEach((c) => {
     const deck: Deck = [];
     const color = c;
     for (let value = 1; value < 10; value++) {
       deck.push({ value, color });
+      deck.push({ value, color });
+      //two of each card
     }
     decks[color] = shuffle<Card>(deck);
   });
