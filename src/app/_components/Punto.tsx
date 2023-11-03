@@ -1,16 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Board from "./Board";
 import Hand from "./Hand";
 import GameLogic, { Card, Color } from "./GameLogic";
 
 type Deck = Card[];
 type Decks = {
-  [key in Color]?: Deck;
+  [key in Color]: Deck;
 };
 
+function shuffle<T>(array: T[]) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
 function initDecks(colors: Color[]) {
-  const decks: Decks = {};
+  const decks: Decks = {} as Decks;
   console.log(colors);
   colors.forEach((c) => {
     const deck: Deck = [];
@@ -18,7 +22,7 @@ function initDecks(colors: Color[]) {
     for (let value = 1; value < 10; value++) {
       deck.push({ value, color });
     }
-    decks[color] = deck;
+    decks[color] = shuffle<Card>(deck);
   });
   console.log("init decks", decks);
   return decks;
@@ -31,20 +35,38 @@ function initDecks(colors: Color[]) {
  *
  */
 export default function Punto() {
-  const [board, setBoard] = useState(GameLogic.newBoard(11));
+  const [players, setPlayers] = useState<Color[]>([
+    "red",
+    "blue",
+    "green",
+    "yellow",
+  ]);
+  const emptyDecks = () => {
+    const d: Decks = {} as Decks; // would love to know the better way to do this
+    players.forEach((p) => (d[p] = []));
+    return d;
+  };
   // the top of each deck will be the hand
-  const [decks, setDecks] = useState({ ...initDecks(["blue"]) });
-  const [player, setPlayer] = useState<Color>("blue"); // this will probably need to change into a more complex object
+  const [decks, setDecks] = useState<Decks>({ ...emptyDecks() });
+  const [board, setBoard] = useState(GameLogic.newBoard(11));
+
+  useEffect(() => {
+    setDecks({ ...initDecks(players) }); // set the state here to avoid ssr conflict
+  }, []);
 
   const handlePlacement = (x: number, y: number) => () => {
-    const deck = decks[player];
+    const deck = decks[players[0]];
 
-    console.log("handlePlacement");
     if (!!deck && deck.length > 0) {
       const card = deck[0];
       setBoard([...GameLogic.place([...board], x, y, card.color, card.value)]);
-      drawCard(player);
+      drawCard(players[0]);
+      nextPlayer();
     }
+  };
+
+  const nextPlayer = () => {
+    setPlayers([...players.slice(1), players[0]]);
   };
 
   const drawCard = (color: Color) => {
@@ -57,7 +79,9 @@ export default function Punto() {
   return (
     <>
       <Board board={board} handlePlacement={handlePlacement}></Board>
-      <Hand color="blue" value={3}></Hand>
+      {!!decks[players[0]] && decks[players[0]].length > 0 && (
+        <Hand color={players[0]} value={decks[players[0]][0].value}></Hand>
+      )}
     </>
   );
 }
