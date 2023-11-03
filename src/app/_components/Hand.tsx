@@ -1,4 +1,5 @@
 import { Color } from "./GameLogic";
+import StyleHelper from "./styleHelpers";
 
 interface HandProps {
   //needs to be told the card information
@@ -10,8 +11,9 @@ export default function Hand({ color, value }: HandProps) {
   return (
     <div className="border">
       <p>Players Hand</p>
-      <p className="text-sky-400">{color}</p>
-      <h1 className="text-sky-400 text-lg">{value}</h1>
+      <h1 className={`${StyleHelper.colorTextStyle(color)} text-lg`}>
+        {value}
+      </h1>
     </div>
   );
 }

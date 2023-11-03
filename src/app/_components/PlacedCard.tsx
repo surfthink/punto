@@ -1,4 +1,5 @@
 import { Color } from "./GameLogic";
+import StyleHelper from "./styleHelpers";
 
 interface PlacedCardProps {
   value: number;
@@ -8,7 +9,7 @@ interface PlacedCardProps {
 export default function PlacedCard({ value, color }: PlacedCardProps) {
   return (
     <div className="border border-grey-500">
-      <p className="text-xl text-sky-500">{value}</p>
+      <p className={`${StyleHelper.colorTextStyle(color)} text-xl`}>{value}</p>
     </div>
   );
 }
