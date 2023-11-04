@@ -33,6 +33,12 @@ function place(
   value: number
 ) {
   console.log(`card placed at ${x},${y} by ${color}`);
+  const oldCard = board[y][x].card;
+  if (!!oldCard && (oldCard.value > value || oldCard.color === color)) {
+    //cant place that card here
+    return { newBoard: board, placed: false };
+  }
+
   board[y][x].card = { value, color };
 
   for (let j = y - 1; j < y + 2; j++) {
@@ -43,7 +49,7 @@ function place(
     }
   }
   const finalBoard = closeInvalidOpenPlaces(board);
-  return finalBoard;
+  return { newBoard: finalBoard, placed: true };
 }
 
 function closeInvalidOpenPlaces(board: Board) {

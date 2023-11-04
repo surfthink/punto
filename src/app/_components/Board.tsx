@@ -27,6 +27,7 @@ export default function Board({ board, handlePlacement }: BoardProps) {
                 value={place.card.value}
                 color={place.card.color}
                 key={`x:${j} y:${i}`}
+                onClick={handlePlacement(j, i)}
               />
             );
           }

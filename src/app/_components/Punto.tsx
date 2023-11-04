@@ -60,9 +60,21 @@ export default function Punto() {
 
     if (!!deck && deck.length > 0) {
       const card = deck[0];
-      setBoard([...GameLogic.place([...board], x, y, card.color, card.value)]);
-      drawCard(players[0]);
-      nextPlayer();
+      const { newBoard, placed } = GameLogic.place(
+        [...board],
+        x,
+        y,
+        card.color,
+        card.value
+      );
+      if (placed) {
+        setBoard([...newBoard]);
+        drawCard(players[0]);
+        nextPlayer();
+        return;
+      }
+      window.alert("You cannot place that card here");
+      return;
     }
   };
 
