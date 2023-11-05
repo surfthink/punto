@@ -145,13 +145,50 @@ function winningRow(row: PlaceDetails[], color: Color) {
   return winner;
 }
 
-function isWinner(board: Board, color: Color) {
+interface Direction {
+  x: number;
+  y: number;
+}
+
+function makeDiagonalRow(board: Board, x: number, y: number, d: Direction) {
+  const start = { x, y };
+  while (
+    start.x < board.length - 1 &&
+    start.y > 0 &&
+    start.y < board.length - 1 &&
+    start.x > 0
+  ) {
+    start.x += d.x;
+    start.y += d.y;
+  }
+  const diagonalRow = [];
+  for (let i = 0; i < board.length; i++) {
+    const xIndex = start.x + i * -d.x;
+    const yIndex = start.y + i * -d.y;
+
+    if (yIndex > 10 || xIndex > 10 || yIndex < 0 || xIndex < 0) {
+      console.log(diagonalRow);
+      return diagonalRow;
+    }
+    diagonalRow.push(board[yIndex][xIndex]);
+  }
+  return diagonalRow;
+}
+
+function isWinner(board: Board, color: Color, x: number, y: number) {
   // check the horizontals
-  if (board.findIndex((row) => winningRow(row, color)) !== -1) return true;
+  // if (board.findIndex((row) => winningRow(row, color)) !== -1) return true;
+  if (winningRow(board[y], color)) return true;
   // check the verticals
-  if (transpose(board).findIndex((row) => winningRow(row, color)) !== -1)
-    return true;
+  if (winningRow(transpose(board)[x], color)) return true;
   // check the diagonals
+  // check +ve diagonal
+  if (winningRow(makeDiagonalRow(board, x, y, { x: 1, y: -1 }), color))
+    return true;
+  if (winningRow(makeDiagonalRow(board, x, y, { x: -1, y: -1 }), color))
+    return true;
+
+  // start at top right and go down to the right
   return false;
 }
 
