@@ -69,6 +69,11 @@ export default function Punto() {
       );
       if (placed) {
         setBoard([...newBoard]);
+        if (GameLogic.isWinner(board, players[0])) {
+          // not sure if i should use newBoard here because sometimes state gets set out of order?
+          window.alert(`GAME OVER! ${players[0]} is the winner!`);
+          return;
+        }
         drawCard(players[0]);
         nextPlayer();
         return;

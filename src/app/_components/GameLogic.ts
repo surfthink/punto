@@ -126,9 +126,39 @@ function getHeight(board: Board) {
   return b.filter((row) => row.find((p) => !!p.card)).length;
 }
 
+function winningRow(row: PlaceDetails[], color: Color) {
+  let count = 0;
+  let winner = false;
+  row.forEach((p) => {
+    const card = p.card;
+    if (!card) {
+      count = 0;
+      return;
+    }
+    if (card.color === color) {
+      count += 1;
+      if (count >= 4) {
+        winner = true;
+      }
+    }
+  });
+  return winner;
+}
+
+function isWinner(board: Board, color: Color) {
+  // check the horizontals
+  if (board.findIndex((row) => winningRow(row, color)) !== -1) return true;
+  // check the verticals
+  if (transpose(board).findIndex((row) => winningRow(row, color)) !== -1)
+    return true;
+  // check the diagonals
+  return false;
+}
+
 const GameLogic = {
   newBoard,
   place,
+  isWinner,
 };
 
 export default GameLogic;
