@@ -13,6 +13,12 @@ export interface PlaceDetails {
 }
 
 export type Board = PlaceDetails[][];
+
+type Deck = Card[];
+export type Decks = {
+  [key in Color]: Deck;
+};
+
 function newBoard(size: number) {
   const board: PlaceDetails[][] = [];
   for (let i = 0; i < size; i++) {
@@ -192,8 +198,29 @@ function isWinner(board: Board, color: Color, x: number, y: number) {
   return false;
 }
 
+function shuffle<T>(array: T[]) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function initDecks(colors: Color[]) {
+  const decks: Decks = {} as Decks;
+  colors.forEach((c) => {
+    const deck: Deck = [];
+    const color = c;
+    for (let value = 1; value < 10; value++) {
+      deck.push({ value, color });
+      deck.push({ value, color });
+      //two of each card
+    }
+    decks[color] = shuffle<Card>(deck);
+  });
+  console.log("init decks", decks);
+  return decks;
+}
+
 const GameLogic = {
   newBoard,
+  initDecks,
   place,
   isWinner,
 };

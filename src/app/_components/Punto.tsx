@@ -2,32 +2,7 @@
 import { useEffect, useState } from "react";
 import Board from "./Board";
 import Hand from "./Hand";
-import GameLogic, { Card, Color } from "./GameLogic";
-
-type Deck = Card[];
-type Decks = {
-  [key in Color]: Deck;
-};
-
-function shuffle<T>(array: T[]) {
-  return array.sort(() => Math.random() - 0.5);
-}
-
-function initDecks(colors: Color[]) {
-  const decks: Decks = {} as Decks;
-  colors.forEach((c) => {
-    const deck: Deck = [];
-    const color = c;
-    for (let value = 1; value < 10; value++) {
-      deck.push({ value, color });
-      deck.push({ value, color });
-      //two of each card
-    }
-    decks[color] = shuffle<Card>(deck);
-  });
-  console.log("init decks", decks);
-  return decks;
-}
+import GameLogic, { Card, Color, Decks } from "./GameLogic";
 
 /**
  * This component will be the brains of the punto game. It will have the grid display beneath it.
@@ -52,7 +27,12 @@ export default function Punto() {
   const [board, setBoard] = useState(GameLogic.newBoard(11));
 
   useEffect(() => {
-    setDecks({ ...initDecks(players) }); // set the state here to avoid ssr conflict
+    (async () => {
+      const res = await fetch("game/logic");
+      const body = await res.json();
+      console.log(body);
+    })();
+    setDecks({ ...GameLogic.initDecks(players) }); // set the state here to avoid ssr conflict
   }, []);
 
   const handlePlacement = (x: number, y: number) => () => {

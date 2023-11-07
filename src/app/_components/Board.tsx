@@ -1,5 +1,3 @@
-"use client";
-
 import { MouseEventHandler } from "react";
 import ClosedPlace from "./ClosedPlace";
 import OpenPlace from "./OpenPlace";
