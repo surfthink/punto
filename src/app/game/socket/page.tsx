@@ -23,7 +23,6 @@ export default function Page() {
         console.log("**ONMESSAGE");
         const msg = JSON.parse(event.data);
         console.log(msg);
-        console.log("silly");
       };
     })();
 
