@@ -4,7 +4,8 @@ import { useEffect } from "react";
 export default function Page() {
   useEffect(() => {
     (async () => {
-      const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL as string);
+      console.log("sending request to", process.env.BACKEND_URL);
+      const res = await fetch(process.env.BACKEND_URL as string);
       const body = await res.json();
       console.log(body);
     })();
