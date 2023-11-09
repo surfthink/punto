@@ -8,6 +8,7 @@ export default function Page() {
       const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL as string);
       const body = await res.json();
       console.log(body);
+      console.log("silly");
     })();
 
     // const ws = new WebSocket(process.env.BACKEND_URL as string);
