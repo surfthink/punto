@@ -12,10 +12,10 @@ import GameLogic, { Card, Color, Decks } from "./GameLogic";
  */
 export default function Punto() {
   const [players, setPlayers] = useState<Color[]>([
-    "red",
-    "blue",
-    "green",
-    "yellow",
+    Color.BLUE,
+    Color.GREEN,
+    Color.RED,
+    Color.YELLOW,
   ]);
   const emptyDecks = () => {
     const d: Decks = {} as Decks; // would love to know the better way to do this
