@@ -10,13 +10,13 @@ function numGridColsString(cols: number) {
 
 function colorTextStyle(color: Color) {
   switch (color) {
-    case "blue":
+    case Color.BLUE:
       return "text-sky-400";
-    case "red":
+    case Color.RED:
       return "text-red-400";
-    case "green":
+    case Color.GREEN:
       return "text-green-400";
-    case "yellow":
+    case Color.YELLOW:
       return "text-yellow-400";
   }
 }
