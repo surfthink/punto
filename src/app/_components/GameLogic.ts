@@ -1,4 +1,9 @@
-export type Color = "red" | "yellow" | "green" | "blue";
+export enum Color {
+  RED = "RED",
+  BLUE = "BLUE",
+  GREEN = "GREEN",
+  YELLOW = "YELLOW",
+}
 
 export interface Card {
   value: number;
