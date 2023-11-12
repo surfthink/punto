@@ -6,37 +6,50 @@ import {
 } from "@/app/_hooks/interfaces";
 import { useEffect, useState } from "react";
 import { Color } from "../_components/GameLogic";
+import { getCookie } from "cookies-next";
+import { browser } from "process";
 
-export function useRoom(room?: string, channelId?: string) {
+export function useRoom(room: string) {
   const [players, setPlayers] = useState<GeneralPlayerInfo[]>();
-  const [id, setId] = useState<string>();
   const [color, setColor] = useState<Color>();
 
   useEffect(() => {
-    // no room id passed yet
-    console.log("useEffect is running with: ", room);
-    if (!room || !channelId) return;
-    const ws = new WebSocket(
-      (process.env.NEXT_PUBLIC_WS_URL as string) + `/join`,
-      "json"
+    (async () => {
+      console.log("useEffect is running with: ", room);
+      await joinRoom(room);
+
+      const ws = new WebSocket(
+        (process.env.NEXT_PUBLIC_WS_URL as string) + `/join`,
+        "json"
+      );
+
+      ws.onopen = (event) => {
+        console.log("**ONOPEN");
+      };
+      ws.onmessage = (event) => {
+        console.log("**ONMESSAGE");
+        receiveMessage(event);
+      };
+
+      return () => {
+        ws.close();
+      };
+    })();
+  }, []);
+
+  const joinRoom = async (room: string) => {
+    console.log("joining room");
+    const res = await fetch(
+      (process.env.NEXT_PUBLIC_BACKEND_URL as string) + `/join/${room}`,
+      {
+        credentials: "include",
+        mode: "cors",
+      }
     );
-
-    //it seems this is the best way to set which room I want to join...
-    document.cookie = `roomId=${room}; SameSite=None; Secure`;
-    document.cookie = `channelId=${channelId}; SameSite=None; Secure`;
-
-    ws.onopen = (event) => {
-      console.log("**ONOPEN");
-    };
-    ws.onmessage = (event) => {
-      console.log("**ONMESSAGE");
-      receiveMessage(event);
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, [room]);
+    const body = await res.json();
+    console.log(body.message);
+    console.log(document.cookie);
+  };
 
   const receiveMessage = (event: MessageEvent) => {
     console.log("**RECEIVEMESSAGE");
@@ -45,7 +58,6 @@ export function useRoom(room?: string, channelId?: string) {
 
     if (body.eventType === "JOINED") {
       const e = body as JoinedEvent;
-      setId(e.data.playerId);
       setPlayers(e.data.players);
       setColor(e.data.players.find((p) => p.id === e.data.playerId)?.color);
     }

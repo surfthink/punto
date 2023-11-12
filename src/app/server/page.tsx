@@ -1,13 +1,9 @@
 "use client";
-
-import { FormEventHandler, createRef, useState } from "react";
-import RoomInfo from "../_components/RoomInfo";
-import { useRoom } from "../_hooks/useRoom";
-
+import { useRouter } from "next/navigation";
+import { FormEventHandler, createRef, useEffect, useState } from "react";
 export default function Page() {
   const [room, setRoom] = useState<string>();
-  const [channelId, setChannelId] = useState<string>();
-  const { players, color } = useRoom(room, channelId);
+  const router = useRouter();
 
   const createRoom = async () => {
     console.log("create room");
@@ -18,13 +14,16 @@ export default function Page() {
         mode: "cors",
       }
     );
+    const body = await res.json();
+    console.log("going to created room: ", body.room);
+    router.push(`/room/${body.room}`);
   };
 
   const roomInput = createRef<HTMLInputElement>();
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    setRoom(roomInput.current?.value);
+    router.push(`/room/${roomInput.current?.value}`);
   };
 
   return (
@@ -39,17 +38,6 @@ export default function Page() {
         ></input>
         <button type="submit">Join Room</button>
       </form>
-      {!!room && (
-        <>
-          <RoomInfo
-            players={players}
-            playerId={channelId}
-            playerColor={color}
-            roomId={room}
-          ></RoomInfo>
-          {/* <button onClick={startGame}>Start Game</button> */}
-        </>
-      )}
     </>
   );
 }
