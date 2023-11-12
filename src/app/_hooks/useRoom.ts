@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { Color } from "../_components/GameLogic";
 
-export function useRoom(room?: string) {
+export function useRoom(room?: string, channelId?: string) {
   const [players, setPlayers] = useState<GeneralPlayerInfo[]>();
   const [id, setId] = useState<string>();
   const [color, setColor] = useState<Color>();
@@ -15,7 +15,7 @@ export function useRoom(room?: string) {
   useEffect(() => {
     // no room id passed yet
     console.log("useEffect is running with: ", room);
-    if (!room) return;
+    if (!room || !channelId) return;
     const ws = new WebSocket(
       (process.env.NEXT_PUBLIC_WS_URL as string) + `/join`,
       "json"
@@ -23,7 +23,7 @@ export function useRoom(room?: string) {
 
     //it seems this is the best way to set which room I want to join...
     document.cookie = `roomId=${room}; SameSite=None; Secure`;
-    document.cookie = `channelId=${crypto.randomUUID()}; SameSite=None; Secure`;
+    document.cookie = `channelId=${channelId}; SameSite=None; Secure`;
 
     ws.onopen = (event) => {
       console.log("**ONOPEN");
@@ -57,5 +57,5 @@ export function useRoom(room?: string) {
     }
   };
 
-  return { players, id, color };
+  return { players, color };
 }

@@ -6,15 +6,18 @@ import { useRoom } from "../_hooks/useRoom";
 
 export default function Page() {
   const [room, setRoom] = useState<string>();
-  const { players, id, color } = useRoom(room);
+  const [channelId, setChannelId] = useState<string>();
+  const { players, color } = useRoom(room, channelId);
 
   const createRoom = async () => {
     console.log("create room");
     const res = await fetch(
-      (process.env.NEXT_PUBLIC_BACKEND_URL as string) + "/create-room"
+      (process.env.NEXT_PUBLIC_BACKEND_URL as string) + "/create-room",
+      {
+        credentials: "include",
+        mode: "cors",
+      }
     );
-    const body = await res.json();
-    setRoom(body.roomId);
   };
 
   const roomInput = createRef<HTMLInputElement>();
@@ -40,7 +43,7 @@ export default function Page() {
         <>
           <RoomInfo
             players={players}
-            playerId={id}
+            playerId={channelId}
             playerColor={color}
             roomId={room}
           ></RoomInfo>
