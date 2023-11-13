@@ -6,14 +6,17 @@ interface RoomLoaderProps {
 }
 
 export default function RoomLoader({ room }: RoomLoaderProps) {
-  const { players, color } = useRoom(room);
+  const { players, color, socket } = useRoom(room);
 
   return (
-    <RoomInfo
-      players={players}
-      playerId={""}
-      playerColor={color}
-      roomId={room}
-    ></RoomInfo>
+    <>
+      <RoomInfo
+        players={players}
+        playerId={""}
+        playerColor={color}
+        roomId={room}
+      ></RoomInfo>
+      <button onClick={() => socket?.send("PUSHHHHHH")}>Push message</button>
+    </>
   );
 }
