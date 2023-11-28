@@ -16,14 +16,21 @@ export interface NewGame extends PuntoEvent {
     players: Color[];
   };
 }
-interface DrawCard extends PuntoEvent {
-  action: "DRAW";
+export interface DrawCard extends PuntoEvent {
+  action: "DRAW_CARD";
   data: {
     card: Card;
   };
 }
-interface PlaceCard extends PuntoEvent {
-  action: "PLACE";
+
+export interface TurnChange extends PuntoEvent {
+  action: "TURN_CHANGED";
+  data: {
+    turn: Color;
+  };
+}
+export interface PlaceCard extends PuntoEvent {
+  action: "CARD_PLACED";
   data: {
     card: Card;
     x: number;
@@ -32,8 +39,7 @@ interface PlaceCard extends PuntoEvent {
 }
 
 export default function EventDrivenPunto(props: { events: PuntoEvent[] }) {
-  const { board, player, players, currentCard, currentTurn, update } =
-    useGameLogic();
+  const { board, player, players, currentCard, turn, update } = useGameLogic();
 
   useEffect(() => {
     if (props.events.length > 0) {
@@ -52,7 +58,7 @@ export default function EventDrivenPunto(props: { events: PuntoEvent[] }) {
     <GameInterface
       board={board}
       card={currentCard}
-      turn={currentTurn}
+      turn={turn}
       player={player}
       handlePlacement={handlePlacement}
     ></GameInterface>
