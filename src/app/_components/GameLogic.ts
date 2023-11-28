@@ -17,7 +17,7 @@ export interface PlaceDetails {
   card?: Card;
 }
 
-export type Board = PlaceDetails[][];
+export type BoardState = PlaceDetails[][];
 
 type Deck = Card[];
 export type Decks = {
@@ -37,7 +37,7 @@ function newBoard(size: number) {
 }
 
 function place(
-  board: Board,
+  board: BoardState,
   x: number,
   y: number,
   color: Color,
@@ -63,7 +63,7 @@ function place(
   return { newBoard: finalBoard, placed: true };
 }
 
-function closeInvalidOpenPlaces(board: Board) {
+function closeInvalidOpenPlaces(board: BoardState) {
   const b = [...board];
   //if the width is 6 and there is no placed cards in the row then close it all
   b.forEach((row) => {
@@ -84,17 +84,17 @@ function closeInvalidOpenPlaces(board: Board) {
   return transpose(bT);
 }
 
-function getHighestFilledRow(board: Board) {
+function getHighestFilledRow(board: BoardState) {
   const b = [...board];
   return b.findIndex((row) => row.findIndex((p) => !!p.card) >= 0);
 }
 
-function getLeftestFilledCol(board: Board) {
+function getLeftestFilledCol(board: BoardState) {
   const b = transpose([...board]);
   return b.findIndex((row) => row.findIndex((p) => !!p.card) >= 0);
 }
 
-function canBeOpened(board: Board, x: number, y: number) {
+function canBeOpened(board: BoardState, x: number, y: number) {
   const width = getWidth(board);
   const height = getHeight(board);
   const leftest = getLeftestFilledCol(board);
@@ -127,12 +127,12 @@ function transpose<T>(matrix: T[][]) {
   return row.map((value, column) => matrix.map((row) => row[column]));
 }
 
-function getWidth(board: Board) {
+function getWidth(board: BoardState) {
   const b = [...board];
   return transpose(b).filter((row) => row.find((p) => !!p.card)).length;
 }
 
-function getHeight(board: Board) {
+function getHeight(board: BoardState) {
   const b = [...board]; // dont want to ruin the board
   return b.filter((row) => row.find((p) => !!p.card)).length;
 }
@@ -161,7 +161,12 @@ interface Direction {
   y: number;
 }
 
-function makeDiagonalRow(board: Board, x: number, y: number, d: Direction) {
+function makeDiagonalRow(
+  board: BoardState,
+  x: number,
+  y: number,
+  d: Direction
+) {
   const start = { x, y };
   while (
     start.x < board.length - 1 &&
@@ -186,7 +191,7 @@ function makeDiagonalRow(board: Board, x: number, y: number, d: Direction) {
   return diagonalRow;
 }
 
-function isWinner(board: Board, color: Color, x: number, y: number) {
+function isWinner(board: BoardState, color: Color, x: number, y: number) {
   // check the horizontals
   // if (board.findIndex((row) => winningRow(row, color)) !== -1) return true;
   if (winningRow(board[y], color)) return true;
