@@ -44,6 +44,13 @@ export interface PlayerJoined extends PuntoEvent {
   };
 }
 
+export interface PlayerLeft extends PuntoEvent {
+  action: "PLAYER_LEFT";
+  data: {
+    player: Color;
+  };
+}
+
 export default function EventDrivenPunto(props: { events: PuntoEvent[] }) {
   const { board, player, players, currentCard, turn, update } = useGameLogic();
 

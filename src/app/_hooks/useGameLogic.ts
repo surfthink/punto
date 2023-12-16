@@ -5,6 +5,7 @@ import {
   NewGame,
   PlaceCard,
   PlayerJoined,
+  PlayerLeft,
   PuntoEvent,
   TurnChange,
 } from "../development/events/EventDrivenPunto";
@@ -65,8 +66,13 @@ export function useGameLogic() {
         case "PLAYER_JOINED":
           e = event as PlayerJoined;
           updatePlayers = [...updatePlayers, e.data.player];
-          updatePlayer = e.data.player;
           break;
+        case "PLAYER_LEFT":
+          e = event as PlayerLeft;
+          const leavingPlayer = e.data.player;
+          updatePlayers = updatePlayers.filter((p) => p != leavingPlayer);
+          break;
+
         default:
           throw new Error(`Unknown event: ${event.action}`);
       }

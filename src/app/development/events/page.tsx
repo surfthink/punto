@@ -83,6 +83,20 @@ export default function Page() {
     ]);
   }
 
+  function addPlayerLeftEvent() {
+    if (!eventSender) return;
+    console.log("adding player left event");
+    setEvents([
+      ...events,
+      {
+        action: "PLAYER_LEFT",
+        data: {
+          player: eventSender,
+        },
+      },
+    ]);
+  }
+
   function handleCheckbox(i: number, checked: boolean) {
     if (checked) {
       setSelectedEvents([...selectedEvents, i]);
@@ -136,6 +150,7 @@ export default function Page() {
         ></input>
         <div className="border flex justify-between flex-wrap">
           <button onClick={addPlayerJoinedEvent}>PLAYER_JOINED</button>
+          <button onClick={addPlayerLeftEvent}>PLAYER_LEFT</button>
           <button onClick={addNewGameEvent}>NEW_GAME</button>
           <button onClick={addDrawCardEvent}>DRAW_CARD</button>
           <div>

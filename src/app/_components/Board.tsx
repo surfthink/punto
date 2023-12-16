@@ -2,7 +2,7 @@ import { MouseEventHandler } from "react";
 import ClosedPlace from "./ClosedPlace";
 import OpenPlace from "./OpenPlace";
 import PlacedCard from "./PlacedCard";
-import { Color, PlaceDetails } from "../_hooks/GameLogic";
+import { PlaceDetails } from "../_hooks/GameLogic";
 import StyleHelper from "./styleHelpers";
 
 interface BoardProps {
