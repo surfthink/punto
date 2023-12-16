@@ -1,18 +1,17 @@
 "use client";
 import EventDrivenPunto, {
   PuntoEvent,
-} from "@/app/_components/EventDrivenPunto";
+} from "@/app/development/events/EventDrivenPunto";
 import { Color } from "@/app/_components/GameLogic";
 import { useState } from "react";
 
 export default function Page() {
   const [events, setEvents] = useState<PuntoEvent[]>([]);
-  const [eventSender, setEventSender] = useState<Color>(Color.RED);
 
+  const [eventSender, setEventSender] = useState<Color>(Color.RED);
   const [eventXValue, setEventXValue] = useState<number>();
   const [eventYValue, setEventYValue] = useState<number>();
   const [eventValue, setEventValue] = useState<number>();
-
   const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
 
   function addNewGameEvent() {

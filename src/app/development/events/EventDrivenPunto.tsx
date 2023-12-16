@@ -1,8 +1,8 @@
 "use client";
 import { useEffect } from "react";
-import { Card, Color } from "./GameLogic";
-import GameInterface from "./GameInterface";
-import { useGameLogic } from "../_hooks/useGameLogic";
+import { Card, Color } from "../../_components/GameLogic";
+import GameInterface from "../../_components/GameInterface";
+import { useGameLogic } from "../../_hooks/useGameLogic";
 
 export interface PuntoEvent {
   action: string;

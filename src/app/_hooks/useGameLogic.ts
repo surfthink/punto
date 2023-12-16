@@ -7,7 +7,7 @@ import {
   PlayerJoined,
   PuntoEvent,
   TurnChange,
-} from "../_components/EventDrivenPunto";
+} from "../development/events/EventDrivenPunto";
 
 export function useGameLogic() {
   const [board, setBoard] = useState<BoardState>();
