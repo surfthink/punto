@@ -1,4 +1,4 @@
-import { Color } from "./GameLogic";
+import { Color } from "../_hooks/GameLogic";
 
 //need to do this because tailwindcss wont know to include the correct css classes otherwise
 function numGridColsString(cols: number) {

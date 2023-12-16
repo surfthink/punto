@@ -1,5 +1,5 @@
 import { useState } from "react";
-import GameLogic, { BoardState, Card, Color } from "../_components/GameLogic";
+import GameLogic, { BoardState, Card, Color } from "./GameLogic";
 import {
   DrawCard,
   NewGame,

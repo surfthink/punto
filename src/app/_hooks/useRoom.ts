@@ -5,7 +5,7 @@ import {
   PuntoEvent,
 } from "@/app/_hooks/interfaces";
 import { useEffect, useState } from "react";
-import { Color } from "../_components/GameLogic";
+import { Color } from "./GameLogic";
 
 export function useRoom(
   room: string,

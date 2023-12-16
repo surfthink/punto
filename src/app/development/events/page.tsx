@@ -2,7 +2,7 @@
 import EventDrivenPunto, {
   PuntoEvent,
 } from "@/app/development/events/EventDrivenPunto";
-import { Color } from "@/app/_components/GameLogic";
+import { Color } from "@/app/_hooks/GameLogic";
 import { useState } from "react";
 
 export default function Page() {

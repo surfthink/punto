@@ -7,7 +7,7 @@ import {
 } from "../_hooks/interfaces";
 import { useRoom } from "../_hooks/useRoom";
 import RoomInfo from "./RoomInfo";
-import { Color } from "./GameLogic";
+import { Color } from "../_hooks/GameLogic";
 import Board from "./Board";
 
 interface RoomLoaderProps {

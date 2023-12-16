@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Board from "./Board";
 import Hand from "./Hand";
-import GameLogic, { Card, Color, Decks } from "./GameLogic";
+import GameLogic, { Card, Color, Decks } from "../_hooks/GameLogic";
 
 /**
  * This component will be the brains of the punto game. It will have the grid display beneath it.

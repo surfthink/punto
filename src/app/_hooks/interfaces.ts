@@ -1,4 +1,4 @@
-import { Color } from "@/app/_components/GameLogic";
+import { Color } from "@/app/_hooks/GameLogic";
 
 export interface PuntoEvent<T> {
   eventType: string;

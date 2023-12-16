@@ -1,4 +1,4 @@
-import { Color } from "./GameLogic";
+import { Color } from "../_hooks/GameLogic";
 import StyleHelper from "./styleHelpers";
 
 interface HandProps {
