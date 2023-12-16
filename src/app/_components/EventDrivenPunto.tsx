@@ -13,7 +13,6 @@ export interface NewGame extends PuntoEvent {
   action: "NEW_GAME";
   data: {
     player: Color;
-    players: Color[];
   };
 }
 export interface DrawCard extends PuntoEvent {
@@ -35,6 +34,13 @@ export interface PlaceCard extends PuntoEvent {
     card: Card;
     x: number;
     y: number;
+  };
+}
+
+export interface PlayerJoined extends PuntoEvent {
+  action: "PLAYER_JOINED";
+  data: {
+    player: Color;
   };
 }
 
@@ -60,6 +66,7 @@ export default function EventDrivenPunto(props: { events: PuntoEvent[] }) {
       card={currentCard}
       turn={turn}
       player={player}
+      players={players}
       handlePlacement={handlePlacement}
     ></GameInterface>
   );

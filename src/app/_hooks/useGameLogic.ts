@@ -4,6 +4,7 @@ import {
   DrawCard,
   NewGame,
   PlaceCard,
+  PlayerJoined,
   PuntoEvent,
   TurnChange,
 } from "../_components/EventDrivenPunto";
@@ -18,7 +19,7 @@ export function useGameLogic() {
 
   function update(events: PuntoEvent[]) {
     let updateBoard: BoardState | undefined = undefined;
-    let updatePlayers: Color[] | undefined = undefined;
+    let updatePlayers: Color[] = [];
     let updatePlayer: Color | undefined = undefined;
     let updateCurrentCard: Card | undefined = undefined;
     let updateTurn: Color | undefined = undefined;
@@ -29,8 +30,10 @@ export function useGameLogic() {
         case "NEW_GAME":
           e = event as NewGame;
           updateBoard = GameLogic.newBoard(11);
-          updatePlayers = e.data.players;
-          updatePlayer = e.data.player;
+          updateTurn = e.data.player;
+          // bring player to front
+          updatePlayers = updatePlayers.filter((p) => p != updateTurn);
+          updatePlayers = [e.data.player, ...updatePlayers];
           break;
         case "DRAW_CARD":
           e = event as DrawCard;
@@ -55,7 +58,14 @@ export function useGameLogic() {
           break;
         case "TURN_CHANGED":
           e = event as TurnChange;
-          updateTurn = e.data.turn;
+          const front = updatePlayers.shift();
+          if (front) updatePlayers = [...updatePlayers, front];
+          updateTurn = updatePlayers[0];
+          break;
+        case "PLAYER_JOINED":
+          e = event as PlayerJoined;
+          updatePlayers = [...updatePlayers, e.data.player];
+          updatePlayer = e.data.player;
           break;
         default:
           throw new Error(`Unknown event: ${event.action}`);

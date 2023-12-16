@@ -6,6 +6,7 @@ import Hand from "./Hand";
 export default function GameInterface(props: {
   board?: BoardState;
   player?: Color;
+  players?: Color[];
   turn?: Color;
   card?: Card;
   handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
@@ -18,7 +19,17 @@ export default function GameInterface(props: {
           handlePlacement={props.handlePlacement}
         ></Board>
       )}
-      {props.player && <div>You are {props.player}</div>}
+      {props.player && <p>You are {props.player}</p>}
+      {props.players && props.players.length > 0 && (
+        <p>
+          Playing with:{" "}
+          <div className="flex">
+            {props.players.map((player) => (
+              <div>{player}, </div>
+            ))}
+          </div>
+        </p>
+      )}
       {props.turn && <div>It is {props.turn}'s turn</div>}
       {props.card && (
         <Hand color={props.card.color} value={props.card.value}></Hand>
