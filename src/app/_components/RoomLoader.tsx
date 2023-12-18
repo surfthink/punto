@@ -24,7 +24,7 @@ export default function RoomLoader({ room }: RoomLoaderProps) {
     console.log("**RECEIVEMESSAGE");
     const body = JSON.parse(event.data) as PuntoEvent<unknown>;
     console.log("server message: ", body);
-    switch (body.eventType) {
+    switch (body.action) {
       case "JOINED":
         const e = body as JoinedEvent;
         setPlayers(e.data.players);
