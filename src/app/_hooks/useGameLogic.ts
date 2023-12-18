@@ -1,14 +1,14 @@
 import { useState } from "react";
 import GameLogic, { BoardState, Card, Color } from "./GameLogic";
 import {
-  DrawCard,
-  NewGame,
-  PlaceCard,
-  PlayerJoined,
-  PlayerLeft,
+  DrewCardEvent,
+  NewGameEvent,
+  PlacedCardEvent,
+  PlayerJoinedEvent,
+  PlayerLeftEvent,
   PuntoEvent,
-  TurnChange,
-} from "../development/events/EventDrivenPunto";
+  TurnChangedEvent,
+} from "./interfaces";
 
 export function useGameLogic() {
   const [board, setBoard] = useState<BoardState>();
@@ -18,7 +18,7 @@ export function useGameLogic() {
   const [player, setPlayer] = useState<Color>();
   const [turn, setTurn] = useState<Color>();
 
-  function update(events: PuntoEvent[]) {
+  function update(events: PuntoEvent<unknown>[]) {
     let updateBoard: BoardState | undefined = undefined;
     let updatePlayers: Color[] = [];
     let updatePlayer: Color | undefined = undefined;
@@ -29,19 +29,19 @@ export function useGameLogic() {
       let e;
       switch (event.action) {
         case "NEW_GAME":
-          e = event as NewGame;
+          e = event as NewGameEvent;
           updateBoard = GameLogic.newBoard(11);
-          updateTurn = e.data.player;
+          updateTurn = e.data.color;
           // bring player to front
           updatePlayers = updatePlayers.filter((p) => p != updateTurn);
-          updatePlayers = [e.data.player, ...updatePlayers];
+          updatePlayers = [e.data.color, ...updatePlayers];
           break;
         case "DRAW_CARD":
-          e = event as DrawCard;
+          e = event as DrewCardEvent;
           updateCurrentCard = e.data.card;
           break;
         case "CARD_PLACED":
-          e = event as PlaceCard;
+          e = event as PlacedCardEvent;
           if (!updateBoard) {
             throw new Error("board not initialized");
           }
@@ -58,21 +58,27 @@ export function useGameLogic() {
           updateBoard = [...newBoard];
           break;
         case "TURN_CHANGED":
-          e = event as TurnChange;
+          e = event as TurnChangedEvent;
           const front = updatePlayers.shift();
           if (front) updatePlayers = [...updatePlayers, front];
           updateTurn = updatePlayers[0];
           break;
         case "PLAYER_JOINED":
-          e = event as PlayerJoined;
-          updatePlayers = [...updatePlayers, e.data.player];
+          e = event as PlayerJoinedEvent;
+          // TODO
           break;
         case "PLAYER_LEFT":
-          e = event as PlayerLeft;
-          const leavingPlayer = e.data.player;
-          updatePlayers = updatePlayers.filter((p) => p != leavingPlayer);
+          e = event as PlayerLeftEvent;
+          // TODO
           break;
-
+        case "GAME_OVER":
+          break;
+        case "RESET":
+          //all values are reset to initial state
+          updateBoard = undefined;
+          updateCurrentCard = undefined;
+          updateTurn = undefined;
+          break;
         default:
           throw new Error(`Unknown event: ${event.action}`);
       }

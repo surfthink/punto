@@ -1,12 +1,15 @@
 "use client";
-import EventDrivenPunto, {
-  PuntoEvent,
-} from "@/app/development/events/EventDrivenPunto";
+import EventDrivenPunto from "@/app/development/events/EventDrivenPunto";
 import { Color } from "@/app/_hooks/GameLogic";
 import { useState } from "react";
+import {
+  DrewCardEvent,
+  NewGameEvent,
+  PuntoEvent,
+} from "@/app/_hooks/interfaces";
 
 export default function Page() {
-  const [events, setEvents] = useState<PuntoEvent[]>([]);
+  const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
 
   const [eventSender, setEventSender] = useState<Color>(Color.RED);
   const [eventXValue, setEventXValue] = useState<number>();
@@ -20,9 +23,10 @@ export default function Page() {
       {
         action: "NEW_GAME",
         data: {
-          player: eventSender,
+          color: eventSender,
+          id: eventSender,
         },
-      },
+      } as NewGameEvent,
     ]);
   }
 
@@ -37,7 +41,7 @@ export default function Page() {
             value: eventValue,
           },
         },
-      },
+      } as DrewCardEvent,
     ]);
   }
 
@@ -105,7 +109,7 @@ export default function Page() {
 
   function removeSelectedEvents() {
     const eventsCopy = [...events];
-    let newEvents: PuntoEvent[] = [];
+    let newEvents: PuntoEvent<unknown>[] = [];
     eventsCopy.filter((event, index) => {
       if (!selectedEvents.includes(index)) newEvents = [...newEvents, event];
     });
