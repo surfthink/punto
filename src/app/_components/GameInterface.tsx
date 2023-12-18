@@ -25,7 +25,7 @@ export default function GameInterface(props: {
           Playing with:{" "}
           <div className="flex">
             {props.players.map((player) => (
-              <div>{player}, </div>
+              <div key={player}>{player}, </div>
             ))}
           </div>
         </p>
