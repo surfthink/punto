@@ -30,7 +30,7 @@ export default function GameInterface(props: {
           </div>
         </p>
       )}
-      {props.turn && <div>It is {props.turn}'s turn</div>}
+      {props.turn && <div>It is {props.turn}&apos;s turn</div>}
       {props.card && (
         <Hand color={props.card.color} value={props.card.value}></Hand>
       )}
