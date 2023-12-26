@@ -5,10 +5,10 @@ import {
   PlayerJoinedEvent,
   PuntoEvent,
   PlayerLeftEvent,
-} from "../_hooks/interfaces";
-import { useRoom } from "../_hooks/useRoom";
+} from "../events/gameEvents";
+import { useRoom } from "./useRoom";
 import RoomInfo from "./RoomInfo";
-import { Color } from "../_hooks/GameLogic";
+import { Color } from "../_shared/gameLogic";
 
 interface RoomLoaderProps {
   room: string;

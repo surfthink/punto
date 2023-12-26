@@ -1,6 +1,6 @@
 "use client";
-import EventDrivenPunto from "@/app/development/events/EventDrivenPunto";
-import { Color } from "@/app/_hooks/GameLogic";
+import EventDrivenPunto from "@/app/events/EventDrivenPunto";
+import { Color } from "@/app/_shared/gameLogic";
 import { useState } from "react";
 import {
   DrewCardEvent,
@@ -10,7 +10,7 @@ import {
   PlayerLeftEvent,
   PuntoEvent,
   TurnChangedEvent,
-} from "@/app/_hooks/interfaces";
+} from "@/app/events/gameEvents";
 
 export default function Page() {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);

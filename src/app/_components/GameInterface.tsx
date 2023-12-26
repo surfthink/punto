@@ -1,8 +1,8 @@
 import { MouseEventHandler } from "react";
-import Board from "./Board";
-import { BoardState, Card, Color } from "../_hooks/GameLogic";
+import Board from "./board/Board";
+import { BoardState, Card, Color } from "../_shared/gameLogic";
 import Hand from "./Hand";
-import { PlayerInfo } from "../_hooks/interfaces";
+import { PlayerInfo } from "../events/gameEvents";
 
 export default function GameInterface(props: {
   board?: BoardState;

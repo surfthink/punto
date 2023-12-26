@@ -1,8 +1,8 @@
-import { Color } from "../_hooks/GameLogic";
-import StyleHelper from "./styleHelpers";
+import { Color } from "../_shared/gameLogic";
+import StyleHelper from "./board/styleHelpers";
 
 interface HandProps {
-  //needs to be told the card information
+  //needs to be told the card informationS
   color: Color;
   value: number;
 }

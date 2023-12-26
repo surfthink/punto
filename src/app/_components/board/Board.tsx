@@ -1,9 +1,7 @@
 import { MouseEventHandler } from "react";
-import ClosedPlace from "./ClosedPlace";
-import OpenPlace from "./OpenPlace";
-import PlacedCard from "./PlacedCard";
-import { PlaceDetails } from "../_hooks/GameLogic";
+import { PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
+import { Color } from "../../_shared/gameLogic";
 
 interface BoardProps {
   board: PlaceDetails[][];
@@ -42,6 +40,46 @@ export default function Board({ board, handlePlacement }: BoardProps) {
           }
         })
       )}
+    </div>
+  );
+}
+
+interface OpenPlaceProps {
+  onClick: MouseEventHandler<HTMLDivElement>;
+}
+
+function OpenPlace({ onClick }: OpenPlaceProps) {
+  return (
+    <div
+      className="border border-blue-800 hover:bg-blue-900 aspect-square"
+      onClick={onClick}
+    ></div>
+  );
+}
+
+function ClosedPlace() {
+  return <div className="border border-gray-900 aspect-square"></div>;
+}
+
+interface PlacedCardProps {
+  value: number;
+  color: Color;
+  onClick: MouseEventHandler<HTMLDivElement>;
+}
+
+function PlacedCard({ value, color, onClick }: PlacedCardProps) {
+  return (
+    <div
+      className="border flex flex-col justify-center items-center rounded-xl border-grey-500 hover:bg-blue-900"
+      onClick={onClick}
+    >
+      <p
+        className={`${StyleHelper.colorTextStyle(
+          color
+        )} text-xl text-center aspect-square`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

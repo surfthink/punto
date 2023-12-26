@@ -1,4 +1,4 @@
-import { Card, Color } from "@/app/_hooks/GameLogic";
+import { Card, Color } from "@/app/_shared/gameLogic";
 
 export interface PuntoEvent<T> {
   action: string;

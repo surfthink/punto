@@ -1,5 +1,5 @@
 "use client";
-import RoomLoader from "@/app/_components/RoomLoader";
+import RoomLoader from "@/app/room/RoomLoader";
 
 export default function Page({ params }: { params: { id: string } }) {
   return (

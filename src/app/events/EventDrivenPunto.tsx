@@ -1,13 +1,13 @@
 "use client";
 import { useEffect } from "react";
-import GameInterface from "../../_components/GameInterface";
-import { useGameLogic } from "../../_hooks/useGameLogic";
-import { PuntoEvent } from "@/app/_hooks/interfaces";
+import GameInterface from "../_components/GameInterface";
+import { useGameEvents } from "./useGameEvents";
+import { PuntoEvent } from "@/app/events/gameEvents";
 
 export default function EventDrivenPunto(props: {
   events: PuntoEvent<unknown>[];
 }) {
-  const { board, player, players, currentCard, turn, update } = useGameLogic();
+  const { board, player, players, currentCard, turn, update } = useGameEvents();
 
   useEffect(() => {
     if (props.events.length > 0) {

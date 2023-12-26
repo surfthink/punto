@@ -1,11 +1,4 @@
-import {
-  GeneralPlayerInfo,
-  JoinedEvent,
-  PlayerJoinedEvent,
-  PuntoEvent,
-} from "@/app/_hooks/interfaces";
 import { useEffect, useState } from "react";
-import { Color } from "./GameLogic";
 
 export function useRoom(
   room: string,

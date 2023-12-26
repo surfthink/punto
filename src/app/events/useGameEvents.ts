@@ -1,5 +1,5 @@
 import { useState } from "react";
-import GameLogic, { BoardState, Card, Color } from "./GameLogic";
+import GameLogic, { BoardState, Card } from "../_shared/gameLogic";
 import {
   DrewCardEvent,
   GameOverEvent,
@@ -10,9 +10,9 @@ import {
   PlayerLeftEvent,
   PuntoEvent,
   TurnChangedEvent,
-} from "./interfaces";
+} from "./gameEvents";
 
-export function useGameLogic() {
+export function useGameEvents() {
   const [board, setBoard] = useState<BoardState>();
   const [players, setPlayers] = useState<PlayerInfo[]>([]); //encodes the turn order
   const [currentCard, setCurrentCard] = useState<Card>();

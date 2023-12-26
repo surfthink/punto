@@ -1,4 +1,4 @@
-import Punto from "../_components/Punto";
+import Punto from "./Punto";
 
 export default function Page() {
   return (

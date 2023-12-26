@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import Board from "./Board";
-import Hand from "./Hand";
-import GameLogic, { Card, Color, Decks } from "../_hooks/GameLogic";
+import Board from "../_components/board/Board";
+import Hand from "../_components/Hand";
+import GameLogic, { Card, Color, Decks } from "../_shared/gameLogic";
 
 /**
  * This component will be the brains of the punto game. It will have the grid display beneath it.

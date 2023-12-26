@@ -1,11 +1,11 @@
 "use client";
-import { GeneralPlayerInfo } from "../_hooks/interfaces";
+import { PlayerInfo } from "../events/gameEvents";
 
 interface RoomInfoProps {
   playerId?: string;
   playerColor?: string;
   roomId?: string;
-  players?: GeneralPlayerInfo[];
+  players?: PlayerInfo[];
 }
 
 export default function RoomInfo({
