@@ -5,7 +5,11 @@ import { useState } from "react";
 import {
   DrewCardEvent,
   NewGameEvent,
+  PlacedCardEvent,
+  PlayerJoinedEvent,
+  PlayerLeftEvent,
   PuntoEvent,
+  TurnChangedEvent,
 } from "@/app/_hooks/interfaces";
 
 export default function Page() {
@@ -14,7 +18,7 @@ export default function Page() {
   const [eventSender, setEventSender] = useState<Color>(Color.RED);
   const [eventXValue, setEventXValue] = useState<number>();
   const [eventYValue, setEventYValue] = useState<number>();
-  const [eventValue, setEventValue] = useState<number>();
+  const [eventCardValue, setEventCardValue] = useState<number>();
   const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
 
   function addNewGameEvent() {
@@ -23,8 +27,10 @@ export default function Page() {
       {
         action: "NEW_GAME",
         data: {
-          color: eventSender,
-          id: eventSender,
+          player: {
+            color: eventSender,
+            id: eventSender,
+          },
         },
       } as NewGameEvent,
     ]);
@@ -38,7 +44,7 @@ export default function Page() {
         data: {
           card: {
             color: eventSender,
-            value: eventValue,
+            value: eventCardValue,
           },
         },
       } as DrewCardEvent,
@@ -53,14 +59,14 @@ export default function Page() {
         data: {
           card: {
             color: eventSender,
-            value: eventValue,
+            value: eventCardValue,
           },
           x: eventXValue,
           y: eventYValue,
         },
-      },
+      } as PlacedCardEvent,
     ]);
-    setEventValue(undefined);
+    setEventCardValue(undefined);
   }
 
   function addNextTurnEvent() {
@@ -69,21 +75,24 @@ export default function Page() {
       {
         action: "TURN_CHANGED",
         data: {},
-      },
+      } as TurnChangedEvent,
     ]);
   }
 
   function addPlayerJoinedEvent() {
     if (!eventSender) return;
-    console.log("adding player joined event");
+    console.log("adding player joined event!");
     setEvents([
       ...events,
       {
         action: "PLAYER_JOINED",
         data: {
-          player: eventSender,
+          player: {
+            color: eventSender,
+            id: eventSender,
+          },
         },
-      },
+      } as PlayerJoinedEvent,
     ]);
   }
 
@@ -95,9 +104,12 @@ export default function Page() {
       {
         action: "PLAYER_LEFT",
         data: {
-          player: eventSender,
+          player: {
+            color: eventSender,
+            id: eventSender,
+          },
         },
-      },
+      } as PlayerLeftEvent,
     ]);
   }
 
@@ -134,19 +146,19 @@ export default function Page() {
             <option value={Color.YELLOW}>YELLOW</option>
           </select>
         </label>
-        <label>Value </label>
+        <label>Card Value</label>
         <input
           className="text-black"
           type="text"
-          onChange={(e) => setEventValue(Number(e.target.value))}
+          onChange={(e) => setEventCardValue(Number(e.target.value))}
         ></input>
-        <label>X </label>
+        <label>X Value</label>
         <input
           className="text-black"
           type="text"
           onChange={(e) => setEventXValue(Number(e.target.value))}
         ></input>
-        <label>Y</label>
+        <label>Y Value</label>
         <input
           className="text-black"
           type="text"

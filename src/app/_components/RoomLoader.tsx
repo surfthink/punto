@@ -1,27 +1,27 @@
 import { useState } from "react";
 import {
-  GeneralPlayerInfo,
+  PlayerInfo,
   JoinedEvent,
   PlayerJoinedEvent,
   PuntoEvent,
+  PlayerLeftEvent,
 } from "../_hooks/interfaces";
 import { useRoom } from "../_hooks/useRoom";
 import RoomInfo from "./RoomInfo";
 import { Color } from "../_hooks/GameLogic";
-import Board from "./Board";
 
 interface RoomLoaderProps {
   room: string;
 }
 
 export default function RoomLoader({ room }: RoomLoaderProps) {
-  const [players, setPlayers] = useState<GeneralPlayerInfo[]>();
+  const [players, setPlayers] = useState<PlayerInfo[]>([]);
   const [color, setColor] = useState<Color>();
 
   const [playing, setPlaying] = useState(false);
 
   const handleMessage = (event: MessageEvent) => {
-    console.log("**RECEIVEMESSAGE");
+    console.log("**RECEIVE MESSAGE");
     const body = JSON.parse(event.data) as PuntoEvent<unknown>;
     console.log("server message: ", body);
     switch (body.action) {
@@ -31,10 +31,14 @@ export default function RoomLoader({ room }: RoomLoaderProps) {
         setColor(e.data.players.find((p) => p.id === e.data.playerId)?.color);
         break;
       case "PLAYER_JOINED":
-        setPlayers((body as PlayerJoinedEvent).data.players);
+        setPlayers([...players, (body as PlayerJoinedEvent).data.player]);
         break;
       case "PLAYER_LEFT":
-        setPlayers((body as PlayerJoinedEvent).data.players);
+        setPlayers([
+          ...players.filter(
+            (p) => p.id !== (body as PlayerLeftEvent).data.player.id
+          ),
+        ]);
         break;
       case "START_GAME":
         console.log("GAME STARTED!");

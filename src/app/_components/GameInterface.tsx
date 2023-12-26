@@ -2,12 +2,13 @@ import { MouseEventHandler } from "react";
 import Board from "./Board";
 import { BoardState, Card, Color } from "../_hooks/GameLogic";
 import Hand from "./Hand";
+import { PlayerInfo } from "../_hooks/interfaces";
 
 export default function GameInterface(props: {
   board?: BoardState;
-  player?: Color;
-  players?: Color[];
-  turn?: Color;
+  player?: string;
+  players?: PlayerInfo[];
+  turn?: string;
   card?: Card;
   handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
 }) {
@@ -21,14 +22,16 @@ export default function GameInterface(props: {
       )}
       {props.player && <p>You are {props.player}</p>}
       {props.players && props.players.length > 0 && (
-        <p>
+        <div>
           Playing with:{" "}
           <div className="flex">
             {props.players.map((player) => (
-              <div key={player}>{player}, </div>
+              <p key={player.id}>
+                id:{player.id}, color:{player.color}
+              </p>
             ))}
           </div>
-        </p>
+        </div>
       )}
       {props.turn && <div>It is {props.turn}&apos;s turn</div>}
       {props.card && (

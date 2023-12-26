@@ -5,34 +5,35 @@ export interface PuntoEvent<T> {
   data: T;
 }
 
-export interface GeneralPlayerInfo {
+export interface PlayerInfo {
   color: Color;
   id: string;
 }
 
+// received from server when you join
 export interface JoinedEvent
-  extends PuntoEvent<{ players: GeneralPlayerInfo[]; playerId: string }> {
+  extends PuntoEvent<{ players: PlayerInfo[]; playerId: string }> {
   action: "JOINED";
 }
 
-export interface PlayerJoinedEvent
-  extends PuntoEvent<{ players: GeneralPlayerInfo[] }> {
+// received from server when someone else joins
+export interface PlayerJoinedEvent extends PuntoEvent<{ player: PlayerInfo }> {
   action: "PLAYER_JOINED";
 }
 
-export interface PlayerLeftEvent extends PuntoEvent<GeneralPlayerInfo> {
+export interface PlayerLeftEvent extends PuntoEvent<{ player: PlayerInfo }> {
   action: "PLAYER_LEFT";
 }
 
-export interface GameOverEvent extends PuntoEvent<GeneralPlayerInfo> {
+export interface GameOverEvent extends PuntoEvent<{ winner: PlayerInfo }> {
   action: "GAME_OVER";
 }
 
-export interface ResetEvent extends PuntoEvent<GeneralPlayerInfo> {
+export interface ResetEvent extends PuntoEvent<{ player: PlayerInfo }> {
   action: "RESET";
 }
 
-export interface NewGameEvent extends PuntoEvent<GeneralPlayerInfo> {
+export interface NewGameEvent extends PuntoEvent<{ player: PlayerInfo }> {
   action: "NEW_GAME";
 }
 

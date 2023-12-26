@@ -2,8 +2,10 @@ import { useState } from "react";
 import GameLogic, { BoardState, Card, Color } from "./GameLogic";
 import {
   DrewCardEvent,
+  GameOverEvent,
   NewGameEvent,
   PlacedCardEvent,
+  PlayerInfo,
   PlayerJoinedEvent,
   PlayerLeftEvent,
   PuntoEvent,
@@ -12,18 +14,17 @@ import {
 
 export function useGameLogic() {
   const [board, setBoard] = useState<BoardState>();
-  // also encodes the turn order
-  const [players, setPlayers] = useState<Color[]>([]);
+  const [players, setPlayers] = useState<PlayerInfo[]>([]); //encodes the turn order
   const [currentCard, setCurrentCard] = useState<Card>();
-  const [player, setPlayer] = useState<Color>();
-  const [turn, setTurn] = useState<Color>();
+  const [player, setPlayer] = useState<string>(); //id of the player
+  const [turn, setTurn] = useState<string>(); // id of the player whose turn it is
 
   function update(events: PuntoEvent<unknown>[]) {
     let updateBoard: BoardState | undefined = undefined;
-    let updatePlayers: Color[] = [];
-    let updatePlayer: Color | undefined = undefined;
+    let updatePlayers: PlayerInfo[] = [];
+    let updatePlayer: string | undefined = undefined;
     let updateCurrentCard: Card | undefined = undefined;
-    let updateTurn: Color | undefined = undefined;
+    let updateTurn: string | undefined = undefined;
 
     events.forEach((event) => {
       let e;
@@ -31,10 +32,10 @@ export function useGameLogic() {
         case "NEW_GAME":
           e = event as NewGameEvent;
           updateBoard = GameLogic.newBoard(11);
-          updateTurn = e.data.color;
+          updateTurn = e.data.player.id;
           // bring player to front
-          updatePlayers = updatePlayers.filter((p) => p != updateTurn);
-          updatePlayers = [e.data.color, ...updatePlayers];
+          updatePlayers = updatePlayers.filter((p) => p.id != updateTurn);
+          updatePlayers = [e.data.player, ...updatePlayers];
           break;
         case "DRAW_CARD":
           e = event as DrewCardEvent;
@@ -61,17 +62,22 @@ export function useGameLogic() {
           e = event as TurnChangedEvent;
           const front = updatePlayers.shift();
           if (front) updatePlayers = [...updatePlayers, front];
-          updateTurn = updatePlayers[0];
+          updateTurn = updatePlayers[0].id;
           break;
         case "PLAYER_JOINED":
           e = event as PlayerJoinedEvent;
-          // TODO
+          updatePlayers = [...updatePlayers, e.data.player];
           break;
         case "PLAYER_LEFT":
           e = event as PlayerLeftEvent;
-          // TODO
+          const playerId = e.data.player.id;
+          updatePlayers = updatePlayers.filter((p) => p.id != playerId);
+          // if the player who left was the current player, then the turn changes
+          //TODO
           break;
         case "GAME_OVER":
+          e = event as GameOverEvent;
+          window.alert(`Game over! ${e.data.winner.id} won!`);
           break;
         case "RESET":
           //all values are reset to initial state
