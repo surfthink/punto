@@ -1,5 +1,15 @@
 import { Card, Color } from "@/app/_shared/gameLogic";
 
+// so the client will sent card placed events to the server
+// the server will broadcast card placed events to all clients along with all the other events that happen as a consequence of the card being placed
+
+/**
+ * Client -(card placed)-> Server
+ * Server -(card placed)-(winner*)-(card drawn**)-(turn changed)-> All Clients
+ *  * only if there is a winner
+ *  ** only sent to the player that just played
+ */
+
 export interface PuntoEvent<T> {
   action: string;
   data: T;
