@@ -149,33 +149,36 @@ export default function EventDebugger({
           <option value={Color.YELLOW}>YELLOW</option>
         </select>
       </label>
-      <label>Card Value</label>
-      <input
-        className="text-black"
-        type="text"
-        onChange={(e) => setEventCardValue(Number(e.target.value))}
-      ></input>
-      <label>X Value</label>
-      <input
-        className="text-black"
-        type="text"
-        onChange={(e) => setEventXValue(Number(e.target.value))}
-      ></input>
-      <label>Y Value</label>
-      <input
-        className="text-black"
-        type="text"
-        onChange={(e) => setEventYValue(Number(e.target.value))}
-      ></input>
+      <label>
+        Card Value:
+        <input
+          className="text-black"
+          type="text"
+          onChange={(e) => setEventCardValue(Number(e.target.value))}
+        ></input>
+      </label>
+      <label>
+        X Value:
+        <input
+          className="text-black"
+          type="text"
+          onChange={(e) => setEventXValue(Number(e.target.value))}
+        ></input>
+      </label>
+      <label>
+        Y Value:
+        <input
+          className="text-black"
+          type="text"
+          onChange={(e) => setEventYValue(Number(e.target.value))}
+        ></input>
+      </label>
       <div className="border flex justify-between flex-wrap">
         <button onClick={addPlayerJoinedEvent}>PLAYER_JOINED</button>
         <button onClick={addPlayerLeftEvent}>PLAYER_LEFT</button>
         <button onClick={addNewGameEvent}>NEW_GAME</button>
         <button onClick={addDrawCardEvent}>DRAW_CARD</button>
-        <div>
-          <button onClick={addPlaceCardEvent}>PLACE_CARD</button>
-        </div>
-
+        <button onClick={addPlaceCardEvent}>PLACE_CARD</button>
         <button onClick={addNextTurnEvent}>NEXT_TURN</button>
       </div>
 
