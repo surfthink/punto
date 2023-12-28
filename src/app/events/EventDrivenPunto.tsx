@@ -6,6 +6,7 @@ import { PuntoEvent } from "@/app/events/gameEvents";
 
 export default function EventDrivenPunto(props: {
   events: PuntoEvent<unknown>[];
+  handlePlacement: (x: number, y: number) => () => void;
 }) {
   const { board, player, players, currentCard, turn, update } = useGameEvents();
 
@@ -15,13 +16,6 @@ export default function EventDrivenPunto(props: {
     }
   }, [props.events]);
 
-  function handlePlacement(x: number, y: number) {
-    console.log("handlePlacement");
-    return () => {
-      console.log(`handlePlacement ${x} ${y}`);
-    };
-  }
-
   return (
     <GameInterface
       board={board}
@@ -29,7 +23,7 @@ export default function EventDrivenPunto(props: {
       turn={turn}
       player={player}
       players={players}
-      handlePlacement={handlePlacement}
+      handlePlacement={props.handlePlacement}
     ></GameInterface>
   );
 }
