@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Authentication } from "./_components/authenticate/Authentication";
+import { SessionProvider } from "next-auth/react";
 
 export default function Home() {
   return (
@@ -14,8 +16,9 @@ export default function Home() {
         by Bernhard Weber!
       </p>
       <Link href="/game">
-        <h2 className="text-2xl font-bold hover:underline">Play</h2>
+        <h2 className="text-2xl font-bold hover:underline">Play Locally</h2>
       </Link>
+      <Authentication></Authentication>
     </main>
   );
 }

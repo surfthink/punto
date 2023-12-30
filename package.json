@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@next-auth/upstash-redis-adapter": "^3.0.4",
     "@types/jest": "^29.5.11",
     "@upstash/redis": "^1.27.1",
     "cookies-next": "^4.0.0",
