@@ -20,7 +20,7 @@ function getRedisConfig() {
   };
 }
 
-export const redis = new Redis({
+export const db = new Redis({
   url: getRedisConfig().url,
   token: getRedisConfig().token,
 });
