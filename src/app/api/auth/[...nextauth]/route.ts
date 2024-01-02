@@ -2,8 +2,9 @@ import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { db } from "../../db/redis";
+import { as } from "@upstash/redis/zmscore-fa7fc9c8";
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(db),
   providers: [
     GoogleProvider({
@@ -11,6 +12,12 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  callbacks: {
+    session: async ({ session, user }) => {
+      if (session.user) session.user.id = user.id;
+      return session;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
