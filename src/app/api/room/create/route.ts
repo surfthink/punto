@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import { createRoom, randomUniqueCode } from "../room";
+import { authOptions } from "../../auth/[...nextauth]/authOptions";
 
 export async function GET() {
   const id = await randomUniqueCode(4);

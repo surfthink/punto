@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { joinRoom } from "../room";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../auth/[...nextauth]/authOptions";
 
 export async function GET(
   request: Request,
