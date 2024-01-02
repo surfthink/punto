@@ -71,7 +71,6 @@ function CreateRoom() {
       throw new Error("Could not create room");
     }
     const body = (await res.json()) as { id: string };
-    console.log(body);
     // redirect to room
     const path = "/room/" + body.id;
     router.push(path);
