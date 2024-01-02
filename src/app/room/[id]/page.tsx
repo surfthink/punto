@@ -1,10 +1,18 @@
 "use client";
-import RoomLoader from "@/app/room/RoomLoader";
+import { useEffect } from "react";
 
 export default function Page({ params }: { params: { id: string } }) {
+  useEffect(() => {
+    (async () => {
+      const res = await fetch(`/api/room/${params.id}`);
+      const body = await res.json();
+      console.log(body);
+    })();
+  }, []);
+
   return (
     <>
-      <RoomLoader room={params.id}></RoomLoader>
+      <h1>Room {params.id}</h1>
     </>
   );
 }
