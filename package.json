@@ -14,7 +14,7 @@
     "@types/jest": "^29.5.11",
     "@upstash/redis": "^1.27.1",
     "cookies-next": "^4.0.0",
-    "next": "13.5.5",
+    "next": "^14.0.4",
     "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18",
