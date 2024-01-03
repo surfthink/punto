@@ -1,10 +1,15 @@
+import { PlayerJoinedEvent } from "@/app/events/gameEvents";
 import { db } from "../db/redis";
+import { RoomChannelName, pusher } from "../pusher/pusher";
+import { Color } from "@/app/_shared/gameLogic";
 
 enum RoomState {
   WAITING = "WAITING",
   PLAYING = "PLAYING",
   FINISHED = "FINISHED",
 }
+
+const COLORS: Color[] = [Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW];
 
 export async function createRoom(id: string) {
   console.log("creating room ", id);
@@ -20,8 +25,21 @@ export async function joinRoom(roomId: string, playerId: string) {
   if (setLength >= 4) {
     throw new Error("Room is full");
   }
-  await db.sadd(`room:${roomId}:players`, playerId);
+
+  const newEntry = !!(await db.sadd(`room:${roomId}:players`, playerId)); // returns 1 if new entry
   await db.expire(`room:${roomId}:players`, 60 * 60); // 1hr
+  if (newEntry) {
+    const event: PlayerJoinedEvent = {
+      action: "PLAYER_JOINED",
+      data: {
+        player: {
+          id: playerId,
+          color: COLORS[setLength],
+        },
+      },
+    };
+    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
+  }
 }
 
 async function roomExists(id: string): Promise<boolean> {
