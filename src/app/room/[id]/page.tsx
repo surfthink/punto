@@ -4,36 +4,69 @@ import { pusher } from "../pusher";
 import { PuntoEvent } from "@/app/events/gameEvents";
 import EventDrivenPunto from "@/app/events/EventDrivenPunto";
 import { RoomChannelName } from "@/app/api/pusher/pusher";
+import { Session } from "next-auth";
+import { useRouter } from "next/navigation";
+import { PresenceChannel } from "pusher-js";
+
+interface SubscriptionSucceededEvent {
+  count: number;
+  me: { id: string; info: Session };
+  members: { [key: string]: Session["user"] };
+  myID: string;
+}
+
+interface MemberAddedEvent {
+  id: string;
+  info: Session["user"];
+}
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
-  // const [pusherChannel, setPusherChannel] = useState<Channel>();
-  // const [members, setMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<string[]>([]);
 
-  const gameEventHandler = (event: PuntoEvent<unknown>) => {
-    setEvents((events) => [...events, event]);
-  };
+  //get react router
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
       const res = await fetch(`/api/room/${params.id}`);
       const body = await res.json();
+      if (res.status !== 200) {
+        router.push("/");
+        throw new Error(body.error);
+      }
 
-      console.log(body);
-      const channel = pusher.subscribe(RoomChannelName(params.id));
-      channel.bind("pusher:subscription_succeeded", (members: any) => {
-        // For example
-        console.log("members", members);
-        //TODO:
-        // sort out a way to effectively set up the members so the the game can start
+      const channel = pusher.subscribe(
+        RoomChannelName(params.id)
+      ) as PresenceChannel;
+
+      function updateMembers() {
+        const updateMembersList: string[] = [];
+        channel.members.each((member: Session["user"]) => {
+          updateMembersList.push(member.id!);
+        });
+        setMembers([...updateMembersList]);
+      }
+
+      channel.bind("pusher:subscription_succeeded", () => {
+        console.log("subscription_succeeded");
+        updateMembers();
       });
-      channel.bind("GAME_EVENT", gameEventHandler);
+      channel.bind("pusher:member_added", () => {
+        console.log("member_added");
+        updateMembers();
+      });
+      channel.bind("pusher:member_removed", () => {
+        console.log("member_removed");
+        updateMembers();
+      });
     })();
 
     return () => {
       pusher.unsubscribe(RoomChannelName(params.id));
-      pusher.unbind("GAME_EVENT", gameEventHandler);
       pusher.unbind("pusher:subscription_succeeded");
+      pusher.unbind("pusher:member_added");
+      pusher.unbind("pusher:member_removed");
     };
   }, []);
 
@@ -51,6 +84,9 @@ export default function Page({ params }: { params: { id: string } }) {
         events={events}
         handlePlacement={handlePlacement}
       ></EventDrivenPunto>
+      {members.map((member, index) => (
+        <div key={index}>{member}</div>
+      ))}
     </>
   );
 }
