@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
-import { joinRoom } from "../room";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
+import { db } from "../../db/redis";
+import { roomExists } from "../room";
 
 export async function GET(
   request: Request,
@@ -11,10 +12,8 @@ export async function GET(
   if (!session) {
     return Response.json({}, { status: 401, statusText: "Unauthorized" });
   }
-  try {
-    await joinRoom(roomId, session.user!.id!);
-  } catch (e) {
-    return Response.json({}, { status: 400 });
+  if (await roomExists(roomId)) {
+    return Response.json({}, { status: 200, statusText: "OK" });
   }
-  return Response.json({}, { status: 200, statusText: "OK" });
+  return Response.json({}, { status: 404, statusText: "Not Found" });
 }

@@ -17,32 +17,7 @@ export async function createRoom(id: string) {
   await db.expire(`room:${id}`, 60 * 60); // 1 hr
 }
 
-export async function joinRoom(roomId: string, playerId: string) {
-  if (!(await roomExists(roomId))) {
-    throw new Error("Room does not exist");
-  }
-  const setLength = await db.scard(`room:${roomId}:players`);
-  if (setLength >= 4) {
-    throw new Error("Room is full");
-  }
-
-  const newEntry = !!(await db.sadd(`room:${roomId}:players`, playerId)); // returns 1 if new entry
-  await db.expire(`room:${roomId}:players`, 60 * 60); // 1hr
-  if (newEntry) {
-    const event: PlayerJoinedEvent = {
-      action: "PLAYER_JOINED",
-      data: {
-        player: {
-          id: playerId,
-          color: COLORS[setLength],
-        },
-      },
-    };
-    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
-  }
-}
-
-async function roomExists(id: string): Promise<boolean> {
+export async function roomExists(id: string): Promise<boolean> {
   const exists = await db.hexists(`room:${id}`, "id");
   return exists === 1;
 }
