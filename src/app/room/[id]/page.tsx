@@ -8,6 +8,9 @@ import { Session } from "next-auth";
 import { useRouter } from "next/navigation";
 import { PresenceChannel } from "pusher-js";
 import { useSession } from "next-auth/react";
+import { Color } from "@/app/_shared/gameLogic";
+
+const COLORS = [Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW];
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
@@ -26,10 +29,6 @@ export default function Page({ params }: { params: { id: string } }) {
         throw new Error(body.error);
       }
 
-      const channel = pusher.subscribe(
-        RoomChannelName(params.id)
-      ) as PresenceChannel;
-
       function updateMembers() {
         const updateMembersList: string[] = [];
         channel.members.each((member: Session["user"]) => {
@@ -37,6 +36,15 @@ export default function Page({ params }: { params: { id: string } }) {
         });
         setMembers([...updateMembersList]);
       }
+
+      const channel = pusher.subscribe(
+        RoomChannelName(params.id)
+      ) as PresenceChannel;
+
+      channel.bind("GAME_EVENT", (event: PuntoEvent<unknown>) => {
+        console.log("GAME_EVENT");
+        setEvents((events) => [...events, event]);
+      });
 
       channel.bind("pusher:subscription_succeeded", () => {
         console.log("subscription_succeeded");
@@ -54,6 +62,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     return () => {
       pusher.unsubscribe(RoomChannelName(params.id));
+      pusher.unbind("GAME_EVENT");
       pusher.unbind("pusher:subscription_succeeded");
       pusher.unbind("pusher:member_added");
       pusher.unbind("pusher:member_removed");
@@ -61,10 +70,14 @@ export default function Page({ params }: { params: { id: string } }) {
   }, []);
 
   function handlePlacement(x: number, y: number) {
-    console.log("handlePlacement");
     return () => {
       console.log(`handlePlacement ${x} ${y}`);
     };
+  }
+
+  async function handleStart() {
+    console.log("handleStart");
+    fetch(`/api/room/${params.id}/start`);
   }
 
   return (
@@ -73,11 +86,19 @@ export default function Page({ params }: { params: { id: string } }) {
       <EventDrivenPunto
         events={events}
         handlePlacement={handlePlacement}
+        players={members.map((member, index) => ({
+          id: member,
+          color: COLORS[index],
+        }))}
         player={session.data?.user?.id!}
       ></EventDrivenPunto>
-      {members.map((member, index) => (
-        <div key={index}>{member}</div>
+      {events.map((event, index) => (
+        <div key={index}>{JSON.stringify(event)}</div>
       ))}
+
+      {members.length >= 2 && events.length === 0 && (
+        <button onClick={handleStart}>Start Game</button>
+      )}
     </>
   );
 }
