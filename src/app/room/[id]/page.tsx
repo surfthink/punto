@@ -7,22 +7,12 @@ import { RoomChannelName } from "@/app/api/pusher/pusher";
 import { Session } from "next-auth";
 import { useRouter } from "next/navigation";
 import { PresenceChannel } from "pusher-js";
-
-interface SubscriptionSucceededEvent {
-  count: number;
-  me: { id: string; info: Session };
-  members: { [key: string]: Session["user"] };
-  myID: string;
-}
-
-interface MemberAddedEvent {
-  id: string;
-  info: Session["user"];
-}
+import { useSession } from "next-auth/react";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
   const [members, setMembers] = useState<string[]>([]);
+  const session = useSession();
 
   //get react router
   const router = useRouter();
@@ -83,6 +73,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <EventDrivenPunto
         events={events}
         handlePlacement={handlePlacement}
+        player={session.data?.user?.id!}
       ></EventDrivenPunto>
       {members.map((member, index) => (
         <div key={index}>{member}</div>
