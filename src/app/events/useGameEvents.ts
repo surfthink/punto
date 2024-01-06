@@ -32,10 +32,6 @@ export function useGameEvents() {
         case "NEW_GAME":
           e = event as NewGameEvent;
           updateBoard = GameLogic.newBoard(11);
-          updateTurn = e.data.player.id;
-          // bring player to front
-          updatePlayers = updatePlayers.filter((p) => p.id != updateTurn);
-          updatePlayers = [e.data.player, ...updatePlayers];
           break;
         case "DRAW_CARD":
           e = event as DrewCardEvent;
@@ -60,9 +56,7 @@ export function useGameEvents() {
           break;
         case "TURN_CHANGED":
           e = event as TurnChangedEvent;
-          const front = updatePlayers.shift();
-          if (front) updatePlayers = [...updatePlayers, front];
-          updateTurn = updatePlayers[0].id;
+          updateTurn = e.data.turn;
           break;
         case "PLAYER_JOINED":
           e = event as PlayerJoinedEvent;
