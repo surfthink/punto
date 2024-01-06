@@ -43,7 +43,7 @@ interface ResetEvent extends PuntoEvent<{ player: PlayerInfo }> {
   action: "RESET";
 }
 
-interface NewGameEvent extends PuntoEvent<{ player: PlayerInfo }> {
+interface NewGameEvent extends PuntoEvent {
   action: "NEW_GAME";
 }
 
@@ -51,7 +51,7 @@ interface DrewCardEvent extends PuntoEvent<{ card: Card }> {
   action: "DRAW_CARD";
 }
 
-interface TurnChangedEvent extends PuntoEvent<{ turn: Color }> {
+interface TurnChangedEvent extends PuntoEvent<{ turn: string }> {
   action: "TURN_CHANGED";
 }
 interface PlacedCardEvent
