@@ -2,15 +2,18 @@
 import { useEffect } from "react";
 import GameInterface from "../_components/GameInterface";
 import { useGameEvents } from "./useGameEvents";
-import { PuntoEvent } from "@/app/events/gameEvents";
+import { PlayerInfo, PuntoEvent } from "@/app/events/gameEvents";
 
 export default function EventDrivenPunto(props: {
   events: PuntoEvent<unknown>[];
   handlePlacement: (x: number, y: number) => () => void;
+  players: PlayerInfo[];
+  player: string;
 }) {
   const { board, player, players, currentCard, turn, update } = useGameEvents();
 
   useEffect(() => {
+    console.log(props.players);
     if (props.events.length > 0) {
       update(props.events);
     }
@@ -21,8 +24,8 @@ export default function EventDrivenPunto(props: {
       board={board}
       card={currentCard}
       turn={turn}
-      player={player}
-      players={players}
+      player={props.player}
+      players={props.players}
       handlePlacement={props.handlePlacement}
     ></GameInterface>
   );
