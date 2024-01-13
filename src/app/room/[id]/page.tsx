@@ -15,7 +15,7 @@ const COLORS = [Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW];
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
   const [members, setMembers] = useState<string[]>([]);
-  const session = useSession();
+  const [color, setColor] = useState<Color>();
 
   //get react router
   const router = useRouter();
