@@ -15,6 +15,7 @@ const COLORS = [Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW];
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
   const [members, setMembers] = useState<string[]>([]);
+  const [cardValue, setCardValue] = useState<number>();
   const [color, setColor] = useState<Color>();
   const [players, setPlayers] = useState<{ id: string; color: Color }[]>([]);
 
@@ -82,8 +83,17 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   function handlePlacement(x: number, y: number) {
-    return () => {
+    return async () => {
       console.log(`handlePlacement ${x} ${y}`);
+      await fetch(`/api/room/${params.id}/place`, {
+        method: "POST",
+        body: JSON.stringify({
+          x,
+          y,
+          card: { value: cardValue, color: color } as Card,
+        }),
+      });
+      await drawCard();
     };
   }
 
