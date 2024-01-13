@@ -21,26 +21,16 @@ export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
 
   useEffect(() => {
-    (async () => {
+    async function fetchColor() {
       const res = await fetch(`/api/room/${params.id}`);
-      const body = await res.json();
+      const body = (await res.json()) as { color: Color };
+      setColor(body.color);
       if (res.status !== 200) {
         router.push("/");
-        throw new Error(body.error);
       }
+    }
 
-      function updateMembers() {
-        const updateMembersList: string[] = [];
-        channel.members.each((member: Session["user"]) => {
-          updateMembersList.push(member.id!);
-        });
-        setMembers([...updateMembersList]);
-      }
-
-      const channel = pusher.subscribe(
-        RoomChannelName(params.id)
-      ) as PresenceChannel;
-
+    fetchColor();
       channel.bind("GAME_EVENT", (event: PuntoEvent<unknown>) => {
         console.log("GAME_EVENT");
         setEvents((events) => [...events, event]);
@@ -67,7 +57,7 @@ export default function Page({ params }: { params: { id: string } }) {
       pusher.unbind("pusher:member_added");
       pusher.unbind("pusher:member_removed");
     };
-  }, []);
+  }, [color]);
 
   function handlePlacement(x: number, y: number) {
     return () => {
