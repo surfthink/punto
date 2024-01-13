@@ -53,6 +53,7 @@ export function useGameEvents() {
           // if (!placed) {
           //   throw new Error("card not placed");
           // }
+          console.log("successfully placed", placed);
           updateBoard = [...newBoard];
           break;
         case "TURN_CHANGED":

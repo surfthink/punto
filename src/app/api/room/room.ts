@@ -1,5 +1,6 @@
 import { Color } from "@/app/_shared/gameLogic";
 import { db } from "../db/redis";
+import { PlacedCardEvent, PuntoEvent } from "@/app/events/gameEvents";
 
 enum RoomState {
   WAITING = "WAITING",
@@ -63,6 +64,50 @@ export async function getTurn(roomId: string) {
   const players = await db.lrange(`room:${roomId}:order`, 0, -1);
   console.log(players);
   return players[turn % players.length];
+}
+
+export async function savePlacedCard(roomId: string, event: PlacedCardEvent) {
+  await db.rpush(
+    `room:${roomId}:board`,
+    JSON.stringify({
+      x: event.data.x,
+      y: event.data.y,
+      c: event.data.card.color,
+      v: event.data.card.value,
+    })
+  );
+}
+
+export async function getPlacedCards(roomId: string) {
+  return (await db.lrange(`room:${roomId}:board`, 0, -1)) as {
+    x: number;
+    y: number;
+    c: Color;
+    v: number;
+  }[];
+}
+
+export async function getPlacedCardEvents(roomId: string) {
+  const cards = await db.lrange(`room:${roomId}:board`, 0, -1);
+  return cards.map((card) => {
+    const tmp = JSON.parse(card) as {
+      x: number;
+      y: number;
+      c: Color;
+      v: number;
+    };
+    return {
+      action: "CARD_PLACED",
+      data: {
+        x: tmp.x,
+        y: tmp.y,
+        card: {
+          color: tmp.c,
+          value: tmp.v,
+        },
+      },
+    } as PlacedCardEvent;
+  });
 }
 
 function generateRandomCode(length: number): string {

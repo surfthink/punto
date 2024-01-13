@@ -1,8 +1,15 @@
 import { getServerSession } from "next-auth";
-import { getTurn, nextTurn, roomExists } from "../../room";
+import {
+  getPlacedCards,
+  getTurn,
+  nextTurn,
+  roomExists,
+  savePlacedCard,
+} from "../../room";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { PlacedCardEvent, TurnChangedEvent } from "@/app/events/gameEvents";
 import { RoomChannelName, pusher } from "@/app/api/pusher/pusher";
+import { Card } from "@/app/_shared/gameLogic";
 
 export async function POST(
   request: Request,
@@ -19,6 +26,7 @@ export async function POST(
 
   const body = await request.json();
   const { x, y, card } = body;
+
   console.log(`placing card in room ${roomId}`);
 
   const currentPlayer = await getTurn(roomId);
@@ -30,6 +38,22 @@ export async function POST(
       { status: 403, statusText: "Forbidden (Not your turn)" }
     );
   }
+
+  if (!(await validPlacement(x, y, card, roomId))) {
+    return Response.json(
+      {},
+      { status: 403, statusText: "Forbidden (Invalid placement)" }
+    );
+  }
+
+  await savePlacedCard(roomId, {
+    action: "CARD_PLACED",
+    data: {
+      card,
+      x,
+      y,
+    },
+  } as PlacedCardEvent);
 
   pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
     action: "CARD_PLACED",
@@ -51,4 +75,29 @@ export async function POST(
   } as TurnChangedEvent);
 
   return Response.json({}, { status: 200, statusText: "OK" });
+}
+
+async function validPlacement(
+  x: number,
+  y: number,
+  card: Card,
+  roomId: string
+) {
+  //TODO
+  console.log("validating placement");
+  const cards = await getPlacedCards(roomId);
+  console.log(cards);
+  if (
+    cards.findIndex((c) => c.x === x && c.y === y && c.v >= card.value) !== -1
+  ) {
+    console.log("card already placed and it has a higher value");
+    return false;
+  }
+  if (
+    cards.findIndex((c) => c.x === x && c.y === y && c.c === card.color) !== -1
+  ) {
+    console.log("card already placed and it has the same color");
+    return false;
+  }
+  return true;
 }
