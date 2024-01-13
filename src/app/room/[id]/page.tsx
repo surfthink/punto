@@ -16,6 +16,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
   const [members, setMembers] = useState<string[]>([]);
   const [color, setColor] = useState<Color>();
+  const [players, setPlayers] = useState<{ id: string; color: Color }[]>([]);
 
   //get react router
   const router = useRouter();
@@ -42,7 +43,10 @@ export default function Page({ params }: { params: { id: string } }) {
 
     fetchColor();
       channel.bind("GAME_EVENT", (event: PuntoEvent<unknown>) => {
-        console.log("GAME_EVENT");
+      switch (event.action) {
+        case "NEW_GAME":
+          handleNewGame();
+      }
         setEvents((events) => [...events, event]);
       });
 
@@ -69,6 +73,14 @@ export default function Page({ params }: { params: { id: string } }) {
     };
   }, [color]);
 
+  async function handleNewGame() {
+    console.log("handleNewGame");
+    const res = await fetch(`/api/room/${params.id}/playerColors`);
+    const body = (await res.json()) as { id: string; color: Color }[];
+    setPlayers(body);
+    await drawCard();
+  }
+
   function handlePlacement(x: number, y: number) {
     return () => {
       console.log(`handlePlacement ${x} ${y}`);
@@ -77,7 +89,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   async function handleStart() {
     console.log("handleStart");
-    fetch(`/api/room/${params.id}/start`);
+    await fetch(`/api/room/${params.id}/start`);
   }
 
   return (
