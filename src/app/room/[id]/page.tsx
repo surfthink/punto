@@ -21,6 +21,16 @@ export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
 
   useEffect(() => {
+    let channel: PresenceChannel;
+
+    function updateMembers() {
+      const updateMembers: string[] = [];
+      channel.members.each((member: Session["user"]) => {
+        updateMembers.push(member.id!);
+      });
+      setMembers(updateMembers);
+    }
+
     async function fetchColor() {
       const res = await fetch(`/api/room/${params.id}`);
       const body = (await res.json()) as { color: Color };
