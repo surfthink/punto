@@ -26,6 +26,7 @@ export async function joinRoom(roomId: string, userId: string) {
     console.log("success", success);
     if (success) {
       await db.set(`room:${roomId}:${userId}`, COLORS[numberInRoom]);
+      await db.lpush(`room:${roomId}:order`, userId);
     }
   }
   return (await db.get(`room:${roomId}:${userId}`)) as Color;
@@ -57,8 +58,11 @@ export async function nextTurn(roomId: string) {
 }
 
 export async function getTurn(roomId: string) {
-  const turn = await db.hget(`room:${roomId}`, "turn");
-  const players = await db.hget(`room:${roomId}`, "players");
+  const turn = (await db.hget(`room:${roomId}`, "turn")) as number;
+  //can i do this in one query?
+  const players = await db.lrange(`room:${roomId}:order`, 0, -1);
+  console.log(players);
+  return players[turn % players.length];
 }
 
 function generateRandomCode(length: number): string {

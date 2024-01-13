@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { Session, getServerSession } from "next-auth";
-import { roomExists } from "../../room";
+import { getTurn, roomExists } from "../../room";
 import { RoomChannelName, pusher } from "@/app/api/pusher/pusher";
 import { NewGameEvent, TurnChangedEvent } from "@/app/events/gameEvents";
 
@@ -21,19 +21,12 @@ export async function GET(
     action: "NEW_GAME",
   };
   pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", event);
-  const res = await pusher.get({
-    path: `/channels/${RoomChannelName(params.id)}/users`,
-  });
-  if (res.status !== 200) {
-    throw new Error("failed to get users");
-  }
-  const body = await res.json();
-  const users = body.users as Session["user"][];
+  const currentPlayer = await getTurn(roomId);
 
   pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
     action: "TURN_CHANGED",
     data: {
-      turn: users[0].id,
+      turn: currentPlayer,
     },
   } as TurnChangedEvent);
 

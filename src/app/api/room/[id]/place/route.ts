@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { roomExists } from "../../room";
+import { getTurn, nextTurn, roomExists } from "../../room";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { PlacedCardEvent, TurnChangedEvent } from "@/app/events/gameEvents";
 import { RoomChannelName, pusher } from "@/app/api/pusher/pusher";
@@ -20,6 +20,17 @@ export async function POST(
   const body = await request.json();
   const { x, y, card } = body;
   console.log(`placing card in room ${roomId}`);
+
+  const currentPlayer = await getTurn(roomId);
+  if (currentPlayer !== session.user.id) {
+    console.log(`not ${session.user.id}'s turn`);
+    console.log(`current player is ${currentPlayer}`);
+    return Response.json(
+      {},
+      { status: 403, statusText: "Forbidden (Not your turn)" }
+    );
+  }
+
   pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
     action: "CARD_PLACED",
     data: {
@@ -28,6 +39,16 @@ export async function POST(
       y,
     },
   } as PlacedCardEvent);
-  //   pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {} as TurnChangedEvent);
+
+  await nextTurn(roomId);
+  const nextPlayer = await getTurn(roomId);
+
+  pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
+    action: "TURN_CHANGED",
+    data: {
+      turn: nextPlayer,
+    },
+  } as TurnChangedEvent);
+
   return Response.json({}, { status: 200, statusText: "OK" });
 }
