@@ -1,3 +1,4 @@
+import { Color } from "@/app/_shared/gameLogic";
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {

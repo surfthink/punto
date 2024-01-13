@@ -45,6 +45,7 @@ function place(
 ) {
   console.log(`card placed at ${x},${y} by ${color}`);
   const oldCard = board[y][x].card;
+  console.log({ oldCard });
   if (!!oldCard && (oldCard.value > value || oldCard.color === color)) {
     //cant place that card here
     return { newBoard: board, placed: false };

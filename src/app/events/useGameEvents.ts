@@ -42,6 +42,7 @@ export function useGameEvents() {
           if (!updateBoard) {
             throw new Error("board not initialized");
           }
+          console.log("in useGameEvent.ts", e);
           const { placed, newBoard } = GameLogic.place(
             [...updateBoard],
             e.data.x,
@@ -49,9 +50,9 @@ export function useGameEvents() {
             e.data.card.color,
             e.data.card.value
           );
-          if (!placed) {
-            throw new Error("card not placed");
-          }
+          // if (!placed) {
+          //   throw new Error("card not placed");
+          // }
           updateBoard = [...newBoard];
           break;
         case "TURN_CHANGED":

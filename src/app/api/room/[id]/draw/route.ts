@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/authOptions";
-import { joinRoom, roomExists } from "../room";
+import { roomExists } from "../../room";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { DrewCardEvent } from "@/app/events/gameEvents";
 
 export async function GET(
   request: Request,
@@ -8,12 +9,13 @@ export async function GET(
 ) {
   const roomId = params.id;
   const session = await getServerSession(authOptions);
+  //check that user is in the room
   if (!session) {
     return Response.json({}, { status: 401, statusText: "Unauthorized" });
   }
-  if (!(await roomExists(roomId))) {
+  if (await !roomExists(roomId)) {
     return Response.json({}, { status: 404, statusText: "Not Found" });
   }
-  const color = await joinRoom(roomId, session.user.id!);
-  return Response.json({ color }, { status: 200, statusText: "OK" });
+  //TODO: store deck state in the database and draw from there
+  return Response.json({ cardValue: 1 }, { status: 200, statusText: "OK" });
 }

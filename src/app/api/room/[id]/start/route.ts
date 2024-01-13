@@ -10,6 +10,7 @@ export async function GET(
 ) {
   const roomId = params.id;
   const session = await getServerSession(authOptions);
+  //check that user is in the room
   if (!session) {
     return Response.json({}, { status: 401, statusText: "Unauthorized" });
   }
