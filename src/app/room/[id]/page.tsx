@@ -87,7 +87,7 @@ export default function Page({ params }: { params: { id: string } }) {
   function handlePlacement(x: number, y: number) {
     return async () => {
       console.log(`handlePlacement ${x} ${y}`);
-      await fetch(`/api/room/${params.id}/place`, {
+      const res = await fetch(`/api/room/${params.id}/place`, {
         method: "POST",
         body: JSON.stringify({
           x,
@@ -95,6 +95,10 @@ export default function Page({ params }: { params: { id: string } }) {
           card: { value: cardValue, color: color } as Card,
         }),
       });
+      if (res.status !== 200) {
+        console.log("failed to place card");
+        return;
+      }
       await drawCard();
     };
   }
