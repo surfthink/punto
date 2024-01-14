@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { roomExists } from "../../room";
+import { drawCard, roomExists } from "../../room";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { DrewCardEvent } from "@/app/events/gameEvents";
 
@@ -17,5 +17,8 @@ export async function GET(
     return Response.json({}, { status: 404, statusText: "Not Found" });
   }
   //TODO: store deck state in the database and draw from there
-  return Response.json({ cardValue: 1 }, { status: 200, statusText: "OK" });
+  const cardValue = await drawCard(roomId, session.user.id!);
+  console.log("drew card ", cardValue);
+
+  return Response.json({ cardValue }, { status: 200, statusText: "OK" });
 }
