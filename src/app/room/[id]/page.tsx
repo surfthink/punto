@@ -17,6 +17,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const [cardValue, setCardValue] = useState<number>();
   const [color, setColor] = useState<Color>();
   const [players, setPlayers] = useState<{ id: string; color: Color }[]>([]);
+  const [requestSent, setRequestSent] = useState<boolean>(false);
 
   //get react router
   const router = useRouter();
@@ -86,6 +87,10 @@ export default function Page({ params }: { params: { id: string } }) {
 
   function handlePlacement(x: number, y: number) {
     return async () => {
+      if (requestSent) {
+        return;
+      }
+      setRequestSent(true);
       console.log(`handlePlacement ${x} ${y}`);
       const res = await fetch(`/api/room/${params.id}/place`, {
         method: "POST",
@@ -95,6 +100,7 @@ export default function Page({ params }: { params: { id: string } }) {
           card: { value: cardValue, color: color } as Card,
         }),
       });
+      setRequestSent(false);
       if (res.status !== 200) {
         console.log("failed to place card");
         return;
