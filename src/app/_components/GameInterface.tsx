@@ -11,6 +11,7 @@ export default function GameInterface(props: {
   turn?: string;
   card?: Card;
   handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
+  debug?: boolean;
 }) {
   return (
     <>
@@ -18,6 +19,7 @@ export default function GameInterface(props: {
         <Board
           board={props.board}
           handlePlacement={props.handlePlacement}
+          debug={props.debug || false}
         ></Board>
       )}
       {props.player && <p>You are {props.player}</p>}

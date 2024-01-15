@@ -148,6 +148,7 @@ export default function Page({ params }: { params: { id: string } }) {
         handlePlacement={handlePlacement}
         players={players}
         player={session?.user?.id!}
+        debug={true}
       ></EventDrivenPunto>
       {events.map((event, index) => (
         <div key={index}>{JSON.stringify(event)}</div>

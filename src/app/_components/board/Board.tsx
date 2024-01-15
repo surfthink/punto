@@ -6,9 +6,10 @@ import { Color } from "../../_shared/gameLogic";
 interface BoardProps {
   board: PlaceDetails[][];
   handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>; //it would be nice to have this function take in placement information
+  debug: boolean;
 }
 
-export default function Board({ board, handlePlacement }: BoardProps) {
+export default function Board({ board, handlePlacement, debug }: BoardProps) {
   return (
     <div
       className={`grid ${StyleHelper.numGridColsString(
@@ -24,6 +25,8 @@ export default function Board({ board, handlePlacement }: BoardProps) {
                 color={place.card.color}
                 key={`x:${j} y:${i}`}
                 onClick={handlePlacement(j, i)}
+                debug={debug}
+                coords={{ x: j, y: i }}
               />
             );
           }
@@ -65,14 +68,21 @@ interface PlacedCardProps {
   value: number;
   color: Color;
   onClick: MouseEventHandler<HTMLDivElement>;
+  debug: boolean;
+  coords: { x: number; y: number };
 }
 
-function PlacedCard({ value, color, onClick }: PlacedCardProps) {
+function PlacedCard({ value, color, onClick, debug, coords }: PlacedCardProps) {
   return (
     <div
       className="border flex flex-col justify-center items-center rounded-xl border-grey-500 hover:bg-blue-900"
       onClick={onClick}
     >
+      {debug && (
+        <p className="text-xs">
+          {coords.x},{coords.y}
+        </p>
+      )}
       <p
         className={`${StyleHelper.colorTextStyle(
           color
