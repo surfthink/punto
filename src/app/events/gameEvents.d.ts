@@ -43,7 +43,7 @@ interface ResetEvent extends PuntoEvent<{ player: PlayerInfo }> {
   action: "RESET";
 }
 
-interface NewGameEvent extends PuntoEvent {
+interface NewGameEvent extends PuntoEvent<{}> {
   action: "NEW_GAME";
 }
 

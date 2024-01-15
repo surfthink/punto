@@ -19,6 +19,7 @@ export async function GET(
   }
   const event: NewGameEvent = {
     action: "NEW_GAME",
+    data: {},
   };
   pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", event);
   const currentPlayer = await getTurn(roomId);

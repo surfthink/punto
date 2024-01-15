@@ -30,12 +30,7 @@ export default function EventDebugger({
       ...events,
       {
         action: "NEW_GAME",
-        data: {
-          player: {
-            color: eventSender,
-            id: eventSender,
-          },
-        },
+        data: {},
       } as NewGameEvent,
     ]);
   }
