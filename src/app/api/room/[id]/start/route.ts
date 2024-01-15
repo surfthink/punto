@@ -17,14 +17,15 @@ export async function GET(
   if (await !roomExists(roomId)) {
     return Response.json({}, { status: 404, statusText: "Not Found" });
   }
-  const event: NewGameEvent = {
+
+  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
     action: "NEW_GAME",
     data: {},
-  };
-  pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", event);
+  } as NewGameEvent);
+
   const currentPlayer = await getTurn(roomId);
 
-  pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
+  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
     action: "TURN_CHANGED",
     data: {
       turn: currentPlayer,
