@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { pusher } from "../pusher";
+import { pusher } from "../../pusher";
 import { DrewCardEvent, PuntoEvent } from "@/app/events/gameEvents";
 import EventDrivenPunto from "@/app/events/EventDrivenPunto";
 import { RoomChannelName } from "@/app/api/pusher/pusher";
