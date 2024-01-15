@@ -26,6 +26,14 @@ export async function createRoom(roomId: string) {
   await db.expire(`room:${roomId}`, 60 * 60); // 1 hr
 }
 
+export async function startGame(roomId: string) {
+  await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
+}
+
+export async function endGame(roomId: string) {
+  await db.hset(`room:${roomId}`, { state: RoomState.FINISHED });
+}
+
 export async function drawCard(roomId: string, userId: string) {
   const card = (await db.spop(`room:${roomId}:deck:${userId}`)) as string;
   console.log("drew card from redis ", card);

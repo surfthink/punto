@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { Session, getServerSession } from "next-auth";
-import { getTurn, roomExists } from "../../room";
+import { getTurn, roomExists, startGame } from "../../room";
 import { RoomChannelName, pusher } from "@/app/api/pusher/pusher";
 import { NewGameEvent, TurnChangedEvent } from "@/app/events/gameEvents";
 
@@ -23,6 +23,7 @@ export async function GET(
     data: {},
   } as NewGameEvent);
 
+  await startGame(roomId);
   const currentPlayer = await getTurn(roomId);
 
   pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
