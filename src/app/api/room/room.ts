@@ -8,10 +8,16 @@ enum RoomState {
   FINISHED = "FINISHED",
 }
 
+export interface PlacedCard {
+  x: number;
+  y: number;
+  c: Color;
+  v: number;
+}
+
 const COLORS = [Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW];
 
 export async function createRoom(roomId: string) {
-  console.log("creating room ", roomId);
   await db.hset(`room:${roomId}`, {
     id: roomId,
     state: RoomState.WAITING,
@@ -89,28 +95,18 @@ export async function savePlacedCard(roomId: string, event: PlacedCardEvent) {
       y: event.data.y,
       c: event.data.card.color,
       v: event.data.card.value,
-    })
+    } as PlacedCard)
   );
 }
 
 export async function getPlacedCards(roomId: string) {
-  return (await db.lrange(`room:${roomId}:board`, 0, -1)) as {
-    x: number;
-    y: number;
-    c: Color;
-    v: number;
-  }[];
+  return (await db.lrange(`room:${roomId}:board`, 0, -1)) as PlacedCard[];
 }
 
 export async function getPlacedCardEvents(roomId: string) {
   const cards = await db.lrange(`room:${roomId}:board`, 0, -1);
   return cards.map((card) => {
-    const tmp = JSON.parse(card) as {
-      x: number;
-      y: number;
-      c: Color;
-      v: number;
-    };
+    const tmp = JSON.parse(card) as PlacedCard;
     return {
       action: "CARD_PLACED",
       data: {

@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import {
+  PlacedCard,
   getPlacedCards,
   getTurn,
   nextTurn,
@@ -162,11 +163,9 @@ function hasFourConsecutive(array: number[]): boolean {
   return false;
 }
 
-function removeCoveredCards(
-  cards: { x: number; y: number; c: Color; v: number }[]
-) {
+function removeCoveredCards(cards: PlacedCard[]) {
   const topCards: {
-    [key: string]: { x: number; y: number; c: Color; v: number };
+    [key: string]: PlacedCard;
   } = {};
   cards.forEach((c) => {
     const key = `${c.x},${c.y}`;
