@@ -1,6 +1,6 @@
 import { Color } from "@/app/_shared/gameLogic";
 import { db } from "../db/redis";
-import { PlacedCardEvent, PuntoEvent } from "@/app/events/gameEvents";
+import { PlacedCardEvent } from "@/app/events/gameEvents";
 
 enum RoomState {
   WAITING = "WAITING",

@@ -5,7 +5,7 @@ import { Color } from "../../_shared/gameLogic";
 
 interface BoardProps {
   board: PlaceDetails[][];
-  handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>; //it would be nice to have this function take in placement information
+  handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
   debug?: boolean;
 }
 
