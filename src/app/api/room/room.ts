@@ -30,6 +30,10 @@ export async function startGame(roomId: string) {
   await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
 }
 
+export async function getRoomState(roomId: string) {
+  return (await db.hget(`room:${roomId}`, "state")) as RoomState;
+}
+
 export async function endGame(roomId: string) {
   await db.hset(`room:${roomId}`, { state: RoomState.FINISHED });
 }

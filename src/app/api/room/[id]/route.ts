@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
-import { joinRoom, roomExists } from "../room";
+import { getRoomState, joinRoom, roomExists } from "../room";
 
 export async function GET(
   request: Request,
@@ -15,5 +15,9 @@ export async function GET(
     return Response.json({}, { status: 404, statusText: "Not Found" });
   }
   const color = await joinRoom(roomId, session.user.id!);
+  const roomState = await getRoomState(roomId);
+
+  //todo let player catch up to already started game
+
   return Response.json({ color }, { status: 200, statusText: "OK" });
 }
