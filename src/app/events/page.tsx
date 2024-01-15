@@ -20,7 +20,7 @@ export default function Page() {
         <EventDebugger events={events} setEvents={setEvents} />
       </div>
       <div className="lg:w-1/2 w-full">
-        <EventDrivenPunto events={events} handlePlacement={handlePlacement} />
+        {/* <EventDrivenPunto events={events} handlePlacement={handlePlacement} /> */}
       </div>
     </main>
   );
