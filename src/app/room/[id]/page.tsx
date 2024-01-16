@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { PresenceChannel } from "pusher-js";
 import { useSession } from "next-auth/react";
 import { Card, Color } from "@/app/_shared/gameLogic";
+import { place } from "@/app/_actions/place";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
@@ -87,22 +88,14 @@ export default function Page({ params }: { params: { id: string } }) {
 
   function handlePlacement(x: number, y: number) {
     return async () => {
-      if (requestSent) {
-        return;
-      }
-      setRequestSent(true);
-      console.log(`handlePlacement ${x} ${y}`);
-      const res = await fetch(`/api/room/${params.id}/place`, {
-        method: "POST",
-        body: JSON.stringify({
-          x,
-          y,
-          card: { value: cardValue, color: color } as Card,
-        }),
-      });
-      setRequestSent(false);
-      if (res.status !== 200) {
-        console.log("failed to place card");
+      try {
+        await place({ x, y, c: color!, v: cardValue! }, params.id);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.log(e.message);
+        } else {
+          console.log(JSON.stringify(e));
+        }
         return;
       }
       await drawCard();

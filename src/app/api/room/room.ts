@@ -99,16 +99,8 @@ export async function getTurn(roomId: string) {
   return players[turn % players.length];
 }
 
-export async function savePlacedCard(roomId: string, event: PlacedCardEvent) {
-  await db.rpush(
-    `room:${roomId}:board`,
-    JSON.stringify({
-      x: event.data.x,
-      y: event.data.y,
-      c: event.data.card.color,
-      v: event.data.card.value,
-    } as PlacedCard)
-  );
+export async function savePlacedCard(roomId: string, card: PlacedCard) {
+  await db.rpush(`room:${roomId}:board`, JSON.stringify(card));
 }
 
 export async function getPlacedCards(roomId: string) {

@@ -1,78 +1,55 @@
+"use server";
+
 import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import {
   PlacedCard,
   getPlacedCards,
   getTurn,
   nextTurn,
-  roomExists,
   savePlacedCard,
-} from "../../room";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+} from "../api/room/room";
 import {
   GameOverEvent,
   PlacedCardEvent,
   TurnChangedEvent,
-} from "@/app/events/gameEvents";
-import { RoomChannelName, pusher } from "@/app/api/pusher/pusher";
-import { Card, Color } from "@/app/_shared/gameLogic";
+} from "../events/gameEvents";
+import { RoomChannelName, pusher } from "../api/pusher/pusher";
+import { Color } from "../_shared/gameLogic";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const roomId = params.id;
+export async function place(card: PlacedCard, roomId: string) {
+  console.log(`placing card in room (server action) ${roomId}`);
+
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return Response.json({}, { status: 401, statusText: "Unauthorized" });
-  }
-  if (await !roomExists(roomId)) {
-    return Response.json({}, { status: 404, statusText: "Not Found" });
-  }
-
-  const body = await request.json();
-  const { x, y, card } = body;
-
-  console.log(`placing card in room ${roomId}`);
 
   const currentPlayer = await getTurn(roomId);
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
   if (currentPlayer !== session.user.id) {
-    console.log(`not ${session.user.id}'s turn`);
-    console.log(`current player is ${currentPlayer}`);
-    return Response.json(
-      {},
-      { status: 403, statusText: "Forbidden (Not your turn)" }
-    );
+    throw new Error("Forbidden (Not your turn)");
   }
 
-  if (!(await validPlacement(x, y, card, roomId))) {
-    return Response.json(
-      {},
-      { status: 403, statusText: "Forbidden (Invalid placement)" }
-    );
+  if (!(await validPlacement(card, roomId))) {
+    throw new Error("Forbidden (Invalid placement)");
   }
 
-  await savePlacedCard(roomId, {
+  await savePlacedCard(roomId, card);
+
+  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
     action: "CARD_PLACED",
     data: {
-      card,
-      x,
-      y,
+      card: { color: card.c, value: card.v },
+      x: card.x,
+      y: card.y,
     },
   } as PlacedCardEvent);
 
-  pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
-    action: "CARD_PLACED",
-    data: {
-      card,
-      x,
-      y,
-    },
-  } as PlacedCardEvent);
-
-  const winner = await checkForWin(roomId, x, y, card.color);
+  const winner = await checkForWin(roomId, card.x, card.y, card.c);
   if (winner) {
     console.log("game over!");
-    pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
+    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
       action: "GAME_OVER",
       data: { winner: { id: session.user.id } },
     } as GameOverEvent);
@@ -80,15 +57,13 @@ export async function POST(
     await nextTurn(roomId);
     const nextPlayer = await getTurn(roomId);
 
-    pusher.trigger(RoomChannelName(params.id), "GAME_EVENT", {
+    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
       action: "TURN_CHANGED",
       data: {
         turn: nextPlayer,
       },
     } as TurnChangedEvent);
   }
-
-  return Response.json({}, { status: 200, statusText: "OK" });
 }
 
 async function checkForWin(roomId: string, x: number, y: number, color: Color) {
@@ -176,24 +151,23 @@ function removeCoveredCards(cards: PlacedCard[]) {
   return Object.values(topCards);
 }
 
-async function validPlacement(
-  x: number,
-  y: number,
-  card: Card,
-  roomId: string
-) {
+async function validPlacement(card: PlacedCard, roomId: string) {
   console.log("validating placement");
   const allCards = await getPlacedCards(roomId);
   const cards = removeCoveredCards(allCards);
   console.log(cards);
   if (
-    cards.findIndex((c) => c.x === x && c.y === y && c.v >= card.value) !== -1
+    cards.findIndex(
+      (c) => c.x === card.x && c.y === card.y && c.v >= card.v
+    ) !== -1
   ) {
     console.log("card already placed and it has a higher value");
     return false;
   }
   if (
-    cards.findIndex((c) => c.x === x && c.y === y && c.c === card.color) !== -1
+    cards.findIndex(
+      (c) => c.x === card.x && c.y === card.y && c.c === card.c
+    ) !== -1
   ) {
     console.log("card already placed and it has the same color");
     return false;
