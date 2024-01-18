@@ -1,16 +1,9 @@
-"use client";
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { getServerSession } from "next-auth";
+import { Login, Logout } from "./LoginOrOut";
 
-export function Login() {
-  return <button onClick={() => signIn()}>Login</button>;
-}
-
-export function Logout() {
-  return <button onClick={() => signOut()}>Logout</button>;
-}
-
-export function UserDetails() {
-  const { data: session } = useSession();
+export async function UserDetails() {
+  const session = await getServerSession(authOptions);
   if (!session) return null;
   return (
     <div>
@@ -20,8 +13,8 @@ export function UserDetails() {
   );
 }
 
-export function LoginOrOut() {
-  const { data: session } = useSession();
+export async function LoginOrOut() {
+  const session = await getServerSession(authOptions);
   if (!session) return <Login />;
   return (
     <div>
@@ -32,9 +25,5 @@ export function LoginOrOut() {
 }
 
 export function Authentication() {
-  return (
-    <SessionProvider>
-      <LoginOrOut />
-    </SessionProvider>
-  );
+  return <LoginOrOut />;
 }

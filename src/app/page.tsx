@@ -1,9 +1,9 @@
-"use client";
 import Link from "next/link";
-import { SessionProvider, useSession } from "next-auth/react";
 import { LoginOrOut } from "./_components/authenticate/Authentication";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { createRoom } from "./_actions/room";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 
 export default function Home() {
   return (
@@ -25,59 +25,41 @@ export default function Home() {
       </Link>
       <br></br>
       <p>Sign in to play a multiplayer version with up to 4 players:</p>
-      <SessionProvider>
-        <LoginOrOut></LoginOrOut>
-        <CreateRoom></CreateRoom>
-        <JoinRoom></JoinRoom>
-      </SessionProvider>
+      <LoginOrOut></LoginOrOut>
+      <JoinRoom></JoinRoom>
+      <CreateRoom></CreateRoom>
     </main>
   );
 }
 
-function JoinRoom() {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const [roomCode, setRoomCode] = useState("");
+async function JoinRoom() {
+  const session = await getServerSession(authOptions);
   if (!session) return null;
 
-  const handleJoin = () => {
-    // redirect to room
-    const path = "/room/" + roomCode;
-    router.push(path);
-  };
+  async function joinRoom(formData: FormData) {
+    "use server";
+    redirect("/room/" + formData.get("roomId"));
+  }
 
   return (
-    <>
+    <form action={joinRoom}>
       <input
         type="text"
+        name="roomId"
         className="text-black"
         placeholder="Room Code"
-        onChange={(e) => setRoomCode(e.target.value)}
       ></input>
-      <button onClick={handleJoin}>Join a room</button>
-    </>
+      <button type="submit">Join a room</button>
+    </form>
   );
 }
 
-function CreateRoom() {
-  const { data: session } = useSession();
-  const router = useRouter();
-
+async function CreateRoom() {
+  const session = await getServerSession(authOptions);
   if (!session) return null;
-
-  const createRoom = async () => {
-    const res = await fetch("api/room/create");
-    if (!res.ok) {
-      throw new Error("Could not create room");
-    }
-    const body = (await res.json()) as { id: string };
-    // redirect to room
-    const path = "/room/" + body.id;
-    router.push(path);
-  };
   return (
-    <>
-      <button onClick={createRoom}>Create a room</button>
-    </>
+    <form action={createRoom}>
+      <button type="submit">Create a room</button>
+    </form>
   );
 }
