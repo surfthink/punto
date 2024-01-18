@@ -18,8 +18,6 @@ import { RoomChannelName, pusher } from "../api/pusher/pusher";
 import { Color } from "../_shared/gameLogic";
 
 export async function place(card: PlacedCard, roomId: string) {
-  console.log(`placing card in room (server action) ${roomId}`);
-
   const session = await getServerSession(authOptions);
 
   const currentPlayer = await getTurn(roomId);

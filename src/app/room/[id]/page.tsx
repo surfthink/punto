@@ -10,6 +10,7 @@ import { PresenceChannel } from "pusher-js";
 import { useSession } from "next-auth/react";
 import { Card, Color } from "@/app/_shared/gameLogic";
 import { place } from "@/app/_actions/place";
+import { drawCard } from "@/app/_actions/deck";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
@@ -83,42 +84,50 @@ export default function Page({ params }: { params: { id: string } }) {
     const res = await fetch(`/api/room/${params.id}/playerColors`);
     const body = (await res.json()) as { id: string; color: Color }[];
     setPlayers(body);
-    await drawCard();
+    await draw();
+  }
+
+  function logError(e: unknown) {
+    if (e instanceof Error) {
+      console.log(e.message);
+    } else {
+      console.log(JSON.stringify(e));
+    }
   }
 
   function handlePlacement(x: number, y: number) {
     return async () => {
       try {
+        if (!cardValue) throw new Error("cardValue is undefined");
+        if (!color) throw new Error("color is undefined");
         await place({ x, y, c: color!, v: cardValue! }, params.id);
       } catch (e: unknown) {
-        if (e instanceof Error) {
-          console.log(e.message);
-        } else {
-          console.log(JSON.stringify(e));
-        }
+        logError(e);
         return;
       }
-      await drawCard();
+      await draw();
     };
   }
 
-  async function drawCard() {
-    console.log("drawing card as ", color);
-    const res = await fetch(`/api/room/${params.id}/draw`);
-    const body = (await res.json()) as { cardValue: number };
-    setEvents((events) => [
-      ...events,
-      {
+  async function draw() {
+    try {
+      const value = await drawCard(params.id, session?.user.id!);
+      const drawEvent: DrewCardEvent = {
         action: "DRAW_CARD",
         data: {
           card: {
-            value: body.cardValue,
-            color: color,
+            value: value,
+            color: color!,
           },
         },
-      } as DrewCardEvent,
-    ]);
-    setCardValue(body.cardValue);
+      };
+      console.log("GAME_EVENT", drawEvent);
+      setEvents((events) => [...events, drawEvent]);
+      // this is confused... we should not have the value in the state here I dont think
+      setCardValue(value);
+    } catch (e: unknown) {
+      logError(e);
+    }
   }
 
   async function handleStart() {

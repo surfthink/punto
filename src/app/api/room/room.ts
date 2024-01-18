@@ -1,6 +1,7 @@
 import { Color } from "@/app/_shared/gameLogic";
 import { db } from "../db/redis";
 import { PlacedCardEvent } from "@/app/events/gameEvents";
+import { initDeck } from "@/app/_actions/deck";
 
 enum RoomState {
   WAITING = "WAITING",
@@ -38,17 +39,6 @@ export async function endGame(roomId: string) {
   await db.hset(`room:${roomId}`, { state: RoomState.FINISHED });
 }
 
-export async function drawCard(roomId: string, userId: string) {
-  const card = (await db.spop(`room:${roomId}:deck:${userId}`)) as string;
-  console.log("drew card from redis ", card);
-  if (String(card).length === 1) {
-    return Number(card);
-  }
-  return Number(card[0]);
-}
-
-const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 export async function joinRoom(roomId: string, userId: string) {
   const numberInRoom = await db.scard(`room:${roomId}:players`);
   if (numberInRoom < 4) {
@@ -57,10 +47,7 @@ export async function joinRoom(roomId: string, userId: string) {
     if (success) {
       await db.set(`room:${roomId}:${userId}`, COLORS[numberInRoom]);
       await db.lpush(`room:${roomId}:order`, userId);
-      POSSIBLE_CARD_VALUES.forEach((value) => {
-        db.sadd(`room:${roomId}:deck:${userId}`, `${value}`);
-        db.sadd(`room:${roomId}:deck:${userId}`, `${value}a`);
-      });
+      initDeck(roomId, userId);
     }
   }
   return (await db.get(`room:${roomId}:${userId}`)) as Color;
