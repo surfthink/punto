@@ -5,6 +5,12 @@ export enum Color {
   YELLOW = "YELLOW",
 }
 
+export enum RoomState {
+  WAITING = "WAITING",
+  PLAYING = "PLAYING",
+  FINISHED = "FINISHED",
+}
+
 export interface Card {
   value: number;
   color: Color;

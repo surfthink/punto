@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "../api/db/redis";
-import { roomExists } from "../api/room/room";
+import { roomExists } from "./room";
 
 const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 

@@ -3,35 +3,37 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import {
-  PlacedCard,
-  getPlacedCards,
-  getTurn,
-  nextTurn,
-  savePlacedCard,
-} from "../api/room/room";
-import {
   GameOverEvent,
   PlacedCardEvent,
   TurnChangedEvent,
 } from "../events/gameEvents";
 import { RoomChannelName, pusher } from "../api/pusher/pusher";
 import { Color } from "../_shared/gameLogic";
+import { roomExists } from "./room";
+import { db } from "../api/db/redis";
+import { getTurn, nextTurn } from "./gameState";
+
+export interface PlacedCard {
+  x: number;
+  y: number;
+  c: Color;
+  v: number;
+}
 
 export async function place(card: PlacedCard, roomId: string) {
+  //error checks
   const session = await getServerSession(authOptions);
-
-  const currentPlayer = await getTurn(roomId);
   if (!session) {
     throw new Error("Unauthorized");
   }
-
+  const currentPlayer = await getTurn(roomId);
   if (currentPlayer !== session.user.id) {
     throw new Error("Forbidden (Not your turn)");
   }
-
   if (!(await validPlacement(card, roomId))) {
     throw new Error("Forbidden (Invalid placement)");
   }
+  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
 
   await savePlacedCard(roomId, card);
 
@@ -171,4 +173,30 @@ async function validPlacement(card: PlacedCard, roomId: string) {
     return false;
   }
   return true;
+}
+
+export async function savePlacedCard(roomId: string, card: PlacedCard) {
+  await db.rpush(`room:${roomId}:board`, JSON.stringify(card));
+}
+
+export async function getPlacedCards(roomId: string) {
+  return (await db.lrange(`room:${roomId}:board`, 0, -1)) as PlacedCard[];
+}
+
+export async function getPlacedCardEvents(roomId: string) {
+  const cards = await db.lrange(`room:${roomId}:board`, 0, -1);
+  return cards.map((card) => {
+    const tmp = JSON.parse(card) as PlacedCard;
+    return {
+      action: "CARD_PLACED",
+      data: {
+        x: tmp.x,
+        y: tmp.y,
+        card: {
+          color: tmp.c,
+          value: tmp.v,
+        },
+      },
+    } as PlacedCardEvent;
+  });
 }

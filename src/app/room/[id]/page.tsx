@@ -5,12 +5,13 @@ import { DrewCardEvent, PuntoEvent } from "@/app/events/gameEvents";
 import EventDrivenPunto from "@/app/events/EventDrivenPunto";
 import { RoomChannelName } from "@/app/api/pusher/pusher";
 import { Session } from "next-auth";
-import { useRouter } from "next/navigation";
 import { PresenceChannel } from "pusher-js";
 import { useSession } from "next-auth/react";
-import { Card, Color } from "@/app/_shared/gameLogic";
+import { Color } from "@/app/_shared/gameLogic";
 import { place } from "@/app/_actions/place";
 import { drawCard } from "@/app/_actions/deck";
+import { getColor, getPlayerColors, joinRoom } from "@/app/_actions/room";
+import { start } from "@/app/_actions/gameState";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
@@ -19,13 +20,15 @@ export default function Page({ params }: { params: { id: string } }) {
   const [cardValue, setCardValue] = useState<number>();
   const [color, setColor] = useState<Color>();
   const [players, setPlayers] = useState<{ id: string; color: Color }[]>([]);
-  const [requestSent, setRequestSent] = useState<boolean>(false);
-
-  //get react router
-  const router = useRouter();
 
   useEffect(() => {
     let channel: PresenceChannel;
+
+    (async () => {
+      //join room returns the color of the player
+      await joinRoom(params.id);
+      setColor(await getColor(params.id));
+    })();
 
     function updateMembers() {
       const updateMembers: string[] = [];
@@ -34,17 +37,6 @@ export default function Page({ params }: { params: { id: string } }) {
       });
       setMembers(updateMembers);
     }
-
-    async function fetchColor() {
-      const res = await fetch(`/api/room/${params.id}`);
-      const body = (await res.json()) as { color: Color };
-      setColor(body.color);
-      if (res.status !== 200) {
-        router.push("/");
-      }
-    }
-
-    fetchColor();
 
     channel = pusher.subscribe(RoomChannelName(params.id)) as PresenceChannel;
     console.log("subscribed to channel");
@@ -80,10 +72,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }, [color]);
 
   async function handleNewGame() {
-    console.log("handleNewGame");
-    const res = await fetch(`/api/room/${params.id}/playerColors`);
-    const body = (await res.json()) as { id: string; color: Color }[];
-    setPlayers(body);
+    setPlayers(await getPlayerColors(params.id));
     await draw();
   }
 
@@ -98,8 +87,6 @@ export default function Page({ params }: { params: { id: string } }) {
   function handlePlacement(x: number, y: number) {
     return async () => {
       try {
-        if (!cardValue) throw new Error("cardValue is undefined");
-        if (!color) throw new Error("color is undefined");
         await place({ x, y, c: color!, v: cardValue! }, params.id);
       } catch (e: unknown) {
         logError(e);
@@ -131,8 +118,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   async function handleStart() {
-    console.log("handleStart");
-    await fetch(`/api/room/${params.id}/start`);
+    await start(params.id);
   }
 
   return (
