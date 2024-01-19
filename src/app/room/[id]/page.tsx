@@ -12,6 +12,7 @@ import { place } from "@/app/_actions/place";
 import { drawCard } from "@/app/_actions/deck";
 import { getColor, getPlayerColors, joinRoom } from "@/app/_actions/room";
 import { start } from "@/app/_actions/gameState";
+import { useRouter } from "next/navigation";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
@@ -21,13 +22,20 @@ export default function Page({ params }: { params: { id: string } }) {
   const [color, setColor] = useState<Color>();
   const [players, setPlayers] = useState<{ id: string; color: Color }[]>([]);
 
+  const router = useRouter();
+
   useEffect(() => {
     let channel: PresenceChannel;
 
     (async () => {
       //join room returns the color of the player
-      await joinRoom(params.id);
-      setColor(await getColor(params.id));
+      try {
+        await joinRoom(params.id);
+        setColor(await getColor(params.id));
+      } catch (e) {
+        logError(e);
+        router.push("/");
+      }
     })();
 
     function updateMembers() {
@@ -138,9 +146,6 @@ export default function Page({ params }: { params: { id: string } }) {
         player={session?.user?.id!}
         debug={true}
       ></EventDrivenPunto>
-      {events.map((event, index) => (
-        <div key={index}>{JSON.stringify(event)}</div>
-      ))}
       {members.length >= 2 && events.length === 0 && (
         <button onClick={handleStart}>Start Game</button>
       )}{" "}

@@ -1,5 +1,4 @@
 "use server";
-
 import { getServerSession } from "next-auth";
 import { Color, RoomState } from "../_shared/gameLogic";
 import { db } from "../api/db/redis";
