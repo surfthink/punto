@@ -14,7 +14,6 @@ export default function Home() {
       </Link>
       <br></br>
       <p>Sign in to play a multiplayer version with up to 4 players:</p>
-      <LoginOrOut></LoginOrOut>
       <JoinRoom></JoinRoom>
       <CreateRoom></CreateRoom>
     </main>

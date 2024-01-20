@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "./_components/nav/Navbar";
+import MainNav from "./_components/nav/MainNav";
+import { LoginOrOut } from "./_components/authenticate/Authentication";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,8 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="m-1">
-          <Navbar></Navbar>
+        <div className=" flex justify-between m-1">
+          <MainNav></MainNav>
+          <LoginOrOut></LoginOrOut>
         </div>
         {children}
       </body>
