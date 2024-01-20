@@ -14,28 +14,183 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function Home() {
-  const [gameMode, setGameMode] = useState<"online" | "local">("online");
-  const handleGameModeChange = (value: string) => {
-    setGameMode(value as "online" | "local");
-  };
-
   return (
     <main className="flex min-h-screen flex-col items-center gap-6">
-      <div className="flex gap-2 text-3xl">
-        {gameMode === "online" && (
-          <>
-            <Button onClick={createRoom}>Create room</Button>
-            <div> or </div>
-            <Button>Play in room</Button>
-            <Input></Input>
-          </>
-        )}
-        {gameMode === "local" && <Button>Play</Button>}
-      </div>
-      <SelectGameMode onValueChange={handleGameModeChange}></SelectGameMode>
+      <p className="mt-6 md:w-2/3">
+        This website is still in development. Many features are not implemented
+        yet. Rooms do not currently have a privacy level.
+      </p>
+      <Tabs defaultValue="create">
+        <TabsList className="flex justify-center">
+          <TabsTrigger value="create">Create Room</TabsTrigger>
+          <TabsTrigger value="private">Join Private</TabsTrigger>
+          <TabsTrigger value="public">Join Public</TabsTrigger>
+          <TabsTrigger value="local">Local</TabsTrigger>
+        </TabsList>
+        <TabsContent value="local">
+          <LocalGameCard />
+        </TabsContent>
+        <TabsContent value="create">
+          <CreateRoomCard />
+        </TabsContent>
+        <TabsContent value="private">
+          <JoinPrivateRoomCard />
+        </TabsContent>
+        <TabsContent value="public">
+          <JoinPublicRoomCard />
+        </TabsContent>
+      </Tabs>
     </main>
+  );
+}
+
+function CreateRoomCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Create Room</CardTitle>
+        <CardDescription>Create a room to play with friends.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <form className="space-y-1">
+          <Label htmlFor="username">Username</Label>
+          <Input name="username" placeholder="Username"></Input>
+          <Label htmlFor="roomType">Privacy</Label>
+          <Select name="roomType" defaultValue="public">
+            <SelectTrigger>
+              <SelectValue defaultValue="public"></SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="public">Public</SelectItem>
+              <SelectItem value="private">Private</SelectItem>
+            </SelectContent>
+          </Select>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button>Create</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function JoinPrivateRoomCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Join Private Room</CardTitle>
+        <CardDescription>
+          Join a private room your friend has created.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <form className="space-y-1">
+          <Label htmlFor="username">Username</Label>
+          <Input name="username" placeholder="Jago"></Input>
+          <Label htmlFor="roomId">Room Code</Label>
+          <Input name="roomId" placeholder="Room Code"></Input>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button>Join</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function JoinPublicRoomCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Join Public Room</CardTitle>
+        <CardDescription>
+          <b>
+            **This feature is not available yet and serves as a placeholder.**
+          </b>
+        </CardDescription>
+        <CardDescription>
+          Join a public room with other players.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <form className="space-y-1">
+          <Label htmlFor="username">Username</Label>
+          <Input name="username" placeholder="Jago"></Input>
+        </form>
+        <Table>
+          <TableCaption>A list of public rooms.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Room Id</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Players</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">T1sT</TableCell>
+              <TableCell>Playing</TableCell>
+              <TableCell>4</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+      <CardFooter>
+        <Button>Join</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function LocalGameCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Local Game</CardTitle>
+        <CardDescription>
+          Start a local game within this browser.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <form className="space-y-1">
+          <Label htmlFor="name">Number of players</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="2"></SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="2">2</SelectItem>
+              <SelectItem value="3">3</SelectItem>
+              <SelectItem value="4">4</SelectItem>
+            </SelectContent>
+          </Select>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button>Start Game</Button>
+      </CardFooter>
+    </Card>
   );
 }
 
