@@ -43,7 +43,6 @@ export function SetUsernameDialog(props: {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>Open</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Set your username</DialogTitle>
