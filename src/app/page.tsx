@@ -33,6 +33,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import CreateRoomCard from "./_components/cards/CreateRoomCard";
+import { JoinRoomCard } from "./_components/cards/JoinRoomCard";
 
 export default function Home() {
   return (
@@ -44,8 +46,8 @@ export default function Home() {
       <Tabs defaultValue="create">
         <TabsList className="flex justify-center">
           <TabsTrigger value="create">Create Room</TabsTrigger>
-          <TabsTrigger value="private">Join Private</TabsTrigger>
-          <TabsTrigger value="public">Join Public</TabsTrigger>
+          <TabsTrigger value="join">Join</TabsTrigger>
+          {/* <TabsTrigger value="public">Join Public</TabsTrigger> */}
           <TabsTrigger value="local">Local</TabsTrigger>
         </TabsList>
         <TabsContent value="local">
@@ -54,143 +56,14 @@ export default function Home() {
         <TabsContent value="create">
           <CreateRoomCard />
         </TabsContent>
-        <TabsContent value="private">
-          <JoinPrivateRoomCard />
+        <TabsContent value="join">
+          <JoinRoomCard />
         </TabsContent>
         <TabsContent value="public">
           <JoinPublicRoomCard />
         </TabsContent>
       </Tabs>
     </main>
-  );
-}
-
-function CreateRoomCard() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create Room</CardTitle>
-        <CardDescription>Create a room to play with friends.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <form className="space-y-1">
-          <Label htmlFor="username">Username</Label>
-          <Input name="username" placeholder="Username"></Input>
-          <Label htmlFor="roomType">Privacy</Label>
-          <Select name="roomType" defaultValue="public">
-            <SelectTrigger>
-              <SelectValue defaultValue="public"></SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="public">Public</SelectItem>
-              <SelectItem value="private">Private</SelectItem>
-            </SelectContent>
-          </Select>
-        </form>
-      </CardContent>
-      <CardFooter>
-        <Button>Create</Button>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function JoinPrivateRoomCard() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Join Private Room</CardTitle>
-        <CardDescription>
-          Join a private room your friend has created.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <form className="space-y-1">
-          <Label htmlFor="username">Username</Label>
-          <Input name="username" placeholder="Jago"></Input>
-          <Label htmlFor="roomId">Room Code</Label>
-          <Input name="roomId" placeholder="Room Code"></Input>
-        </form>
-      </CardContent>
-      <CardFooter>
-        <Button>Join</Button>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function JoinPublicRoomCard() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Join Public Room</CardTitle>
-        <CardDescription>
-          <b>
-            **This feature is not available yet and serves as a placeholder.**
-          </b>
-        </CardDescription>
-        <CardDescription>
-          Join a public room with other players.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <form className="space-y-1">
-          <Label htmlFor="username">Username</Label>
-          <Input name="username" placeholder="Jago"></Input>
-        </form>
-        <Table>
-          <TableCaption>A list of public rooms.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Room Id</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Players</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">T1sT</TableCell>
-              <TableCell>Playing</TableCell>
-              <TableCell>4</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </CardContent>
-      <CardFooter>
-        <Button>Join</Button>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function LocalGameCard() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Local Game</CardTitle>
-        <CardDescription>
-          Start a local game within this browser.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <form className="space-y-1">
-          <Label htmlFor="name">Number of players</Label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="2"></SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="4">4</SelectItem>
-            </SelectContent>
-          </Select>
-        </form>
-      </CardContent>
-      <CardFooter>
-        <Button>Start Game</Button>
-      </CardFooter>
-    </Card>
   );
 }
 
@@ -243,5 +116,80 @@ function SelectGameMode({ onValueChange }: SelectGameModeProps) {
         </SelectContent>
       </Select>
     </div>
+  );
+}
+
+export function JoinPublicRoomCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Join Public Room</CardTitle>
+        <CardDescription>
+          <b>
+            **This feature is not available yet and serves as a placeholder.**
+          </b>
+        </CardDescription>
+        <CardDescription>
+          Join a public room with other players.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <form className="space-y-1">
+          <Label htmlFor="username">Username</Label>
+          <Input name="username" placeholder="Jago"></Input>
+        </form>
+        <Table>
+          <TableCaption>A list of public rooms.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Room Id</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Players</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">T1sT</TableCell>
+              <TableCell>Playing</TableCell>
+              <TableCell>4</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+      <CardFooter>
+        <Button>Join</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function LocalGameCard() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Local Game</CardTitle>
+        <CardDescription>
+          Start a local game within this browser.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <form className="space-y-1">
+          <Label htmlFor="name">Number of players</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="2"></SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="2">2</SelectItem>
+              <SelectItem value="3">3</SelectItem>
+              <SelectItem value="4">4</SelectItem>
+            </SelectContent>
+          </Select>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button>Start Game</Button>
+      </CardFooter>
+    </Card>
   );
 }
