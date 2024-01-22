@@ -66,14 +66,14 @@ export function useGameEvents() {
           break;
         case "PLAYER_LEFT":
           e = event as PlayerLeftEvent;
-          const playerId = e.data.player.id;
-          updatePlayers = updatePlayers.filter((p) => p.id != playerId);
+          const playerId = e.data.player.username;
+          updatePlayers = updatePlayers.filter((p) => p.username != playerId);
           // if the player who left was the current player, then the turn changes
           //TODO
           break;
         case "GAME_OVER":
           e = event as GameOverEvent;
-          window.alert(`Game over! ${e.data.winner.id} won!`);
+          window.alert(`Game over! ${e.data.winner.username} won!`);
           break;
         case "RESET":
           //all values are reset to initial state

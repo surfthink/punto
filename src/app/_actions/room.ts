@@ -1,12 +1,11 @@
 "use server";
-import { getServerSession } from "next-auth";
 import { Color, RoomState } from "../_shared/gameLogic";
 import { db } from "../api/db/redis";
-import { initDeck } from "./deck";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { drawCard, initDeck } from "./deck";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { PuntoEvent } from "../events/gameEvents";
 
 const COLORS = [Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW];
 
@@ -41,10 +40,6 @@ export async function getUsernameCookieOrUndefined() {
 }
 
 export async function createRoom(formData: FormData) {
-  // const session = await getServerSession(authOptions);
-  // if (!session) {
-  //   throw new Error("Unauthorized");
-  // }
   const roomId = await randomUniqueCode(4);
 
   await setUsernameCookie(formData.get("username") as string);
@@ -75,7 +70,8 @@ export async function joinRoom(roomId: string, takenColors: Color[]) {
     console.log("availableColors", availableColors);
     await db.set(`room:${roomId}:${username}`, availableColors[0]);
     await db.lpush(`room:${roomId}:order`, username);
-    initDeck(roomId, username);
+    await initDeck(roomId, username);
+    await drawCard(roomId);
   }
 }
 export async function getColor(roomId: string) {
@@ -115,4 +111,16 @@ export async function randomUniqueCode(length: number) {
     console.log(code);
   }
   return code;
+}
+
+export async function saveEventToRoom(
+  roomId: string,
+  event: PuntoEvent<unknown>
+) {
+  await db.rpush(`room:${roomId}:events`, JSON.stringify(event));
+}
+
+export async function getEvents(roomId: string) {
+  const events = await db.lrange(`room:${roomId}:events`, 0, -1);
+  return events as unknown as PuntoEvent<unknown>[];
 }

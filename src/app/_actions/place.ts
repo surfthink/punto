@@ -1,17 +1,15 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import {
   GameOverEvent,
   PlacedCardEvent,
   TurnChangedEvent,
 } from "../events/gameEvents";
-import { RoomChannelName, pusher } from "../api/pusher/pusher";
+import { RoomChannelName, broadcastToRoom, pusher } from "../api/pusher/pusher";
 import { Color } from "../_shared/gameLogic";
-import { roomExists } from "./room";
+import { getUsernameCookie, roomExists } from "./room";
 import { db } from "../api/db/redis";
-import { getTurn, nextTurn } from "./gameState";
+import { endGame, getTurn, nextTurn } from "./gameState";
 
 export interface PlacedCard {
   x: number;
@@ -22,12 +20,10 @@ export interface PlacedCard {
 
 export async function place(card: PlacedCard, roomId: string) {
   //error checks
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
+  const username = await getUsernameCookie();
+
   const currentPlayer = await getTurn(roomId);
-  if (currentPlayer !== session.user.id) {
+  if (currentPlayer !== username) {
     throw new Error("Forbidden (Not your turn)");
   }
   if (!(await validPlacement(card, roomId))) {
@@ -37,7 +33,7 @@ export async function place(card: PlacedCard, roomId: string) {
 
   await savePlacedCard(roomId, card);
 
-  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
+  broadcastToRoom(roomId, {
     action: "CARD_PLACED",
     data: {
       card: { color: card.c, value: card.v },
@@ -49,15 +45,16 @@ export async function place(card: PlacedCard, roomId: string) {
   const winner = await checkForWin(roomId, card.x, card.y, card.c);
   if (winner) {
     console.log("game over!");
-    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
+    await endGame(roomId);
+    broadcastToRoom(roomId, {
       action: "GAME_OVER",
-      data: { winner: { id: session.user.id } },
+      data: { winner: { username: await getUsernameCookie() } },
     } as GameOverEvent);
   } else {
     await nextTurn(roomId);
     const nextPlayer = await getTurn(roomId);
 
-    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
+    broadcastToRoom(roomId, {
       action: "TURN_CHANGED",
       data: {
         turn: nextPlayer,

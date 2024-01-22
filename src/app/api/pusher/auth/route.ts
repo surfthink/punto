@@ -1,10 +1,8 @@
-import { getServerSession } from "next-auth";
-import { GetRoomId, RoomChannelName, pusher } from "../pusher";
-import { authOptions } from "../../auth/[...nextauth]/authOptions";
+import { GetRoomId, getTakenColors, pusher } from "../pusher";
 import { cookies } from "next/headers";
 import { getColor, getUserColor, joinRoom } from "@/app/_actions/room";
-import { PresenceChannelData } from "pusher";
 import { Color } from "@/app/_shared/gameLogic";
+import { getRoomState, playerInRoom } from "@/app/_actions/gameState";
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -17,17 +15,42 @@ export async function POST(request: Request) {
   }
   const username = cookies().get("username")?.value as string;
 
-  const takenColors = await getTakenColors(channel);
-  if (!takenColors) throw new Error("Error getting taken colors");
-  if (takenColors.length >= 4) {
-    throw new Error("Room is full");
+  const roomState = await getRoomState(roomId);
+  switch (roomState) {
+    case "WAITING":
+      const takenColors = await getTakenColors(channel);
+      if (!takenColors) throw new Error("Error getting taken colors");
+      if (takenColors.length >= 4) {
+        throw new Error("Room is full");
+      }
+      await joinRoom(roomId, takenColors);
+      const color = await getColor(roomId);
+      return allowConnection(username, color, socketId, channel);
+
+    case "PLAYING":
+      if (!(await playerInRoom(roomId, username))) {
+        throw new Error("cannot join the room. The game has started");
+      }
+      return allowConnection(
+        username,
+        await getUserColor(roomId, username),
+        socketId,
+        channel
+      );
+
+    case "FINISHED":
+      throw new Error("joining after game is finished");
+    default:
+      throw new Error("room does not exist");
   }
+}
 
-  console.log(takenColors);
-  await joinRoom(roomId, takenColors);
-
-  const color = await getColor(roomId);
-
+function allowConnection(
+  username: string,
+  color: Color,
+  socketId: string,
+  channel: string
+) {
   const presenceData = {
     user_id: username,
     user_info: {
@@ -38,36 +61,4 @@ export async function POST(request: Request) {
   // This authenticates every user. Don't do this in production!
   const authResponse = pusher.authorizeChannel(socketId, channel, presenceData);
   return Response.json(authResponse);
-}
-
-async function numberOfUsersInRoom(channelName: string) {
-  const res = await pusher.get({
-    path: "/channels/" + channelName + "/users",
-  });
-  if (res.status !== 200) {
-    throw new Error("Error getting pusher users");
-  }
-  if (res.status === 200) {
-    const body = await res.json();
-    const users = body.users;
-    return users.length;
-  }
-}
-async function getTakenColors(channelName: string) {
-  const res = await pusher.get({
-    path: "/channels/" + channelName + "/users",
-  });
-  if (res.status !== 200) {
-    throw new Error("Error getting pusher users");
-  }
-  if (res.status === 200) {
-    const body = await res.json();
-    const ids = body.users.map((u: any) => u.id);
-    const colors: Color[] = [];
-    for (let id of ids) {
-      colors.push(await getUserColor(GetRoomId(channelName), id));
-    }
-
-    return colors;
-  }
 }

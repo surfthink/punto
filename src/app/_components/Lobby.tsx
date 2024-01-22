@@ -11,11 +11,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SetUsernameDialog } from "./dialog/SetUsernameDialog";
-import { startAction } from "../_actions/gameState";
+import { start } from "../_actions/gameState";
+import { useEffect } from "react";
 
 export function Lobby(props: { roomId: string }) {
   const { channel, members, reconnect } = useRoomChannel(props.roomId);
-  const start = startAction.bind(null, props.roomId);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!members) return;
+    await start(
+      props.roomId,
+      members?.map((member) => member.username)
+    );
+  }
 
   return (
     <>
@@ -45,7 +54,7 @@ export function Lobby(props: { roomId: string }) {
               .map((_, i) => <PlayerRoomCard key={i}></PlayerRoomCard>)}
         </CardContent>
         <CardFooter>
-          <form action={start}>
+          <form onSubmit={handleSubmit}>
             <Button type="submit">Start Game</Button>
           </form>
         </CardFooter>

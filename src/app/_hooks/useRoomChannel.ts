@@ -1,11 +1,10 @@
-import { Session } from "next-auth";
 import { PresenceChannel } from "pusher-js";
 import { useEffect, useState } from "react";
 import { pusher } from "../pusher";
 import { RoomChannelName } from "../api/pusher/pusher";
 import { PuntoEvent } from "../events/gameEvents";
 import { Color } from "../_shared/gameLogic";
-import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 // Finish this hook
 
@@ -18,7 +17,9 @@ interface MemberInfo {
 export default function useRoomChannel(roomId: string) {
   const [channel, setChannel] = useState<PresenceChannel | null>(null);
   const [members, setMembers] = useState<MemberInfo[]>();
+  const [events, setEvents] = useState<PuntoEvent<unknown>[]>([]);
   const [attemptReconnect, setAttemptReconnect] = useState(false);
+  const router = useRouter();
 
   function reconnect() {
     console.log("reconnecting");
@@ -28,12 +29,13 @@ export default function useRoomChannel(roomId: string) {
   useEffect(() => {
     let channel: PresenceChannel;
 
-    // if (!Cookies.get("username")) return;
     console.log("connecting");
     channel = pusher.subscribe(RoomChannelName(roomId)) as PresenceChannel;
     console.log("subscribed to channel");
     channel.bind("GAME_EVENT", (event: PuntoEvent<unknown>) => {
       console.log("GAME_EVENT", event);
+      setEvents((events) => [...events, event]);
+      if (event.action === "NEW_GAME") router.refresh();
     });
 
     setChannel(channel);
@@ -54,11 +56,11 @@ export default function useRoomChannel(roomId: string) {
 
     return () => {
       pusher.unsubscribe(RoomChannelName(roomId));
-      // pusher.unbind("GAME_EVENT");
+      pusher.unbind("GAME_EVENT");
       pusher.unbind("pusher:subscription_succeeded");
       pusher.unbind("pusher:member_added");
       pusher.unbind("pusher:member_removed");
     };
   }, [attemptReconnect]);
-  return { channel, members, reconnect };
+  return { channel, members, reconnect, events, setEvents };
 }

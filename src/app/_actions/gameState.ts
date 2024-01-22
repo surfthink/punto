@@ -1,44 +1,44 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { roomExists } from "./room";
-import { RoomChannelName, pusher } from "../api/pusher/pusher";
+import { broadcastToRoom } from "../api/pusher/pusher";
 import { NewGameEvent, TurnChangedEvent } from "../events/gameEvents";
 import { db } from "../api/db/redis";
 import { RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
 
-export async function start(roomId: string) {
+export async function start(roomId: string, players: string[]) {
   if (await !roomExists(roomId)) {
     throw new Error("Room does not exist");
   }
 
-  await startGame(roomId);
+  await startGame(roomId, players);
 
-  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
+  broadcastToRoom(roomId, {
     action: "NEW_GAME",
     data: {},
   } as NewGameEvent);
 
   const currentPlayer = await getTurn(roomId);
 
-  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
+  broadcastToRoom(roomId, {
     action: "TURN_CHANGED",
     data: {
       turn: currentPlayer,
     },
   } as TurnChangedEvent);
+
   console.log("revalidatin");
   revalidatePath(`/room/${roomId}`);
 }
 
-export async function startAction(roomId: string, formData: FormData) {
-  await start(roomId);
+async function startGame(roomId: string, players: string[]) {
+  await db.sadd(`room:${roomId}:players`, ...players);
+  await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
 }
 
-async function startGame(roomId: string) {
-  await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
+export async function playerInRoom(roomId: string, username: string) {
+  return (await db.sismember(`room:${roomId}:players`, username)) === 1;
 }
 
 export async function endGame(roomId: string) {

@@ -28,8 +28,8 @@ export default function GameInterface(props: {
           Playing with:{" "}
           <div className="flex">
             {props.players.map((player) => (
-              <p key={player.id}>
-                id:{player.id}, color:{player.color}
+              <p key={player.username}>
+                id:{player.username}, color:{player.color}
               </p>
             ))}
           </div>

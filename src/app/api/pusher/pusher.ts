@@ -1,3 +1,6 @@
+import { getUserColor, saveEventToRoom } from "@/app/_actions/room";
+import { Color } from "@/app/_shared/gameLogic";
+import { PuntoEvent } from "@/app/events/gameEvents";
 import Pusher from "pusher";
 
 export const pusher = new Pusher({
@@ -15,4 +18,38 @@ export function RoomChannelName(roomId: string) {
 
 export function GetRoomId(name: string) {
   return name.split("-")[2];
+}
+
+export async function broadcastToRoom(
+  roomId: string,
+  event: PuntoEvent<unknown>
+) {
+  await saveEventToRoom(roomId, event);
+  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
+}
+
+export async function userIdsInRoom(channelName: string) {
+  console.log("running user ids in room");
+  let ids: string[] = [];
+  const res = await pusher.get({
+    path: "/channels/" + channelName + "/users",
+  });
+  if (res.status !== 200) {
+    throw new Error("Error getting pusher users");
+  }
+  if (res.status === 200) {
+    const body = await res.json();
+    ids = body.users.map((u: any) => u.id);
+  }
+  return ids;
+}
+
+export async function getTakenColors(channelName: string) {
+  const ids = await userIdsInRoom(channelName);
+  const colors: Color[] = [];
+  for (let id of ids) {
+    colors.push(await getUserColor(GetRoomId(channelName), id));
+  }
+
+  return colors;
 }

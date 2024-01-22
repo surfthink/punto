@@ -17,7 +17,7 @@ interface PuntoEvent<T> {
 
 interface PlayerInfo {
   color: Color;
-  id: string;
+  username: string;
 }
 
 // received from server when you join
