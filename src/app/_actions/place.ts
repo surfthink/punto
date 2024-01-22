@@ -42,6 +42,15 @@ export async function place(card: PlacedCard, roomId: string) {
     },
   } as PlacedCardEvent);
 
+  await nextTurn(roomId);
+  const nextPlayer = await getTurn(roomId);
+  broadcastToRoom(roomId, {
+    action: "TURN_CHANGED",
+    data: {
+      turn: nextPlayer,
+    },
+  } as TurnChangedEvent);
+
   const winner = await checkForWin(roomId, card.x, card.y, card.c);
   if (winner) {
     console.log("game over!");
@@ -50,16 +59,6 @@ export async function place(card: PlacedCard, roomId: string) {
       action: "GAME_OVER",
       data: { winner: { username: await getUsernameCookie() } },
     } as GameOverEvent);
-  } else {
-    await nextTurn(roomId);
-    const nextPlayer = await getTurn(roomId);
-
-    broadcastToRoom(roomId, {
-      action: "TURN_CHANGED",
-      data: {
-        turn: nextPlayer,
-      },
-    } as TurnChangedEvent);
   }
 }
 
