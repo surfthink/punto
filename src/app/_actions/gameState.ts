@@ -7,23 +7,20 @@ import { RoomChannelName, pusher } from "../api/pusher/pusher";
 import { NewGameEvent, TurnChangedEvent } from "../events/gameEvents";
 import { db } from "../api/db/redis";
 import { RoomState } from "../_shared/gameLogic";
+import { revalidatePath } from "next/cache";
 
 export async function start(roomId: string) {
-  const session = await getServerSession(authOptions);
-  //check that user is in the room
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
   if (await !roomExists(roomId)) {
     throw new Error("Room does not exist");
   }
+
+  await startGame(roomId);
 
   pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
     action: "NEW_GAME",
     data: {},
   } as NewGameEvent);
 
-  await startGame(roomId);
   const currentPlayer = await getTurn(roomId);
 
   pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", {
@@ -32,9 +29,15 @@ export async function start(roomId: string) {
       turn: currentPlayer,
     },
   } as TurnChangedEvent);
+  console.log("revalidatin");
+  revalidatePath(`/room/${roomId}`);
 }
 
-export async function startGame(roomId: string) {
+export async function startAction(roomId: string, formData: FormData) {
+  await start(roomId);
+}
+
+async function startGame(roomId: string) {
   await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
 }
 

@@ -11,9 +11,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SetUsernameDialog } from "./dialog/SetUsernameDialog";
+import { startAction } from "../_actions/gameState";
 
 export function Lobby(props: { roomId: string }) {
   const { channel, members, reconnect } = useRoomChannel(props.roomId);
+  const start = startAction.bind(null, props.roomId);
 
   return (
     <>
@@ -43,7 +45,9 @@ export function Lobby(props: { roomId: string }) {
               .map((_, i) => <PlayerRoomCard key={i}></PlayerRoomCard>)}
         </CardContent>
         <CardFooter>
-          <Button>Start Game</Button>
+          <form action={start}>
+            <Button type="submit">Start Game</Button>
+          </form>
         </CardFooter>
       </Card>
     </>
