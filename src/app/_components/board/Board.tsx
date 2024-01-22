@@ -2,6 +2,7 @@ import { MouseEventHandler } from "react";
 import { PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
 import { Color } from "../../_shared/gameLogic";
+import PlacedCard from "./PlacedCard";
 
 interface BoardProps {
   board: PlaceDetails[][];
@@ -18,7 +19,7 @@ export default function Board({
     <div
       className={`grid ${StyleHelper.numGridColsString(
         board[0].length
-      )} w-full`}
+      )} w-full gap-1`}
     >
       {board.map((row, i) =>
         row.map((place, j) => {
@@ -29,8 +30,8 @@ export default function Board({
                 color={place.card.color}
                 key={`x:${j} y:${i}`}
                 onClick={handlePlacement(j, i)}
-                debug={debug}
-                coords={{ x: j, y: i }}
+                // debug={debug}
+                // coords={{ x: j, y: i }}
               />
             );
           }
@@ -58,42 +59,42 @@ interface OpenPlaceProps {
 function OpenPlace({ onClick }: OpenPlaceProps) {
   return (
     <div
-      className="border border-blue-800 hover:bg-blue-900 aspect-square"
+      className="bg-gray-100 rounded-lg aspect-square active:ring active:ring-gray-400 focus:ring focus:ring-gray-400 hover:bg-gray-200 "
       onClick={onClick}
     ></div>
   );
 }
 
 function ClosedPlace() {
-  return <div className="border border-gray-900 aspect-square"></div>;
+  return <div className="aspect-square"></div>;
 }
 
-interface PlacedCardProps {
-  value: number;
-  color: Color;
-  onClick: MouseEventHandler<HTMLDivElement>;
-  debug: boolean;
-  coords: { x: number; y: number };
-}
+// interface PlacedCardProps {
+//   value: number;
+//   color: Color;
+//   onClick: MouseEventHandler<HTMLDivElement>;
+//   debug: boolean;
+//   coords: { x: number; y: number };
+// }
 
-function PlacedCard({ value, color, onClick, debug, coords }: PlacedCardProps) {
-  return (
-    <div
-      className="border flex flex-col justify-center items-center rounded-xl border-grey-500 hover:bg-blue-900"
-      onClick={onClick}
-    >
-      {debug && (
-        <p className="text-xs">
-          {coords.x},{coords.y}
-        </p>
-      )}
-      <p
-        className={`${StyleHelper.colorTextStyle(
-          color
-        )} text-xl text-center aspect-square`}
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
+// function PlacedCard({ value, color, onClick, debug, coords }: PlacedCardProps) {
+//   return (
+//     <div
+//       className="border flex flex-col justify-center items-center rounded-xl border-grey-500 hover:bg-blue-900"
+//       onClick={onClick}
+//     >
+//       {debug && (
+//         <p className="text-xs">
+//           {coords.x},{coords.y}
+//         </p>
+//       )}
+//       <p
+//         className={`${StyleHelper.colorTextStyle(
+//           color
+//         )} text-xl text-center aspect-square`}
+//       >
+//         {value}
+//       </p>
+//     </div>
+//   );
+// }

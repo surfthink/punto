@@ -1,46 +1,16 @@
+import { Color } from "@/app/_shared/gameLogic";
 import { cn } from "@/lib/utils";
-import { Card, Color } from "../_shared/gameLogic";
+import { MouseEventHandler } from "react";
 
-export default function Page() {
-  return (
-    <>
-      <h1>Design Sandbox</h1>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.RED} value={1}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.BLUE} value={2}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.YELLOW} value={3}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.GREEN} value={4}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.RED} value={5}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.RED} value={6}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.RED} value={7}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.RED} value={8}></PlacedCard>
-      </div>
-      <div className="w-[90px]">
-        <PlacedCard color={Color.RED} value={9}></PlacedCard>
-      </div>
-    </>
-  );
-}
-
-function PlacedCard(props: Card) {
+export default function PlacedCard(props: {
+  value: number;
+  color: Color;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+}) {
   switch (props.value) {
     case 1:
       return (
-        <Grid>
+        <Grid onClick={props.onClick}>
           <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
         </Grid>
       );
@@ -133,12 +103,16 @@ function PlacedCard(props: Card) {
   }
 }
 
-function Grid(props: { children: React.ReactNode }) {
+function Grid(props: {
+  children: React.ReactNode;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+}) {
   return (
     <div
       className={cn(
-        "aspect-square bg-black hover:bg-gray-800 grid grid-cols-3 gap-1 p-1 grid-rows-3 rounded-lg border-white border"
+        "aspect-square bg-black hover:bg-gray-800 grid grid-cols-3 gap-1 p-1 grid-rows-3 rounded-lg"
       )}
+      onClick={props.onClick}
     >
       {props.children}
     </div>
