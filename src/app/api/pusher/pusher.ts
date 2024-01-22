@@ -9,5 +9,10 @@ export const pusher = new Pusher({
 });
 
 export function RoomChannelName(roomId: string) {
+  if (roomId.length !== 4) throw new Error("Invalid room id");
   return `presence-room-${roomId}`;
+}
+
+export function GetRoomId(name: string) {
+  return name.split("-")[2];
 }

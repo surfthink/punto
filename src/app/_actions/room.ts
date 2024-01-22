@@ -5,15 +5,49 @@ import { db } from "../api/db/redis";
 import { initDeck } from "./deck";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 const COLORS = [Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW];
 
-export async function createRoom() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Unauthorized");
+export async function joinPrivateRoom(formData: FormData) {
+  "use server";
+  const username = formData.get("username");
+  const roomId = formData.get("roomId");
+  await setUsernameCookie(username as string);
+  redirect("/room/" + roomId);
+}
+
+export async function setUsernameCookie(username: string) {
+  cookies().set("username", username);
+}
+export async function setUsernameCookieRevalidateRoom(
+  roomId: string,
+  formData: FormData
+) {
+  cookies().set("username", formData.get("username") as string);
+  revalidatePath("/room/" + roomId);
+}
+
+export async function getUsernameCookie() {
+  if (!cookies().has("username")) {
+    throw new Error("No username cookie found");
   }
+  return cookies().get("username")?.value as string;
+}
+
+export async function getUsernameCookieOrUndefined() {
+  return cookies().get("username")?.value as string | undefined;
+}
+
+export async function createRoom(formData: FormData) {
+  // const session = await getServerSession(authOptions);
+  // if (!session) {
+  //   throw new Error("Unauthorized");
+  // }
   const roomId = await randomUniqueCode(4);
+
+  await setUsernameCookie(formData.get("username") as string);
 
   console.log("creating room", roomId);
   await db.hset(`room:${roomId}`, {
@@ -25,42 +59,31 @@ export async function createRoom() {
   redirect(`/room/${roomId}`);
 }
 
-export async function joinRoom(roomId: string) {
+export async function joinRoomDummy(roomId: string) {
+  console.log("joining room", roomId);
+}
+
+export async function joinRoom(roomId: string, takenColors: Color[]) {
   //throw errors if room does not exist etc.
   if (!(await roomExists(roomId))) throw new Error("Room does not exist");
 
-  const session = await getServerSession(authOptions);
-  if (!session) throw new Error("Unauthorized");
-
-  const numberInRoom = await db.scard(`room:${roomId}:players`);
+  const username = await getUsernameCookie();
 
   //add spectators
-  if (numberInRoom < 4) {
-    let success =
-      (await db.sadd(`room:${roomId}:players`, session.user.id)) === 1;
-    console.log("success", success);
-    if (success) {
-      await db.set(`room:${roomId}:${session.user.id}`, COLORS[numberInRoom]);
-      await db.lpush(`room:${roomId}:order`, session.user.id);
-      initDeck(roomId, session.user.id!);
-    }
+  if (takenColors.length < 4) {
+    const availableColors = COLORS.filter((c) => !takenColors.includes(c));
+    console.log("availableColors", availableColors);
+    await db.set(`room:${roomId}:${username}`, availableColors[0]);
+    await db.lpush(`room:${roomId}:order`, username);
+    initDeck(roomId, username);
   }
-  return true;
 }
 export async function getColor(roomId: string) {
-  const session = await getServerSession(authOptions);
-  if (!session) throw new Error("Unauthorized");
-  return (await db.get(`room:${roomId}:${session.user.id}`)) as Color;
+  const username = await getUsernameCookie();
+  return (await db.get(`room:${roomId}:${username}`)) as Color;
 }
-
-export async function getPlayerColors(roomId: string) {
-  const playerColors: { id: string; color: Color }[] = [];
-  const players = await db.smembers(`room:${roomId}:players`);
-  for (const player of players) {
-    const color = await db.get(`room:${roomId}:${player}`);
-    playerColors.push({ id: player, color: color as Color });
-  }
-  return playerColors;
+export async function getUserColor(roomId: string, username: string) {
+  return (await db.get(`room:${roomId}:${username}`)) as Color;
 }
 
 export async function roomExists(id: string): Promise<boolean> {
