@@ -63,13 +63,12 @@ export async function place(card: PlacedCard, roomId: string) {
 }
 
 async function checkForWin(roomId: string, x: number, y: number, color: Color) {
+  console.log("checking for win");
   const allCards = await getPlacedCards(roomId);
   const cards = removeCoveredCards(allCards);
-
   const relevantCards = cards.filter((c) => c.c === color);
   // check vertically from the placed card
   const verticalCards = relevantCards.filter((c) => c.x === x);
-  console.log("vertical", verticalCards);
   if (
     verticalCards.length >= 4 &&
     hasFourConsecutive(verticalCards.map((c) => c.y))
@@ -121,7 +120,6 @@ async function checkForWin(roomId: string, x: number, y: number, color: Color) {
 
 function hasFourConsecutive(array: number[]): boolean {
   const sorted = array.toSorted((a, b) => a - b);
-  console.log(sorted);
   for (let i = 0; i < sorted.length - 3; i++) {
     if (
       sorted[i] + 1 === sorted[i + 1] &&
@@ -148,16 +146,13 @@ function removeCoveredCards(cards: PlacedCard[]) {
 }
 
 async function validPlacement(card: PlacedCard, roomId: string) {
-  console.log("validating placement");
   const allCards = await getPlacedCards(roomId);
   const cards = removeCoveredCards(allCards);
-  console.log(cards);
   if (
     cards.findIndex(
       (c) => c.x === card.x && c.y === card.y && c.v >= card.v
     ) !== -1
   ) {
-    console.log("card already placed and it has a higher value");
     return false;
   }
   if (
@@ -165,7 +160,6 @@ async function validPlacement(card: PlacedCard, roomId: string) {
       (c) => c.x === card.x && c.y === card.y && c.c === card.c
     ) !== -1
   ) {
-    console.log("card already placed and it has the same color");
     return false;
   }
   return true;
