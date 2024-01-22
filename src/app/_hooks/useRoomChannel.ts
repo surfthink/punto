@@ -27,40 +27,43 @@ export default function useRoomChannel(roomId: string) {
   }
 
   useEffect(() => {
-    let channel: PresenceChannel;
+    console.log("connecting to channel");
+    const channel = pusher.subscribe(
+      RoomChannelName(roomId)
+    ) as PresenceChannel;
+    setChannel(channel);
+    return () => {
+      console.log("unsubscribing from channel");
+      pusher.unsubscribe(RoomChannelName(roomId));
+    };
+  }, [roomId, attemptReconnect]);
 
-    console.log("connecting");
-    channel = pusher.subscribe(RoomChannelName(roomId)) as PresenceChannel;
-    console.log("subscribed to channel");
+  useEffect(() => {
+    if (!channel) return;
+    console.log("binding");
     channel.bind("GAME_EVENT", (event: PuntoEvent<unknown>) => {
       console.log("GAME_EVENT", event);
       setEvents((events) => [...events, event]);
       if (event.action === "NEW_GAME") router.refresh();
     });
-
-    setChannel(channel);
-
     channel.bind("pusher:subscription_succeeded", () => {
-      console.log("subscription_succeeded");
-      console.log(channel.members);
+      // console.log("subscription_succeeded");
+      // console.log(channel.members);
       setMembers(Object.values(channel.members.members) as MemberInfo[]);
     });
     channel.bind("pusher:member_added", () => {
-      console.log("member_added");
+      // console.log("member_added");
       setMembers(Object.values(channel.members.members) as MemberInfo[]);
     });
     channel.bind("pusher:member_removed", () => {
-      console.log("member_removed");
+      // console.log("member_removed");
       setMembers(Object.values(channel.members.members) as MemberInfo[]);
     });
 
     return () => {
-      pusher.unsubscribe(RoomChannelName(roomId));
-      pusher.unbind("GAME_EVENT");
-      pusher.unbind("pusher:subscription_succeeded");
-      pusher.unbind("pusher:member_added");
-      pusher.unbind("pusher:member_removed");
+      console.log("unbinding");
+      channel.unbind_all();
     };
-  }, [attemptReconnect]);
+  }, [channel, events]);
   return { channel, members, reconnect, events, setEvents };
 }

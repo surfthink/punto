@@ -13,7 +13,7 @@ export default function EventDrivenPunto(props: {
   card: Card;
   debug: boolean;
 }) {
-  const { board, player, players, currentCard, turn, update } = useGameEvents();
+  const { board, turn, update } = useGameEvents();
 
   useEffect(() => {
     if (props.events.length > 0) {

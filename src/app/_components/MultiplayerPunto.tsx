@@ -25,7 +25,6 @@ export default function MultiplayerPunto(props: { roomId: string }) {
     if (!player) setPlayer({ ...channel?.members.me.info } as PlayerInfo);
     if (!players) setPlayers([...members!]);
     await getPreviousEvents(props.roomId);
-    console.log(events);
     setCard({
       value: await getCurrentCard(props.roomId),
       color: player?.color!,
@@ -33,17 +32,13 @@ export default function MultiplayerPunto(props: { roomId: string }) {
   }
 
   async function getPreviousEvents(roomId: string) {
-    console.log("getPreviousEvents");
-
     const prevEvents = await getEvents(roomId);
-    console.log(prevEvents);
+    console.log("previous events", prevEvents);
     setEvents((events) => [...events, ...prevEvents]);
   }
 
   async function draw() {
-    console.log("draw");
     const card = await drawCard(props.roomId);
-    console.log(card);
     setCard({ value: card, color: player?.color! });
   }
 

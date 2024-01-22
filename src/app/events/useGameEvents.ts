@@ -14,15 +14,11 @@ import {
 
 export function useGameEvents() {
   const [board, setBoard] = useState<BoardState>();
-  const [players, setPlayers] = useState<PlayerInfo[]>([]); //encodes the turn order
-  const [currentCard, setCurrentCard] = useState<Card>();
-  const [player, setPlayer] = useState<string>(); //id of the player
   const [turn, setTurn] = useState<string>(); // id of the player whose turn it is
 
   function update(events: PuntoEvent<unknown>[]) {
     let updateBoard: BoardState | undefined = undefined;
     let updatePlayers: PlayerInfo[] = [];
-    let updatePlayer: string | undefined = undefined;
     let updateCurrentCard: Card | undefined = undefined;
     let updateTurn: string | undefined = undefined;
 
@@ -42,7 +38,6 @@ export function useGameEvents() {
           if (!updateBoard) {
             throw new Error("board not initialized");
           }
-          console.log("in useGameEvent.ts", e);
           const { placed, newBoard } = GameLogic.place(
             [...updateBoard],
             e.data.x,
@@ -50,10 +45,6 @@ export function useGameEvents() {
             e.data.card.color,
             e.data.card.value
           );
-          // if (!placed) {
-          //   throw new Error("card not placed");
-          // }
-          console.log("successfully placed", placed);
           updateBoard = [...newBoard];
           break;
         case "TURN_CHANGED":
@@ -69,7 +60,6 @@ export function useGameEvents() {
           const playerId = e.data.player.username;
           updatePlayers = updatePlayers.filter((p) => p.username != playerId);
           // if the player who left was the current player, then the turn changes
-          //TODO
           break;
         case "GAME_OVER":
           e = event as GameOverEvent;
@@ -86,17 +76,11 @@ export function useGameEvents() {
       }
     });
     if (updateBoard) setBoard([...updateBoard]);
-    if (updatePlayers) setPlayers([...updatePlayers]);
-    if (updatePlayer) setPlayer(updatePlayer);
-    if (updateCurrentCard) setCurrentCard(updateCurrentCard);
     if (updateTurn) setTurn(updateTurn);
   }
 
   return {
     board,
-    players,
-    player,
-    currentCard,
     turn,
     update,
   };
