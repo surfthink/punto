@@ -119,7 +119,7 @@ async function checkForWin(roomId: string, x: number, y: number, color: Color) {
 }
 
 function hasFourConsecutive(array: number[]): boolean {
-  const sorted = array.toSorted((a, b) => a - b);
+  const sorted = [...array].sort((a, b) => a - b);
   for (let i = 0; i < sorted.length - 3; i++) {
     if (
       sorted[i] + 1 === sorted[i + 1] &&
