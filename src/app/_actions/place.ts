@@ -54,7 +54,7 @@ export async function place(card: PlacedCard, roomId: string) {
   const winner = await checkForWin(roomId, card.x, card.y, card.c);
   if (winner) {
     console.log("game over!");
-    await endGame(roomId);
+    // await endGame(roomId);
     broadcastToRoom(roomId, {
       action: "GAME_OVER",
       data: { winner: { username: await getUsernameCookie() } },
