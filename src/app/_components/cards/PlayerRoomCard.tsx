@@ -12,7 +12,7 @@ export default function PlayerRoomCard({
 }) {
   if (!color || !username)
     return (
-      <Card className="flex justify-center">
+      <Card className="flex justify-center h-full">
         <CardHeader>
           <CardTitle>Invite Link</CardTitle>
         </CardHeader>
@@ -21,15 +21,15 @@ export default function PlayerRoomCard({
   return (
     <Card
       className={cn(
-        "flex justify-center",
+        "flex justify-center h-full",
         color === Color.RED ? "bg-red-400" : "",
         color === Color.GREEN ? "bg-green-400" : "",
         color === Color.BLUE ? "bg-blue-400" : "",
         color === Color.YELLOW ? "bg-yellow-400" : ""
       )}
     >
-      <CardHeader>
-        <CardTitle>
+      <CardHeader className="flex justify-center items-center">
+        <CardTitle className="text-center">
           {username == Cookies.get("username") ? `${username} (You)` : username}
         </CardTitle>
         {/* <CardDescription></CardDescription> */}

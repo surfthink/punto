@@ -3,6 +3,8 @@ import Board from "./board/Board";
 import { BoardState, Card, Color } from "../_shared/gameLogic";
 import Hand from "./Hand";
 import { PlayerInfo } from "../events/gameEvents";
+import PlayerRoomCard from "./cards/PlayerRoomCard";
+import { cn } from "@/lib/utils";
 
 export default function GameInterface(props: {
   board?: BoardState;
@@ -25,20 +27,23 @@ export default function GameInterface(props: {
           debug={props.debug || false}
         ></Board>
       )}
-      {props.player && <p>You are {props.player}</p>}
       {props.players && props.players.length > 0 && (
+        //make this responsive
         <div>
-          Playing with:{" "}
-          <div className="flex">
-            {props.players.map((player) => (
-              <p key={player.username}>
-                id:{player.username}, color:{player.color}
-              </p>
-            ))}
-          </div>
+          {props.players.map((player) => (
+            <div
+              key={player.username}
+              className={cn(props.turn === player.username ? "ring" : "")}
+            >
+              <PlayerRoomCard
+                key={player.username}
+                color={player.color}
+                username={player.username}
+              ></PlayerRoomCard>
+            </div>
+          ))}
         </div>
       )}
-      {props.turn && <div>It is {props.turn}&apos;s turn</div>}
     </>
   );
 }
