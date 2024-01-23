@@ -17,9 +17,11 @@ export default function GameInterface(props: {
 }) {
   return (
     <>
-      {props.card && (
-        <Hand color={props.card.color} value={props.card.value}></Hand>
-      )}
+      <Hand
+        color={!props.card ? undefined : props.card.color}
+        value={!props.card ? undefined : props.card.value}
+      ></Hand>
+
       {!!props.board && (
         <Board
           board={props.board}

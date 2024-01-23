@@ -32,9 +32,6 @@ export default function EventDrivenPunto(props: {
         handlePlacement={props.handlePlacement}
         debug={props.debug}
       ></GameInterface>
-      {/* {props.events.map((event) => (
-        <div key={JSON.stringify(event)}>{JSON.stringify(event)}</div>
-      ))} */}
     </>
   );
 }

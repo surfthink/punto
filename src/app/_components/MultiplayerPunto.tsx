@@ -45,8 +45,19 @@ export default function MultiplayerPunto(props: { roomId: string }) {
 
   function handlePlacement(x: number, y: number) {
     return async () => {
-      await place({ c: card?.color!, v: card?.value!, x, y }, props.roomId);
-      await draw();
+      if (!card || !card.color || !card.value) return;
+      const cardToBePlaced = { ...card };
+      setCard(undefined);
+      try {
+        await place(
+          { c: cardToBePlaced.color!, v: cardToBePlaced.value!, x, y },
+          props.roomId
+        );
+        await draw();
+      } catch (e) {
+        console.log(e);
+        setCard(cardToBePlaced);
+      }
     };
   }
 
