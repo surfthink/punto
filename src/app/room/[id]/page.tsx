@@ -9,6 +9,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     return <Lobby roomId={params.id}></Lobby>;
   if (roomState === RoomState.PLAYING)
     return <MultiplayerPunto roomId={params.id}></MultiplayerPunto>;
+
   if (roomState === RoomState.FINISHED)
     return <>Game is finished... join another room.</>;
   return <>Room not found</>;

@@ -8,7 +8,10 @@ import { getEvents } from "../_actions/room";
 import { Card } from "../_shared/gameLogic";
 import { place } from "../_actions/place";
 
-export default function MultiplayerPunto(props: { roomId: string }) {
+export default function MultiplayerPunto(props: {
+  roomId: string;
+  className?: string;
+}) {
   const { channel, members, events, setEvents } = useRoomChannel(props.roomId);
   const [player, setPlayer] = useState<PlayerInfo>();
   const [players, setPlayers] = useState<PlayerInfo[]>();
@@ -69,6 +72,7 @@ export default function MultiplayerPunto(props: { roomId: string }) {
       card={card!}
       debug={true}
       handlePlacement={handlePlacement}
+      className={props.className}
     ></EventDrivenPunto>
   );
 }

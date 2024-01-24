@@ -18,7 +18,7 @@ export default function Board({
 }: BoardProps) {
   if (!board)
     return (
-      <div className="grid grid-cols-11 w-full gap-1 aspect-square">
+      <div className="grid grid-cols-11 gap-1 aspect-square h-full">
         {[...Array(121)].map((_, i) => (
           <Skeleton key={i} className="aspect-square" />
         ))}
@@ -29,7 +29,7 @@ export default function Board({
     <div
       className={`grid ${StyleHelper.numGridColsString(
         board[0].length
-      )} w-full gap-1`}
+      )} gap-1 aspect-square h-full`}
     >
       {board.map((row, i) =>
         row.map((place, j) => {
@@ -40,8 +40,6 @@ export default function Board({
                 color={place.card.color}
                 key={`x:${j} y:${i}`}
                 onClick={handlePlacement(j, i)}
-                // debug={debug}
-                // coords={{ x: j, y: i }}
               />
             );
           }

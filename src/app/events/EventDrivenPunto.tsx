@@ -12,6 +12,7 @@ export default function EventDrivenPunto(props: {
   player: string;
   card: Card;
   debug: boolean;
+  className?: string;
 }) {
   const { board, turn, update } = useGameEvents();
 
@@ -31,6 +32,7 @@ export default function EventDrivenPunto(props: {
         players={props.players}
         handlePlacement={props.handlePlacement}
         debug={props.debug}
+        className={props.className}
       ></GameInterface>
     </>
   );

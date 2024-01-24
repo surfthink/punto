@@ -23,7 +23,7 @@ export default function RootLayout({
           <MainNav></MainNav>
           <LoginOrOut></LoginOrOut>
         </div>
-        {children}
+        <div className="flex flex-col items-center">{children}</div>
       </body>
     </html>
   );
