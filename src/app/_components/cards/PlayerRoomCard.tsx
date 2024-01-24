@@ -1,5 +1,6 @@
 import { Color } from "@/app/_shared/gameLogic";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 
@@ -10,14 +11,7 @@ export default function PlayerRoomCard({
   color?: Color;
   username?: string;
 }) {
-  if (!color || !username)
-    return (
-      <Card className="flex justify-center h-full">
-        <CardHeader>
-          <CardTitle>Invite Link</CardTitle>
-        </CardHeader>
-      </Card>
-    );
+  if (!color || !username) return <Skeleton></Skeleton>;
   return (
     <Card
       className={cn(
