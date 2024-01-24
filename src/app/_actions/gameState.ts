@@ -7,7 +7,11 @@ import { db } from "../api/db/redis";
 import { RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
 
-export async function start(roomId: string, players: string[]) {
+export async function start(
+  roomId: string,
+  players: string[],
+  formData: FormData
+) {
   if (await !roomExists(roomId)) {
     throw new Error("Room does not exist");
   }

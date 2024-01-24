@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import FormButton from "../FormButton";
 
 export default function CreateRoomCard() {
   return (
@@ -41,7 +42,7 @@ export default function CreateRoomCard() {
           </Select>
         </CardContent>
         <CardFooter>
-          <Button type="submit">Create</Button>
+          <FormButton type="submit">Create</FormButton>
         </CardFooter>
       </form>
     </Card>

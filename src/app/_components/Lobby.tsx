@@ -1,7 +1,6 @@
 "use client";
 import PlayerRoomCard from "@/app/_components/cards/PlayerRoomCard";
 import useRoomChannel from "@/app/_hooks/useRoomChannel";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,22 +11,25 @@ import {
 } from "@/components/ui/card";
 import { SetUsernameDialog } from "./dialog/SetUsernameDialog";
 import { start } from "../_actions/gameState";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import InviteLinkCard from "./cards/InviteLinkCard";
 import { Color } from "../_shared/gameLogic";
 import { Skeleton } from "@/components/ui/skeleton";
+import FormButton from "./FormButton";
 
 export function Lobby(props: { roomId: string }) {
   const { channel, members, reconnect } = useRoomChannel(props.roomId);
+  const [formAction, setFormAction] = useState<(formData: FormData) => void>();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  useEffect(() => {
     if (!members) return;
-    await start(
+    const action = start.bind(
+      null,
       props.roomId,
-      members?.map((member) => member.username)
+      members.map((m) => m.username)
     );
-  }
+    setFormAction(() => action);
+  }, [members]);
 
   return (
     <>
@@ -44,8 +46,8 @@ export function Lobby(props: { roomId: string }) {
         </CardHeader>
         <LobbyContent members={members}></LobbyContent>
         <CardFooter>
-          <form onSubmit={handleSubmit}>
-            <Button type="submit">Start Game</Button>
+          <form action={formAction}>
+            <FormButton type="submit">Start Game</FormButton>
           </form>
         </CardFooter>
       </Card>
