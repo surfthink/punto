@@ -3,9 +3,10 @@ import { PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
 import { Color } from "../../_shared/gameLogic";
 import PlacedCard from "./PlacedCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BoardProps {
-  board: PlaceDetails[][];
+  board?: PlaceDetails[][];
   handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
   debug?: boolean;
 }
@@ -15,6 +16,15 @@ export default function Board({
   handlePlacement,
   debug = false,
 }: BoardProps) {
+  if (!board)
+    return (
+      <div className="grid grid-cols-11 w-full gap-1 aspect-square">
+        {[...Array(121)].map((_, i) => (
+          <Skeleton key={i} className="aspect-square" />
+        ))}
+      </div>
+    );
+
   return (
     <div
       className={`grid ${StyleHelper.numGridColsString(

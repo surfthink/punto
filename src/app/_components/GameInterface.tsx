@@ -21,14 +21,11 @@ export default function GameInterface(props: {
         color={!props.card ? undefined : props.card.color}
         value={!props.card ? undefined : props.card.value}
       ></Hand>
-
-      {!!props.board && (
-        <Board
-          board={props.board}
-          handlePlacement={props.handlePlacement}
-          debug={props.debug || false}
-        ></Board>
-      )}
+      <Board
+        board={props.board}
+        handlePlacement={props.handlePlacement}
+        debug={props.debug || false}
+      ></Board>
       {props.players && props.players.length > 0 && (
         //make this responsive
         <div>
