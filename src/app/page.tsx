@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -18,15 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import CreateRoomCard from "./_components/cards/CreateRoomCard";
 import { JoinRoomCard } from "./_components/cards/JoinRoomCard";
 import { JoinPublicRoomCard } from "./_components/cards/JoinPublicRoomCard";
@@ -34,10 +25,6 @@ import { JoinPublicRoomCard } from "./_components/cards/JoinPublicRoomCard";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center gap-6">
-      <p className="mt-6 md:w-2/3">
-        This website is still in development. Many features are not implemented
-        yet. Rooms do not currently have a privacy level.
-      </p>
       <Tabs defaultValue="create">
         <TabsList className="flex justify-center">
           <TabsTrigger value="create">Create Room</TabsTrigger>
