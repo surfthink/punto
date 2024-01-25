@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import MainNav from "./_components/nav/MainNav";
-import { LoginOrOut } from "./_components/authenticate/Authentication";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className=" flex justify-between m-1">
           <MainNav></MainNav>
-          <LoginOrOut></LoginOrOut>
+          {/* <LoginOrOut></LoginOrOut> */}
         </div>
         <div className="flex flex-col items-center">{children}</div>
       </body>
