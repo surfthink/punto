@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <main>
-      <h1 className="text-3xl font-bold underline">About</h1>
+    <div className="md:w-2/3 lg:w-1/2">
+      <h1 className="text-2xl">About</h1>
       <p>
         An online version of a table top game I was shown by some dutch friends
         while traveling. I decided it would be the perfect project to explore
@@ -19,6 +19,6 @@ export default function Page() {
           <b className="hover:underline">Github</b>
         </Link>{" "}
       </p>
-    </main>
+    </div>
   );
 }
