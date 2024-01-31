@@ -26,7 +26,6 @@ export interface PlacedCard {
 
 export async function place(x: number, y: number) {
   //error checks
-  console.log("placing at ", x, y);
   const username = await getUsernameCookie();
   const roomId = await getRoomIdCookie();
 
@@ -57,7 +56,6 @@ export async function place(x: number, y: number) {
 }
 
 async function checkForWin(roomId: string, x: number, y: number, color: Color) {
-  console.log("checking for win");
   const allCards = await getPlacedCards(roomId);
   const cards = removeCoveredCards(allCards);
   const relevantCards = cards.filter((c) => c.c === color);

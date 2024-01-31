@@ -29,7 +29,6 @@ export async function setRoomIdCookie(roomId: string) {
 }
 
 export async function revalidateRoom(roomId: string) {
-  console.log("revalidating room ", roomId);
   revalidatePath(`/room/${roomId}`);
 }
 
@@ -62,8 +61,6 @@ export async function createRoom(formData: FormData) {
   const roomId = await randomUniqueCode(4);
 
   await setUsernameCookie(formData.get("username") as string);
-
-  console.log("creating room", roomId);
   await db.hset(`room:${roomId}`, {
     state: RoomState.WAITING,
     turn: 0,
@@ -71,10 +68,6 @@ export async function createRoom(formData: FormData) {
   await db.expire(`room:${roomId}`, 60 * 60); // 1 hr
 
   redirect(`/room/${roomId}`);
-}
-
-export async function joinRoomDummy(roomId: string) {
-  console.log("joining room", roomId);
 }
 
 export async function joinRoom(roomId: string, takenColors: Color[]) {
@@ -87,7 +80,6 @@ export async function joinRoom(roomId: string, takenColors: Color[]) {
   if (takenColors.length < 4) {
     setRoomIdCookie(roomId);
     const availableColors = COLORS.filter((c) => !takenColors.includes(c));
-    console.log("availableColors", availableColors);
     await db.set(`room:${roomId}:${username}`, availableColors[0]);
     await db.lpush(`room:${roomId}:order`, username);
     await initDeck(roomId, username);
@@ -128,7 +120,6 @@ export async function randomUniqueCode(length: number) {
   let code = generateRandomCode(length);
   while (await roomExists(code)) {
     code = generateRandomCode(length);
-    console.log(code);
   }
   return code;
 }

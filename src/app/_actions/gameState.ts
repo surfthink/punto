@@ -67,6 +67,6 @@ export async function getTurn(roomId: string) {
   const turn = (await db.hget(`room:${roomId}`, "turn")) as number;
   //can i do this in one query?
   const players = await db.lrange(`room:${roomId}:order`, 0, -1);
-  console.log(players);
+  console.log(turn % players.length);
   return players[turn % players.length];
 }
