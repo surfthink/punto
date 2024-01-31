@@ -60,6 +60,7 @@ export async function getRoomState(roomId: string) {
 
 export async function nextTurn(roomId: string) {
   const turn = await db.hincrby(`room:${roomId}`, "turn", 1);
+  console.log("turn is now ", turn);
   return turn;
 }
 

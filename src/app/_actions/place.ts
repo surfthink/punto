@@ -43,7 +43,6 @@ export async function place(x: number, y: number) {
   await savePlacedCard(roomId, placedCard);
 
   await nextTurn(roomId);
-  const nextPlayer = await getTurn(roomId);
   await drawCard();
   broadcastToRoom(roomId, { action: "TURN_CHANGED" });
 
