@@ -1,11 +1,8 @@
-import { MouseEventHandler } from "react";
 import { PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
-import { Color } from "../../_shared/gameLogic";
 import PlacedCard from "./PlacedCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { place } from "@/app/_actions/place";
-import { drawCard } from "@/app/_actions/deck";
 
 interface BoardProps {
   board?: PlaceDetails[][];
