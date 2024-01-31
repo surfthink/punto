@@ -19,33 +19,40 @@ export interface PlacedCard {
   v: number;
 }
 
+// how many redis requests do we need to make and can we speed it up?
+
 export async function place(x: number, y: number) {
   //error checks
+
+  // batch 1
   const username = await getUsernameCookie();
   const roomId = await getRoomIdCookie();
 
+  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
   const currentPlayer = await getTurn(roomId);
+  const card = await getCurrentCard(roomId);
+
   if (currentPlayer !== username) {
     throw new Error("Forbidden (Not your turn)");
   }
-  const card = await getCurrentCard(roomId);
+  //batch 2
   const placedCard = { x, y, c: card.color, v: card.value };
   if (!(await validPlacement(placedCard, roomId))) {
     throw new Error("Forbidden (Invalid placement)");
   }
-  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
 
+  //batch 3
   await savePlacedCard(roomId, placedCard);
-
   await nextTurn(roomId);
   await drawCard();
   await broadcastToRoom(roomId, { action: "TURN_CHANGED" });
 
+  //batch 4
   const winner = await checkForWin(roomId, x, y, card.color);
   if (winner) {
     console.log("game over!");
+    await endGame(roomId); // 10
     await broadcastToRoom(roomId, { action: "GAME_OVER" });
-    await endGame(roomId);
   }
 }
 
