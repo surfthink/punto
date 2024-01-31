@@ -4,18 +4,15 @@ import StyleHelper from "./styleHelpers";
 import { Color } from "../../_shared/gameLogic";
 import PlacedCard from "./PlacedCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { place } from "@/app/_actions/place";
+import { drawCard } from "@/app/_actions/deck";
 
 interface BoardProps {
   board?: PlaceDetails[][];
-  handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
   debug?: boolean;
 }
 
-export default function Board({
-  board,
-  handlePlacement,
-  debug = false,
-}: BoardProps) {
+export default async function Board({ board, debug = false }: BoardProps) {
   if (!board)
     return (
       <div className="grid grid-cols-11 gap-1 aspect-square h-full">
@@ -25,8 +22,19 @@ export default function Board({
       </div>
     );
 
+  function handlePlacement(x: number, y: number) {
+    return async () => {
+      "use server";
+      try {
+        await place(x, y);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  }
+
   return (
-    <div
+    <form
       className={`grid ${StyleHelper.numGridColsString(
         board[0].length
       )} gap-1 aspect-square h-full`}
@@ -39,7 +47,7 @@ export default function Board({
                 value={place.card.value}
                 color={place.card.color}
                 key={`x:${j} y:${i}`}
-                onClick={handlePlacement(j, i)}
+                formAction={handlePlacement(j, i)}
               />
             );
           }
@@ -47,7 +55,7 @@ export default function Board({
             return (
               <OpenPlace
                 key={`x:${j} y:${i}`}
-                onClick={handlePlacement(j, i)}
+                formAction={handlePlacement(j, i)}
               />
             );
           }
@@ -56,20 +64,20 @@ export default function Board({
           }
         })
       )}
-    </div>
+    </form>
   );
 }
 
 interface OpenPlaceProps {
-  onClick: MouseEventHandler<HTMLDivElement>;
+  formAction: () => void;
 }
 
-function OpenPlace({ onClick }: OpenPlaceProps) {
+function OpenPlace({ formAction }: OpenPlaceProps) {
   return (
-    <div
-      className="bg-gray-100 rounded-lg aspect-square active:ring active:ring-gray-400 focus:ring focus:ring-gray-400 hover:bg-gray-200 "
-      onClick={onClick}
-    ></div>
+    <button
+      className="bg-gray-100 rounded-lg aspect-square active:ring active:ring-gray-400 focus:ring focus:ring-gray-400 hover:bg-gray-200 w-full h-full"
+      formAction={formAction}
+    ></button>
   );
 }
 

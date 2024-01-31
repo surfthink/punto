@@ -5,6 +5,7 @@ import { RoomChannelName } from "../api/pusher/pusher";
 import { PuntoEvent } from "../events/gameEvents";
 import { Color } from "../_shared/gameLogic";
 import { useRouter } from "next/navigation";
+import { revalidateRoom } from "../_actions/room";
 
 // Finish this hook
 
@@ -41,8 +42,10 @@ export default function useRoomChannel(roomId: string) {
   useEffect(() => {
     if (!channel) return;
     console.log("binding");
-    channel.bind("GAME_EVENT", (event: PuntoEvent<unknown>) => {
+    channel.bind("GAME_EVENT", async (event: PuntoEvent<unknown>) => {
       console.log("GAME_EVENT", event);
+
+      await revalidateRoom(roomId);
       setEvents((events) => [...events, event]);
       if (event.action === "NEW_GAME") router.refresh();
     });

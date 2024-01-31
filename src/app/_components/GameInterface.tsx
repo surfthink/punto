@@ -13,7 +13,6 @@ export default function GameInterface(props: {
   players?: PlayerInfo[];
   turn?: string;
   card?: Card;
-  handlePlacement: (x: number, y: number) => MouseEventHandler<HTMLDivElement>;
   debug?: boolean;
   className?: string;
 }) {
@@ -27,38 +26,10 @@ export default function GameInterface(props: {
       </div>
       {/* <div className="row-span-4 h-full flex flex-col items-center justify-center"> */}
       <div className="border row-span-3 h-full max-h-[100vw] flex items-center justify-center">
-        <Board
-          board={props.board}
-          handlePlacement={props.handlePlacement}
-          debug={props.debug || false}
-        ></Board>
+        <Board board={props.board} debug={props.debug || false}></Board>
       </div>
       {/* </div> */}
-      <div className="row-span-2 grid grid-cols-2 border w-full">
-        {props.players && props.players.length > 0 && (
-          //make this responsive
-          <div>
-            {props.players.map((player) => (
-              <div
-                key={player.username}
-                className={cn(
-                  "h-full",
-                  props.turn === player.username ? "ring" : ""
-                )}
-              >
-                <PlayerRoomCard
-                  key={player.username}
-                  color={player.color}
-                  username={player.username}
-                ></PlayerRoomCard>
-              </div>
-            ))}
-          </div>
-        )}
-        <InviteLinkCard></InviteLinkCard>
-        <InviteLinkCard></InviteLinkCard>
-        <InviteLinkCard></InviteLinkCard>
-      </div>
+      <div className="row-span-2 grid grid-cols-2 border w-full"></div>
     </div>
   );
 }

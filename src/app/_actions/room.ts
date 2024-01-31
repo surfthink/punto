@@ -20,6 +20,15 @@ export async function joinPrivateRoom(formData: FormData) {
 export async function setUsernameCookie(username: string) {
   cookies().set("username", username);
 }
+export async function setRoomIdCookie(roomId: string) {
+  cookies().set("roomId", roomId);
+}
+
+export async function revalidateRoom(roomId: string) {
+  console.log("revalidating room ", roomId);
+  revalidatePath(`/room/${roomId}`);
+}
+
 export async function setUsernameCookieRevalidateRoom(
   roomId: string,
   formData: FormData
@@ -33,6 +42,12 @@ export async function getUsernameCookie() {
     throw new Error("No username cookie found");
   }
   return cookies().get("username")?.value as string;
+}
+export async function getRoomIdCookie() {
+  if (!cookies().has("roomId")) {
+    throw new Error("No roomId cookie found");
+  }
+  return cookies().get("roomId")?.value as string;
 }
 
 export async function getUsernameCookieOrUndefined() {
@@ -64,14 +79,15 @@ export async function joinRoom(roomId: string, takenColors: Color[]) {
 
   const username = await getUsernameCookie();
 
-  //add spectators
+  //TODO:add spectators
   if (takenColors.length < 4) {
+    setRoomIdCookie(roomId);
     const availableColors = COLORS.filter((c) => !takenColors.includes(c));
     console.log("availableColors", availableColors);
     await db.set(`room:${roomId}:${username}`, availableColors[0]);
     await db.lpush(`room:${roomId}:order`, username);
     await initDeck(roomId, username);
-    await drawCard(roomId);
+    await drawCard();
   }
 }
 export async function getColor(roomId: string) {

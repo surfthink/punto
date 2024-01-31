@@ -18,7 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import FormButton from "./FormButton";
 
 export function Lobby(props: { roomId: string }) {
-  const { channel, members, reconnect } = useRoomChannel(props.roomId);
+  const { members, reconnect } = useRoomChannel(props.roomId);
   const [formAction, setFormAction] = useState<(formData: FormData) => void>();
 
   useEffect(() => {

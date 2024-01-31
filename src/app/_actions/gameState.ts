@@ -1,8 +1,12 @@
 "use server";
 
-import { roomExists } from "./room";
+import { getUserColor, roomExists } from "./room";
 import { broadcastToRoom } from "../api/pusher/pusher";
-import { NewGameEvent, TurnChangedEvent } from "../events/gameEvents";
+import {
+  NewGameEvent,
+  PlayerInfo,
+  TurnChangedEvent,
+} from "../events/gameEvents";
 import { db } from "../api/db/redis";
 import { RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
@@ -39,6 +43,21 @@ export async function start(
 async function startGame(roomId: string, players: string[]) {
   await db.sadd(`room:${roomId}:players`, ...players);
   await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
+}
+
+export async function getPlayersInRoom(roomId: string) {
+  return await db.smembers(`room:${roomId}:players`);
+}
+
+export async function getPlayerColors(roomId: string) {
+  const players = await getPlayersInRoom(roomId);
+  const colors: PlayerInfo[] = await Promise.all(
+    players.map(async (player) => ({
+      username: player,
+      color: await getUserColor(roomId, player),
+    }))
+  );
+  return colors;
 }
 
 export async function playerInRoom(roomId: string, username: string) {

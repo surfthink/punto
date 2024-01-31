@@ -5,25 +5,25 @@ import { MouseEventHandler } from "react";
 export default function PlacedCard(props: {
   value: number;
   color: Color;
-  onClick?: MouseEventHandler<HTMLDivElement>;
+  formAction: () => void;
 }) {
   switch (props.value) {
     case 1:
       return (
-        <Grid onClick={props.onClick}>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
         </Grid>
       );
     case 2:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
         </Grid>
       );
     case 3:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
@@ -31,7 +31,7 @@ export default function PlacedCard(props: {
       );
     case 4:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
@@ -40,7 +40,7 @@ export default function PlacedCard(props: {
       );
     case 5:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
@@ -50,7 +50,7 @@ export default function PlacedCard(props: {
       );
     case 6:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
@@ -61,7 +61,7 @@ export default function PlacedCard(props: {
       );
     case 7:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
@@ -73,7 +73,7 @@ export default function PlacedCard(props: {
       );
     case 8:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
@@ -86,7 +86,7 @@ export default function PlacedCard(props: {
       );
     case 9:
       return (
-        <Grid>
+        <Grid formAction={props.formAction}>
           <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
           <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
           <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
@@ -103,18 +103,15 @@ export default function PlacedCard(props: {
   }
 }
 
-function Grid(props: {
-  children: React.ReactNode;
-  onClick?: MouseEventHandler<HTMLDivElement>;
-}) {
+function Grid(props: { children: React.ReactNode; formAction: () => void }) {
   return (
-    <div
-      className={cn(
-        "aspect-square bg-black hover:bg-gray-800 grid grid-cols-3 gap-1 p-1 grid-rows-3 rounded-lg"
-      )}
-      onClick={props.onClick}
-    >
-      {props.children}
+    <div className={cn("aspect-square bg-black hover:bg-gray-800 rounded-lg")}>
+      <button
+        formAction={props.formAction}
+        className="grid grid-cols-3 gap-1 p-1 grid-rows-3 w-full h-full"
+      >
+        {props.children}
+      </button>
     </div>
   );
 }

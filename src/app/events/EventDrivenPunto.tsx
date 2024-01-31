@@ -7,7 +7,7 @@ import { Card } from "../_shared/gameLogic";
 
 export default function EventDrivenPunto(props: {
   events: PuntoEvent<unknown>[];
-  handlePlacement: (x: number, y: number) => () => void;
+  handlePlacement?: (x: number, y: number) => () => void;
   players: PlayerInfo[];
   player: string;
   card: Card;

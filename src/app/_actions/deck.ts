@@ -1,11 +1,19 @@
 "use server";
 
+import { Card } from "../_shared/gameLogic";
 import { db } from "../api/db/redis";
-import { getUsernameCookie, roomExists } from "./room";
+import {
+  getColor,
+  getRoomIdCookie,
+  getUserColor,
+  getUsernameCookie,
+  roomExists,
+} from "./room";
 
 const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export async function drawCard(roomId: string) {
+export async function drawCard() {
+  const roomId = await getRoomIdCookie();
   if (!(await roomExists(roomId))) throw new Error("Room does not exist");
   const username = await getUsernameCookie();
 
@@ -15,7 +23,10 @@ export async function drawCard(roomId: string) {
   return parseCard(card);
 }
 
-function parseCard(card: string) {
+function parseCard(card: string | null) {
+  if (card === null) {
+    throw new Error("Card is null");
+  }
   if (String(card).length === 1) {
     return Number(card);
   }
@@ -25,10 +36,11 @@ function parseCard(card: string) {
 export async function getCurrentCard(roomId: string) {
   if (!(await roomExists(roomId))) throw new Error("Room does not exist");
   const username = await getUsernameCookie();
-  const card = (await db.get(
-    `room:${roomId}:currentCard:${username}`
-  )) as string;
-  return parseCard(card);
+  const card = {
+    value: parseCard(await db.get(`room:${roomId}:currentCard:${username}`)),
+    color: await getUserColor(roomId, username),
+  };
+  return card;
 }
 
 export async function initDeck(roomId: string, userId: string) {

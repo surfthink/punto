@@ -68,7 +68,7 @@ function place(
   return { newBoard: finalBoard, placed: true };
 }
 
-function closeInvalidOpenPlaces(board: BoardState) {
+export function closeInvalidOpenPlaces(board: BoardState) {
   const b = [...board];
   //if the width is 6 and there is no placed cards in the row then close it all
   b.forEach((row) => {
@@ -99,7 +99,7 @@ function getLeftestFilledCol(board: BoardState) {
   return b.findIndex((row) => row.findIndex((p) => !!p.card) >= 0);
 }
 
-function canBeOpened(board: BoardState, x: number, y: number) {
+export function canBeOpened(board: BoardState, x: number, y: number) {
   const width = getWidth(board);
   const height = getHeight(board);
   const leftest = getLeftestFilledCol(board);

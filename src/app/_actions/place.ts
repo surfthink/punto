@@ -5,11 +5,22 @@ import {
   PlacedCardEvent,
   TurnChangedEvent,
 } from "../events/gameEvents";
-import { RoomChannelName, broadcastToRoom, pusher } from "../api/pusher/pusher";
-import { Color } from "../_shared/gameLogic";
-import { getUsernameCookie, roomExists } from "./room";
+import {
+  GetRoomId,
+  RoomChannelName,
+  broadcastToRoom,
+  pusher,
+} from "../api/pusher/pusher";
+import {
+  Color,
+  PlaceDetails,
+  canBeOpened,
+  closeInvalidOpenPlaces,
+} from "../_shared/gameLogic";
+import { getRoomIdCookie, getUsernameCookie, roomExists } from "./room";
 import { db } from "../api/db/redis";
 import { endGame, getTurn, nextTurn } from "./gameState";
+import { drawCard, getCurrentCard } from "./deck";
 
 export interface PlacedCard {
   x: number;
@@ -18,32 +29,28 @@ export interface PlacedCard {
   v: number;
 }
 
-export async function place(card: PlacedCard, roomId: string) {
+export async function place(x: number, y: number) {
   //error checks
+  console.log("placing at ", x, y);
   const username = await getUsernameCookie();
+  const roomId = await getRoomIdCookie();
 
   const currentPlayer = await getTurn(roomId);
   if (currentPlayer !== username) {
     throw new Error("Forbidden (Not your turn)");
   }
-  if (!(await validPlacement(card, roomId))) {
+  const card = await getCurrentCard(roomId);
+  const placedCard = { x, y, c: card.color, v: card.value };
+  if (!(await validPlacement(placedCard, roomId))) {
     throw new Error("Forbidden (Invalid placement)");
   }
   if (!(await roomExists(roomId))) throw new Error("Room does not exist");
 
-  await savePlacedCard(roomId, card);
-
-  broadcastToRoom(roomId, {
-    action: "CARD_PLACED",
-    data: {
-      card: { color: card.c, value: card.v },
-      x: card.x,
-      y: card.y,
-    },
-  } as PlacedCardEvent);
+  await savePlacedCard(roomId, placedCard);
 
   await nextTurn(roomId);
   const nextPlayer = await getTurn(roomId);
+  await drawCard();
   broadcastToRoom(roomId, {
     action: "TURN_CHANGED",
     data: {
@@ -51,7 +58,7 @@ export async function place(card: PlacedCard, roomId: string) {
     },
   } as TurnChangedEvent);
 
-  const winner = await checkForWin(roomId, card.x, card.y, card.c);
+  const winner = await checkForWin(roomId, x, y, card.color);
   if (winner) {
     console.log("game over!");
     broadcastToRoom(roomId, {
@@ -163,6 +170,41 @@ async function validPlacement(card: PlacedCard, roomId: string) {
     return false;
   }
   return true;
+}
+
+function newBoard(size: number) {
+  const board: PlaceDetails[][] = [];
+  for (let i = 0; i < size; i++) {
+    board.push([]);
+    for (let j = 0; j < size; j++) {
+      board[i][j] = { state: "closed" };
+    }
+  }
+  board[Math.floor(size / 2)][Math.floor(size / 2)].state = "open";
+  return board;
+}
+
+export async function getBoard(roomId: string) {
+  const allPlacedCards = await getPlacedCards(roomId);
+  const cards = removeCoveredCards(allPlacedCards);
+  const board = newBoard(11);
+  cards.forEach((card) => {
+    board[card.y][card.x].card = { color: card.c, value: card.v };
+    board[card.y][card.x].state = "open";
+    openAdjacentPlaces(board, card.x, card.y);
+  });
+  closeInvalidOpenPlaces(board);
+  return board;
+}
+
+function openAdjacentPlaces(board: PlaceDetails[][], x: number, y: number) {
+  for (let j = y - 1; j < y + 2; j++) {
+    for (let i = x - 1; i < x + 2; i++) {
+      if (canBeOpened(board, i, j)) {
+        board[j][i].state = "open";
+      }
+    }
+  }
 }
 
 export async function savePlacedCard(roomId: string, card: PlacedCard) {

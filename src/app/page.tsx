@@ -29,7 +29,7 @@ export default function Home() {
         <TabsList className="flex justify-center">
           <TabsTrigger value="create">Create Room</TabsTrigger>
           <TabsTrigger value="join">Join</TabsTrigger>
-          {/* <TabsTrigger value="public">Join Public</TabsTrigger> */}
+          <TabsTrigger value="public">Join Public</TabsTrigger>
           <TabsTrigger value="local">Local</TabsTrigger>
         </TabsList>
         <TabsContent value="local">
@@ -41,9 +41,9 @@ export default function Home() {
         <TabsContent value="join">
           <JoinRoomCard />
         </TabsContent>
-        <TabsContent value="public">
+        {/* <TabsContent value="public">
           <JoinPublicRoomCard />
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </main>
   );
