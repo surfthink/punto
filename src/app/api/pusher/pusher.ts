@@ -21,7 +21,7 @@ export function GetRoomId(name: string) {
 
 export async function broadcastToRoom(roomId: string, event: unknown) {
   console.log("broadcasting to room", roomId, event);
-  pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
+  await pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
 }
 
 export async function userIdsInRoom(channelName: string) {
