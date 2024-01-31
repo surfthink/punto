@@ -64,7 +64,7 @@ export async function place(x: number, y: number) {
   const winner = await checkForWin(roomId, x, y, card.color);
   if (winner) {
     console.log("game over!");
-    await endGame(roomId); // 10
+    await endGame(roomId);
     await broadcastToRoom(roomId, { action: "GAME_OVER" });
   }
   const endBatch4 = new Date();
