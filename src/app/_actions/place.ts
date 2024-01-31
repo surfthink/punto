@@ -23,15 +23,18 @@ export interface PlacedCard {
 
 export async function place(x: number, y: number) {
   //error checks
-  const start = new Date();
-  // batch 1
+  const prestart = new Date();
   const username = await getUsernameCookie();
   const roomId = await getRoomIdCookie();
+  const start = new Date();
+  // batch 1
+  const [roomExist, currentPlayer, card] = await Promise.all([
+    roomExists(roomId),
+    getTurn(roomId),
+    getCurrentCard(roomId),
+  ]);
 
-  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
-  const currentPlayer = await getTurn(roomId);
-  const card = await getCurrentCard(roomId);
-
+  if (!roomExist) throw new Error("Room does not exist");
   if (currentPlayer !== username) {
     throw new Error("Forbidden (Not your turn)");
   }
@@ -44,10 +47,12 @@ export async function place(x: number, y: number) {
 
   const endBatch2 = new Date();
   //batch 3
-  await savePlacedCard(roomId, placedCard);
-  await nextTurn(roomId);
-  await drawCard();
-  await broadcastToRoom(roomId, { action: "TURN_CHANGED" });
+  await Promise.all([
+    savePlacedCard(roomId, placedCard),
+    nextTurn(roomId),
+    drawCard(),
+    broadcastToRoom(roomId, { action: "TURN_CHANGED" }),
+  ]);
 
   const endBatch3 = new Date();
   //batch 4
@@ -58,6 +63,7 @@ export async function place(x: number, y: number) {
     await broadcastToRoom(roomId, { action: "GAME_OVER" });
   }
   const endBatch4 = new Date();
+  console.log("prestart: ", (start.getTime() - prestart.getTime()) / 1000);
   console.log("batch 1: ", (endBatch1.getTime() - start.getTime()) / 1000);
   console.log("batch 2: ", (endBatch2.getTime() - endBatch1.getTime()) / 1000);
   console.log("batch 3: ", (endBatch3.getTime() - endBatch2.getTime()) / 1000);

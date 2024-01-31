@@ -12,11 +12,15 @@ import {
 
 const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export async function drawCard() {
-  const roomId = await getRoomIdCookie();
-  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
-  const username = await getUsernameCookie();
+export async function drawCard(roomId?: string, username?: string) {
+  if (!roomId) {
+    roomId = await getRoomIdCookie();
+  }
+  if (!username) {
+    username = await getUsernameCookie();
+  }
 
+  // if (!(await roomExists(roomId))) throw new Error("Room does not exist");
   const card = (await db.spop(`room:${roomId}:deck:${username}`)) as string;
   await db.set(`room:${roomId}:currentCard:${username}`, card);
   console.log("drew card from redis ", card);
@@ -33,14 +37,17 @@ function parseCard(card: string | null) {
   return Number(card[0]);
 }
 
-export async function getCurrentCard(roomId: string) {
-  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
-  const username = await getUsernameCookie();
-  const card = {
-    value: parseCard(await db.get(`room:${roomId}:currentCard:${username}`)),
-    color: await getUserColor(roomId, username),
-  };
-  return card;
+export async function getCurrentCard(roomId: string, username?: string) {
+  if (!username) {
+    username = await getUsernameCookie();
+  }
+
+  const [value, color] = await Promise.all([
+    parseCard(await db.get(`room:${roomId}:currentCard:${username}`)),
+    getUserColor(roomId, username),
+  ]);
+
+  return { value, color } as Card;
 }
 
 export async function initDeck(roomId: string, userId: string) {
