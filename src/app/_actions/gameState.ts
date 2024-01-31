@@ -19,7 +19,7 @@ export async function start(
 
   const currentPlayer = await getTurn(roomId);
 
-  broadcastToRoom(roomId, {
+  await broadcastToRoom(roomId, {
     action: "TURN_CHANGED",
   });
 

@@ -1,11 +1,6 @@
 "use server";
 
-import {
-  GetRoomId,
-  RoomChannelName,
-  broadcastToRoom,
-  pusher,
-} from "../api/pusher/pusher";
+import { broadcastToRoom } from "../api/pusher/pusher";
 import {
   Color,
   PlaceDetails,
@@ -44,12 +39,12 @@ export async function place(x: number, y: number) {
 
   await nextTurn(roomId);
   await drawCard();
-  broadcastToRoom(roomId, { action: "TURN_CHANGED" });
+  await broadcastToRoom(roomId, { action: "TURN_CHANGED" });
 
   const winner = await checkForWin(roomId, x, y, card.color);
   if (winner) {
     console.log("game over!");
-    broadcastToRoom(roomId, { action: "GAME_OVER" });
+    await broadcastToRoom(roomId, { action: "GAME_OVER" });
     await endGame(roomId);
   }
 }
