@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export default function PlacedCard(props: {
   value: number;
   color: Color;
-  formAction: () => void;
+  formAction?: () => void;
 }) {
   switch (props.value) {
     case 1:
@@ -102,11 +102,11 @@ export default function PlacedCard(props: {
   }
 }
 
-function Grid(props: { children: React.ReactNode; formAction: () => void }) {
+function Grid(props: { children: React.ReactNode; formAction?: () => void }) {
   return (
     <div className={cn("aspect-square bg-black hover:bg-gray-800 rounded-lg")}>
       <button
-        formAction={props.formAction}
+        formAction={props.formAction || (() => {})}
         className="grid grid-cols-3 gap-1 p-1 grid-rows-3 w-full h-full"
       >
         {props.children}
