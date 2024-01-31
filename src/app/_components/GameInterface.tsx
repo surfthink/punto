@@ -2,10 +2,10 @@ import { MouseEventHandler } from "react";
 import Board from "./board/Board";
 import { BoardState, Card, Color } from "../_shared/gameLogic";
 import Hand from "./Hand";
-import { PlayerInfo } from "../events/gameEvents";
 import PlayerRoomCard from "./cards/PlayerRoomCard";
 import { cn } from "@/lib/utils";
 import InviteLinkCard from "./cards/InviteLinkCard";
+import { PlayerInfo } from "../_actions/room";
 
 export default function GameInterface(props: {
   board?: BoardState;

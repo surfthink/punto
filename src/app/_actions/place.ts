@@ -1,11 +1,6 @@
 "use server";
 
 import {
-  GameOverEvent,
-  PlacedCardEvent,
-  TurnChangedEvent,
-} from "../events/gameEvents";
-import {
   GetRoomId,
   RoomChannelName,
   broadcastToRoom,
@@ -51,20 +46,12 @@ export async function place(x: number, y: number) {
   await nextTurn(roomId);
   const nextPlayer = await getTurn(roomId);
   await drawCard();
-  broadcastToRoom(roomId, {
-    action: "TURN_CHANGED",
-    data: {
-      turn: nextPlayer,
-    },
-  } as TurnChangedEvent);
+  broadcastToRoom(roomId, { action: "TURN_CHANGED" });
 
   const winner = await checkForWin(roomId, x, y, card.color);
   if (winner) {
     console.log("game over!");
-    broadcastToRoom(roomId, {
-      action: "GAME_OVER",
-      data: { winner: { username: await getUsernameCookie() } },
-    } as GameOverEvent);
+    broadcastToRoom(roomId, { action: "GAME_OVER" });
     await endGame(roomId);
   }
 }
@@ -213,22 +200,4 @@ export async function savePlacedCard(roomId: string, card: PlacedCard) {
 
 export async function getPlacedCards(roomId: string) {
   return (await db.lrange(`room:${roomId}:board`, 0, -1)) as PlacedCard[];
-}
-
-export async function getPlacedCardEvents(roomId: string) {
-  const cards = await db.lrange(`room:${roomId}:board`, 0, -1);
-  return cards.map((card) => {
-    const tmp = JSON.parse(card) as PlacedCard;
-    return {
-      action: "CARD_PLACED",
-      data: {
-        x: tmp.x,
-        y: tmp.y,
-        card: {
-          color: tmp.c,
-          value: tmp.v,
-        },
-      },
-    } as PlacedCardEvent;
-  });
 }

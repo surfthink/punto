@@ -1,6 +1,5 @@
-import { getUserColor, saveEventToRoom } from "@/app/_actions/room";
+import { getUserColor } from "@/app/_actions/room";
 import { Color } from "@/app/_shared/gameLogic";
-import { PuntoEvent } from "@/app/events/gameEvents";
 import Pusher from "pusher";
 
 export const pusher = new Pusher({
@@ -20,11 +19,7 @@ export function GetRoomId(name: string) {
   return name.split("-")[2];
 }
 
-export async function broadcastToRoom(
-  roomId: string,
-  event: PuntoEvent<unknown>
-) {
-  await saveEventToRoom(roomId, event);
+export async function broadcastToRoom(roomId: string, event: unknown) {
   pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
 }
 

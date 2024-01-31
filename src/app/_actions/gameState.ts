@@ -1,12 +1,7 @@
 "use server";
 
-import { getUserColor, roomExists } from "./room";
+import { PlayerInfo, getUserColor, roomExists } from "./room";
 import { broadcastToRoom } from "../api/pusher/pusher";
-import {
-  NewGameEvent,
-  PlayerInfo,
-  TurnChangedEvent,
-} from "../events/gameEvents";
 import { db } from "../api/db/redis";
 import { RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
@@ -22,21 +17,12 @@ export async function start(
 
   await startGame(roomId, players);
 
-  broadcastToRoom(roomId, {
-    action: "NEW_GAME",
-    data: {},
-  } as NewGameEvent);
-
   const currentPlayer = await getTurn(roomId);
 
   broadcastToRoom(roomId, {
     action: "TURN_CHANGED",
-    data: {
-      turn: currentPlayer,
-    },
-  } as TurnChangedEvent);
+  });
 
-  console.log("revalidatin");
   revalidatePath(`/room/${roomId}`);
 }
 

@@ -5,7 +5,11 @@ import { drawCard, initDeck } from "./deck";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { PuntoEvent } from "../events/gameEvents";
+
+export interface PlayerInfo {
+  color: Color;
+  username: string;
+}
 
 const COLORS = [Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW];
 
@@ -127,16 +131,4 @@ export async function randomUniqueCode(length: number) {
     console.log(code);
   }
   return code;
-}
-
-export async function saveEventToRoom(
-  roomId: string,
-  event: PuntoEvent<unknown>
-) {
-  await db.rpush(`room:${roomId}:events`, JSON.stringify(event));
-}
-
-export async function getEvents(roomId: string) {
-  const events = await db.lrange(`room:${roomId}:events`, 0, -1);
-  return events as unknown as PuntoEvent<unknown>[];
 }
