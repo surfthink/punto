@@ -7,9 +7,11 @@ import Cookies from "js-cookie";
 export default function PlayerRoomCard({
   color,
   username,
+  player,
 }: {
   color?: Color;
   username?: string;
+  player?: string;
 }) {
   if (!color || !username) return <Skeleton></Skeleton>;
   return (
@@ -24,7 +26,7 @@ export default function PlayerRoomCard({
     >
       <CardHeader className="flex justify-center items-center">
         <CardTitle className="text-center">
-          {username == Cookies.get("username") ? `${username} (You)` : username}
+          {username == player ? `${username} (You)` : username}
         </CardTitle>
         {/* <CardDescription></CardDescription> */}
       </CardHeader>

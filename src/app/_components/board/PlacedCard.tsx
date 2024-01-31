@@ -2,99 +2,232 @@ import { Color } from "@/app/_shared/gameLogic";
 import { cn } from "@/lib/utils";
 
 export default function PlacedCard(props: {
-  value: number;
-  color: Color;
-  formAction?: () => void;
+  value: { value: number; color: Color; x?: number; y?: number };
 }) {
-  switch (props.value) {
+  switch (props.value.value) {
     case 1:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-2"
+          ></Dot>
         </Grid>
       );
     case 2:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
         </Grid>
       );
     case 3:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
         </Grid>
       );
     case 4:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
         </Grid>
       );
     case 5:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-2"
+          ></Dot>
         </Grid>
       );
     case 6:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-2"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-2"
+          ></Dot>
         </Grid>
       );
     case 7:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-2"
+          ></Dot>
         </Grid>
       );
     case 8:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-3"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-3"
+          ></Dot>
         </Grid>
       );
     case 9:
       return (
-        <Grid formAction={props.formAction}>
-          <Dot color={props.color} className="col-start-1 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-1 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-3 row-start-2"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-1"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-3"></Dot>
-          <Dot color={props.color} className="col-start-2 row-start-2"></Dot>
+        <Grid value={props.value}>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-1 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-3 row-start-2"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-1"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-3"
+          ></Dot>
+          <Dot
+            color={props.value.color}
+            className="col-start-2 row-start-2"
+          ></Dot>
         </Grid>
       );
     default:
@@ -102,11 +235,16 @@ export default function PlacedCard(props: {
   }
 }
 
-function Grid(props: { children: React.ReactNode; formAction?: () => void }) {
+function Grid(props: {
+  children: React.ReactNode;
+  value: { value: number; color: Color; x?: number; y?: number };
+}) {
   return (
     <div className={cn("aspect-square bg-black hover:bg-gray-800 rounded-lg")}>
       <button
-        formAction={props.formAction}
+        value={JSON.stringify({ x: props.value.x, y: props.value.y })}
+        name="position"
+        type="submit"
         className="grid grid-cols-3 gap-1 p-1 grid-rows-3 w-full h-full"
       >
         {props.children}
