@@ -23,7 +23,7 @@ export interface PlacedCard {
 
 export async function place(x: number, y: number) {
   //error checks
-
+  const start = new Date();
   // batch 1
   const username = await getUsernameCookie();
   const roomId = await getRoomIdCookie();
@@ -35,18 +35,21 @@ export async function place(x: number, y: number) {
   if (currentPlayer !== username) {
     throw new Error("Forbidden (Not your turn)");
   }
+  const endBatch1 = new Date();
   //batch 2
   const placedCard = { x, y, c: card.color, v: card.value };
   if (!(await validPlacement(placedCard, roomId))) {
     throw new Error("Forbidden (Invalid placement)");
   }
 
+  const endBatch2 = new Date();
   //batch 3
   await savePlacedCard(roomId, placedCard);
   await nextTurn(roomId);
   await drawCard();
   await broadcastToRoom(roomId, { action: "TURN_CHANGED" });
 
+  const endBatch3 = new Date();
   //batch 4
   const winner = await checkForWin(roomId, x, y, card.color);
   if (winner) {
@@ -54,6 +57,11 @@ export async function place(x: number, y: number) {
     await endGame(roomId); // 10
     await broadcastToRoom(roomId, { action: "GAME_OVER" });
   }
+  const endBatch4 = new Date();
+  console.log("batch 1: ", (endBatch1.getTime() - start.getTime()) / 1000);
+  console.log("batch 2: ", (endBatch2.getTime() - endBatch1.getTime()) / 1000);
+  console.log("batch 3: ", (endBatch3.getTime() - endBatch2.getTime()) / 1000);
+  console.log("batch 4: ", (endBatch4.getTime() - endBatch3.getTime()) / 1000);
 }
 
 async function checkForWin(roomId: string, x: number, y: number, color: Color) {
