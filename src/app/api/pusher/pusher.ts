@@ -1,4 +1,4 @@
-import { getUserColor } from "@/app/_actions/room";
+import { getUserColor, revalidateRoom } from "@/app/_actions/room";
 import { Color } from "@/app/_shared/gameLogic";
 import Pusher from "pusher";
 
@@ -21,7 +21,10 @@ export function GetRoomId(name: string) {
 
 export async function broadcastToRoom(roomId: string, event: unknown) {
   console.log("broadcasting to room", roomId, event);
-  await pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event);
+  await Promise.all([
+    revalidateRoom(roomId),
+    pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event),
+  ]);
 }
 
 export async function userIdsInRoom(channelName: string) {

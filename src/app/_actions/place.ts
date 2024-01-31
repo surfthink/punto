@@ -7,7 +7,12 @@ import {
   canBeOpened,
   closeInvalidOpenPlaces,
 } from "../_shared/gameLogic";
-import { getRoomIdCookie, getUsernameCookie, roomExists } from "./room";
+import {
+  getRoomIdCookie,
+  getUsernameCookie,
+  revalidateRoom,
+  roomExists,
+} from "./room";
 import { db } from "../api/db/redis";
 import { endGame, getTurn, nextTurn } from "./gameState";
 import { drawCard, getCurrentCard } from "./deck";
