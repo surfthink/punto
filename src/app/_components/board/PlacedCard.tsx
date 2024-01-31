@@ -1,6 +1,5 @@
 import { Color } from "@/app/_shared/gameLogic";
 import { cn } from "@/lib/utils";
-import { MouseEventHandler } from "react";
 
 export default function PlacedCard(props: {
   value: number;

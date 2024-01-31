@@ -9,7 +9,6 @@ export default function RoomInvalidator({ roomId }: { roomId: string }) {
   const [channel, setChannel] = useState<PresenceChannel | null>(null);
 
   useEffect(() => {
-    console.log("useEffect roomInvalidator");
     const channel = pusher.subscribe(
       RoomChannelName(roomId)
     ) as PresenceChannel;

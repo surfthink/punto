@@ -1,18 +1,15 @@
-import { MouseEventHandler } from "react";
 import { PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
-import { Color } from "../../_shared/gameLogic";
 import PlacedCard from "./PlacedCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { place } from "@/app/_actions/place";
-import { drawCard } from "@/app/_actions/deck";
+import { handlePlacement } from "@/app/_actions/handlePlacement";
 
 interface BoardProps {
   board?: PlaceDetails[][];
   debug?: boolean;
 }
 
-export default async function Board({ board, debug = false }: BoardProps) {
+export default function Board({ board, debug = false }: BoardProps) {
   if (!board)
     return (
       <div className="grid grid-cols-11 gap-1 aspect-square h-full">
@@ -21,17 +18,6 @@ export default async function Board({ board, debug = false }: BoardProps) {
         ))}
       </div>
     );
-
-  function handlePlacement(x: number, y: number) {
-    return async () => {
-      "use server";
-      try {
-        await place(x, y);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-  }
 
   return (
     <form
