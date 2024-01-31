@@ -2,7 +2,7 @@ import { PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
 import PlacedCard from "./PlacedCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { handlePlacement } from "@/app/_actions/handlePlacement";
+import { place as handlePlacement } from "@/app/_actions/place";
 
 interface BoardProps {
   board?: PlaceDetails[][];
@@ -33,7 +33,7 @@ export default function Board({ board, debug = false }: BoardProps) {
                 value={place.card.value}
                 color={place.card.color}
                 key={`x:${j} y:${i}`}
-                formAction={handlePlacement(j, i)}
+                formAction={handlePlacement.bind(null, j, i)}
               />
             );
           }
@@ -41,7 +41,7 @@ export default function Board({ board, debug = false }: BoardProps) {
             return (
               <OpenPlace
                 key={`x:${j} y:${i}`}
-                formAction={handlePlacement(j, i)}
+                formAction={handlePlacement.bind(null, j, i)}
               />
             );
           }
@@ -70,33 +70,3 @@ function OpenPlace({ formAction }: OpenPlaceProps) {
 function ClosedPlace() {
   return <div className="aspect-square"></div>;
 }
-
-// interface PlacedCardProps {
-//   value: number;
-//   color: Color;
-//   onClick: MouseEventHandler<HTMLDivElement>;
-//   debug: boolean;
-//   coords: { x: number; y: number };
-// }
-
-// function PlacedCard({ value, color, onClick, debug, coords }: PlacedCardProps) {
-//   return (
-//     <div
-//       className="border flex flex-col justify-center items-center rounded-xl border-grey-500 hover:bg-blue-900"
-//       onClick={onClick}
-//     >
-//       {debug && (
-//         <p className="text-xs">
-//           {coords.x},{coords.y}
-//         </p>
-//       )}
-//       <p
-//         className={`${StyleHelper.colorTextStyle(
-//           color
-//         )} text-xl text-center aspect-square`}
-//       >
-//         {value}
-//       </p>
-//     </div>
-//   );
-// }
