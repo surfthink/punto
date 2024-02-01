@@ -1,4 +1,4 @@
-import { createRoom } from "@/app/_actions/room";
+import { createRoom, getUsernameCookie } from "@/app/_actions/room";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/select";
 import FormButton from "../FormButton";
 
-export default function CreateRoomCard() {
+export default async function CreateRoomCard() {
+  const username = await getUsernameCookie();
   return (
     <Card>
       <CardHeader>
@@ -29,7 +30,12 @@ export default function CreateRoomCard() {
       <form action={createRoom} className="space-y-2">
         <CardContent className="space-y-1">
           <Label htmlFor="username">Username</Label>
-          <Input name="username" placeholder="Username" required></Input>
+          <Input
+            name="username"
+            placeholder="Username"
+            required
+            defaultValue={username}
+          ></Input>
           <Label htmlFor="roomType">Privacy</Label>
           <Select name="roomType" defaultValue="public">
             <SelectTrigger>

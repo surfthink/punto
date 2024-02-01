@@ -1,4 +1,8 @@
-import { joinPrivateRoom, setUsernameCookie } from "@/app/_actions/room";
+import {
+  getUsernameCookie,
+  joinPrivateRoom,
+  setUsernameCookie,
+} from "@/app/_actions/room";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function JoinRoomCard() {
+export async function JoinRoomCard() {
+  const username = await getUsernameCookie();
   return (
     <Card>
       <CardHeader>
@@ -23,7 +28,7 @@ export function JoinRoomCard() {
       <form className="space-y-2" action={joinPrivateRoom}>
         <CardContent className="space-y-1">
           <Label htmlFor="username">Username</Label>
-          <Input name="username" required placeholder="Username"></Input>
+          <Input name="username" required defaultValue={username}></Input>
           <Label htmlFor="roomId">Room Code</Label>
           <Input name="roomId" required placeholder="Room Code"></Input>
         </CardContent>
