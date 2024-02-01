@@ -8,6 +8,7 @@ import PlayerRoomCard from "./cards/PlayerRoomCard";
 import { cn } from "@/lib/utils";
 import { useOptimistic } from "react";
 import { PlacedCard, place } from "../_actions/place";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function GameInterface(props: {
   board?: PlaceDetails[][];
@@ -18,6 +19,8 @@ export default function GameInterface(props: {
   debug?: boolean;
   className?: string;
 }) {
+  const { toast } = useToast();
+
   const [optimisticBoard, addOptimisticCard] = useOptimistic(
     props.board,
     (state, newCard: PlacedCard) => {
@@ -38,26 +41,38 @@ export default function GameInterface(props: {
     if (!props.card) return;
     if (!props.board) return;
     if (props.player !== props.turn) {
-      console.log("not your turn");
+      toast({
+        title: "Sneaky! You cannot play out of turn.",
+        description: `It is currently ${props.turn}'s turn.`,
+      });
       return;
     }
     const { x, y } = JSON.parse(formData.get("position") as string);
     if (props.board[y][x].state !== "open") {
-      console.log("not an open place");
+      toast({
+        title: "You cannot play that card there!",
+        description: `That space is closed.`,
+      });
       return;
     }
     if (
       props.board[y][x].card &&
       props.board[y][x].card!.color === props.card.color
     ) {
-      console.log("can only play on top of a different color");
+      toast({
+        title: "You cannot play that card there!",
+        description: `That cards color is the same as yours.`,
+      });
       return;
     }
     if (
       props.board[y][x].card &&
       props.board[y][x].card!.value >= props.card.value
     ) {
-      console.log("can only play on top of a lower card");
+      toast({
+        title: "You cannot play that card there!",
+        description: `You can only play on top of cards with a lower value.`,
+      });
       return;
     }
     addOptimisticCard({ c: props.card.color, v: props.card.value, x, y });
