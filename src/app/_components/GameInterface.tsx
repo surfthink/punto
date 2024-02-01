@@ -36,7 +36,30 @@ export default function GameInterface(props: {
 
   async function formAction(formData: FormData) {
     if (!props.card) return;
+    if (!props.board) return;
+    if (props.player !== props.turn) {
+      console.log("not your turn");
+      return;
+    }
     const { x, y } = JSON.parse(formData.get("position") as string);
+    if (props.board[y][x].state !== "open") {
+      console.log("not an open place");
+      return;
+    }
+    if (
+      props.board[y][x].card &&
+      props.board[y][x].card!.color === props.card.color
+    ) {
+      console.log("can only play on top of a different color");
+      return;
+    }
+    if (
+      props.board[y][x].card &&
+      props.board[y][x].card!.value >= props.card.value
+    ) {
+      console.log("can only play on top of a lower card");
+      return;
+    }
     addOptimisticCard({ c: props.card.color, v: props.card.value, x, y });
     blankCard(undefined);
     await place(x, y);
