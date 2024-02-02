@@ -1,8 +1,7 @@
 "use client";
 import Board from "./board/Board";
-import { BoardState, Card, PlaceDetails } from "../_shared/gameLogic";
+import { Card, PlaceDetails } from "../_shared/gameLogic";
 import Hand from "./Hand";
-import InviteLinkCard from "./cards/InviteLinkCard";
 import { PlayerInfo } from "../_actions/room";
 import PlayerRoomCard from "./cards/PlayerRoomCard";
 import { cn } from "@/lib/utils";
