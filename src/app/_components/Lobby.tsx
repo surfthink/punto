@@ -64,7 +64,7 @@ function LobbyContent(props: {
 }) {
   if (!props.members) {
     return (
-      <CardContent className="grid gap-3 grid-cols-2 grid-rows-2 h-48">
+      <CardContent className="grid gap-3 grid-cols-2 grid-rows-2 h-80">
         {Array(4)
           .fill(null)
           .map((_, i) => (
