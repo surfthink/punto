@@ -23,7 +23,11 @@ import { JoinPublicRoomCard } from "./_components/cards/JoinPublicRoomCard";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center gap-6">
+    <main className="flex h-full flex-col items-center justify-around">
+      <h1 className="text-4xl font-semibold">Punto Online</h1>
+      <div className="bg-red-200 h-[180px] aspect-square flex items-center justify-center">
+        Placeholder
+      </div>
       <Tabs defaultValue="create">
         <TabsList className="flex justify-center">
           <TabsTrigger value="create">Create Room</TabsTrigger>
