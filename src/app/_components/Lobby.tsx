@@ -74,7 +74,7 @@ function LobbyContent(props: {
     );
   }
   return (
-    <CardContent className="grid gap-3 grid-cols-2 grid-rows-2 h-48">
+    <CardContent className="grid gap-3 grid-cols-2 grid-rows-2 h-80">
       {props.members.map((member) => (
         <PlayerRoomCard
           key={member.username}

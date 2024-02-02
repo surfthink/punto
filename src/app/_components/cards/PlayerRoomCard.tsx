@@ -22,7 +22,7 @@ export default function PlayerRoomCard({
       )}
     >
       <CardHeader className="flex justify-center items-center">
-        <div className="w-[50px] h-[50px]">
+        <div className="h-full aspect-square">
           <PlacedCard value={{ color, value: 3 }}></PlacedCard>
         </div>
         <CardTitle>

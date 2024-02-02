@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useOptimistic } from "react";
 import { PlacedCard, place } from "../_actions/place";
 import { useToast } from "@/components/ui/use-toast";
+import TurnIndicatorCard from "./cards/TurnIndicatorCard";
 
 export default function GameInterface(props: {
   board?: PlaceDetails[][];
@@ -80,11 +81,11 @@ export default function GameInterface(props: {
   }
 
   return (
-    <div className="grid grid-rows-6 h-screen w-full md:aspect-square md:max-h-[100vw] md:max-w-[100vh] border border-red overflow-hidden">
+    <div className="grid grid-rows-9 h-screen w-full md:aspect-square md:max-h-[100vw] md:max-w-[100vh] border border-red overflow-hidden">
       <div className="row-span-1 border w-full flex items-center justify-center">
         <Hand card={optimisticCard}></Hand>
       </div>
-      <div className="border row-span-3 h-full max-h-[100vw] flex items-center justify-center">
+      <div className="border row-span-5 h-full max-h-[100vw] flex items-center justify-center">
         <Board
           formAction={formAction}
           board={optimisticBoard}
@@ -92,7 +93,7 @@ export default function GameInterface(props: {
           card={optimisticCard}
         ></Board>
       </div>
-      <div className="row-span-2 grid grid-cols-2 border w-full">
+      <div className="row-span-3 grid gap-1 grid-cols-2 border w-full px-1">
         {props.players &&
           props.players.length > 0 &&
           //make this responsive
@@ -108,12 +109,12 @@ export default function GameInterface(props: {
                 index === 3 ? "col-start-2 row-start-2" : ""
               )}
             >
-              <PlayerRoomCard
+              <TurnIndicatorCard
                 key={player.username}
                 color={player.color}
                 username={player.username}
                 player={props.player}
-              ></PlayerRoomCard>
+              ></TurnIndicatorCard>
             </div>
           ))}
       </div>
