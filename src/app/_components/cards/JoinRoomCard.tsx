@@ -16,7 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export async function JoinRoomCard() {
-  const username = await getUsernameCookie();
+  let username: string;
+  try {
+    username = await getUsernameCookie();
+  } catch (e) {
+    username = "";
+  }
   return (
     <Card>
       <CardHeader>

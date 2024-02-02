@@ -20,7 +20,12 @@ import {
 import FormButton from "../FormButton";
 
 export default async function CreateRoomCard() {
-  const username = await getUsernameCookie();
+  let username: string;
+  try {
+    username = await getUsernameCookie();
+  } catch (e) {
+    username = "";
+  }
   return (
     <Card>
       <CardHeader>
