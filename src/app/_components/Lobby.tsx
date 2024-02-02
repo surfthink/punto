@@ -18,26 +18,9 @@ import FormButton from "./FormButton";
 import { CopyIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
 
 export function Lobby(props: { roomId: string }) {
   const { members, reconnect } = useRoomChannel(props.roomId);
-
-  const [copied, setCopied] = useState(false);
-
-  const pathname = usePathname();
-
-  function copyLink() {
-    navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}${pathname}`);
-    setCopied(true);
-  }
-
-  useEffect(() => {
-    if (copied) {
-      const timeout = setTimeout(() => setCopied(false), 2000);
-      return () => clearTimeout(timeout);
-    }
-  }, [copied]);
 
   const [formAction, setFormAction] = useState<(formData: FormData) => void>();
 
@@ -66,13 +49,7 @@ export function Lobby(props: { roomId: string }) {
         </CardHeader>
         <LobbyContent members={members}></LobbyContent>
         <CardFooter className="gap-3 justify-between">
-          <div className="flex gap-2 items-center">
-            <Button className="flex gap-1" onClick={copyLink}>
-              <div>Invite</div>
-              <CopyIcon></CopyIcon>
-            </Button>
-            {!!copied && <CardDescription>Invite Copied!</CardDescription>}
-          </div>
+          <CopyLinkButton />
           <form action={formAction}>
             <FormButton type="submit">Start Game</FormButton>
           </form>
@@ -111,5 +88,32 @@ function LobbyContent(props: {
           .fill(null)
           .map((_, i) => <Skeleton key={i} className="h-full"></Skeleton>)}
     </CardContent>
+  );
+}
+
+function CopyLinkButton() {
+  const [copied, setCopied] = useState(false);
+  const pathname = usePathname();
+
+  function copyLink() {
+    navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}${pathname}`);
+    setCopied(true);
+  }
+
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [copied]);
+
+  return (
+    <div className="flex gap-2 items-center">
+      <Button className="flex gap-1" onClick={copyLink}>
+        <div>Invite</div>
+        <CopyIcon></CopyIcon>
+      </Button>
+      {!!copied && <CardDescription>Invite Copied!</CardDescription>}
+    </div>
   );
 }
