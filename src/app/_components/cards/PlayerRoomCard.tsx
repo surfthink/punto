@@ -2,7 +2,8 @@ import { Color } from "@/app/_shared/gameLogic";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import Cookies from "js-cookie";
+import { PersonIcon } from "@radix-ui/react-icons";
+import PlacedCard from "../board/PlacedCard";
 
 export default function PlayerRoomCard({
   color,
@@ -17,18 +18,16 @@ export default function PlayerRoomCard({
   return (
     <Card
       className={cn(
-        "flex justify-center h-full",
-        color === Color.RED ? "bg-red-400" : "",
-        color === Color.GREEN ? "bg-green-400" : "",
-        color === Color.BLUE ? "bg-blue-400" : "",
-        color === Color.YELLOW ? "bg-yellow-400" : ""
+        "flex justify-center h-full border-none drop-shadow-none shadow-none "
       )}
     >
       <CardHeader className="flex justify-center items-center">
-        <CardTitle className="text-center">
+        <div className="w-[50px] h-[50px]">
+          <PlacedCard value={{ color, value: 3 }}></PlacedCard>
+        </div>
+        <CardTitle>
           {username == player ? `${username} (You)` : username}
         </CardTitle>
-        {/* <CardDescription></CardDescription> */}
       </CardHeader>
     </Card>
   );
