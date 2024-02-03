@@ -36,7 +36,7 @@ export default function TurnIndicatorCard({
           ></AvatarIcon>
         </div>
         <CardTitle>{username}</CardTitle>
-        <CardDescription>{username == player ? `(You)` : ""}</CardDescription>
+        <CardDescription>{username == player ? `(You)` : "--"}</CardDescription>
       </CardHeader>
     </Card>
   );
