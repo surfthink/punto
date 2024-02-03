@@ -81,7 +81,6 @@ export async function joinRoom(roomId: string, takenColors: Color[]) {
     setRoomIdCookie(roomId);
     const availableColors = COLORS.filter((c) => !takenColors.includes(c));
     await db.set(`room:${roomId}:${username}`, availableColors[0]);
-    await db.lpush(`room:${roomId}:order`, username);
     await initDeck(roomId, username);
     await drawCard();
   }

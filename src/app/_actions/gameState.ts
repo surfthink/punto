@@ -27,6 +27,7 @@ export async function start(
 }
 
 async function startGame(roomId: string, players: string[]) {
+  await db.lpush(`room:${roomId}:order`, ...players);
   await db.sadd(`room:${roomId}:players`, ...players);
   await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
 }
