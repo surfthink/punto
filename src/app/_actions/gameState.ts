@@ -54,6 +54,13 @@ export async function endGame(roomId: string) {
   await db.hset(`room:${roomId}`, { state: RoomState.FINISHED });
 }
 
+export async function setWinner(roomId: string, username: string) {
+  await db.hset(`room:${roomId}`, { winner: username });
+}
+export async function getWinner(roomId: string) {
+  return (await db.hget(`room:${roomId}`, "winner")) as string | null;
+}
+
 export async function getRoomState(roomId: string) {
   return (await db.hget(`room:${roomId}`, "state")) as RoomState;
 }

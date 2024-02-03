@@ -7,7 +7,7 @@ interface BoardProps {
   board?: PlaceDetails[][];
   debug?: boolean;
   card?: Card;
-  formAction: (formData: FormData) => Promise<void>;
+  formAction?: (formData: FormData) => Promise<void>;
 }
 
 export default function Board({
@@ -29,7 +29,7 @@ export default function Board({
       className={`grid ${StyleHelper.numGridColsString(
         board[0].length
       )} gap-1 aspect-square h-full`}
-      action={formAction}
+      action={formAction || ((formData: FormData) => {})}
     >
       {board.map((row, i) =>
         row.map((place, j) => {

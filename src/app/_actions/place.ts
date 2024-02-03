@@ -14,7 +14,7 @@ import {
   roomExists,
 } from "./room";
 import { db } from "../api/db/redis";
-import { endGame, getTurn, nextTurn } from "./gameState";
+import { endGame, getTurn, nextTurn, setWinner } from "./gameState";
 import { drawCard, getCurrentCard } from "./deck";
 
 export interface PlacedCard {
@@ -61,11 +61,14 @@ export async function place(x: number, y: number) {
 
   const endBatch3 = new Date();
   //batch 4
-  const winner = await checkForWin(roomId, x, y, card.color);
-  if (winner) {
+  const thisIsWinner = await checkForWin(roomId, x, y, card.color);
+  if (thisIsWinner) {
     console.log("game over!");
-    await endGame(roomId);
-    await broadcastToRoom(roomId, { action: "GAME_OVER" });
+    await Promise.all([
+      setWinner(roomId, username),
+      endGame(roomId),
+      broadcastToRoom(roomId, { action: "GAME_OVER" }),
+    ]);
   }
   const endBatch4 = new Date();
   console.log("prestart: ", (start.getTime() - prestart.getTime()) / 1000);
