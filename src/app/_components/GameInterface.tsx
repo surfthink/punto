@@ -101,11 +101,10 @@ export default function GameInterface(props: {
             <div
               key={player.username}
               className={cn(
-                "h-1/2",
                 props.turn === player.username ? "ring" : "",
                 index === 0 ? "col-start-1 row-start-1" : "",
                 index === 1 ? "col-start-2 row-start-1" : "",
-                index === 2 ? "col-start-2 row-start-1" : "",
+                index === 2 ? "col-start-1 row-start-2" : "",
                 index === 3 ? "col-start-2 row-start-2" : ""
               )}
             >
