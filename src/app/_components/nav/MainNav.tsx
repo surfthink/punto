@@ -10,6 +10,11 @@ export default function MainNav() {
   const pathname = usePathname();
   return (
     <div className="flex items-center">
+      {pathname !== "/" && (
+        <Link href="/" className="mr-6">
+          Punto Online
+        </Link>
+      )}
       <nav className="flex items-center gap-6 text-sm">
         <Link
           href="/rules"
