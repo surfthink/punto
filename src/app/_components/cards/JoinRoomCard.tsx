@@ -1,8 +1,4 @@
-import {
-  getUsernameCookie,
-  joinPrivateRoom,
-  setUsernameCookie,
-} from "@/app/_actions/room";
+import { getUsernameCookie, joinRoom } from "@/app/_actions/room";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,7 +26,7 @@ export async function JoinRoomCard() {
           Join a game room your friend has created.
         </CardDescription>
       </CardHeader>
-      <form className="space-y-2" action={joinPrivateRoom}>
+      <form className="space-y-2" action={joinRoom}>
         <CardContent className="space-y-1">
           <Label htmlFor="username">Username</Label>
           <Input name="username" required defaultValue={username}></Input>

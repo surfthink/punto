@@ -23,7 +23,6 @@ export async function drawCard(roomId?: string, username?: string) {
   // if (!(await roomExists(roomId))) throw new Error("Room does not exist");
   const card = (await db.spop(`room:${roomId}:deck:${username}`)) as string;
   await db.set(`room:${roomId}:currentCard:${username}`, card);
-  console.log("drew card from redis ", card);
   return parseCard(card);
 }
 

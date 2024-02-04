@@ -1,10 +1,11 @@
 "use server";
 
-import { PlayerInfo, getUserColor, roomExists } from "./room";
+import { PlayerInfo, getUserColor, roomExists, setUserColor } from "./room";
 import { broadcastToRoom } from "../api/pusher/pusher";
 import { db } from "../api/db/redis";
-import { RoomState } from "../_shared/gameLogic";
+import { Color, RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
+import { drawCard, initDeck } from "./deck";
 
 export async function start(
   roomId: string,
@@ -26,10 +27,17 @@ export async function start(
   revalidatePath(`/room/${roomId}`);
 }
 
+const COLORS = [Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW];
+
 async function startGame(roomId: string, players: string[]) {
-  await db.lpush(`room:${roomId}:order`, ...players);
-  await db.sadd(`room:${roomId}:players`, ...players);
-  await db.hset(`room:${roomId}`, { state: RoomState.PLAYING });
+  await Promise.all([
+    db.lpush(`room:${roomId}:order`, ...players),
+    db.sadd(`room:${roomId}:players`, ...players),
+    ...players.map((player, i) => setUserColor(roomId, player, COLORS[i])),
+    ...players.map((player) => initDeck(roomId, player)),
+    db.hset(`room:${roomId}`, { state: RoomState.PLAYING, turn: 0 }),
+  ]);
+  await Promise.all([...players.map((player) => drawCard(roomId, player))]);
 }
 
 export async function getPlayersInRoom(roomId: string) {
@@ -68,7 +76,6 @@ export async function getRoomState(roomId: string) {
 
 export async function nextTurn(roomId: string) {
   const turn = await db.hincrby(`room:${roomId}`, "turn", 1);
-  console.log("turn is now ", turn);
   return turn;
 }
 

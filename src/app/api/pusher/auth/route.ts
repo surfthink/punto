@@ -1,6 +1,7 @@
 import { GetRoomId, getTakenColors, pusher, userCountInRoom } from "../pusher";
 import { cookies } from "next/headers";
 import { getRoomState, playerInRoom } from "@/app/_actions/gameState";
+import { setRoomIdCookie } from "@/app/_actions/room";
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
       if (userCount >= 4) {
         throw new Error("Room is full");
       }
-
+      setRoomIdCookie(roomId);
       return allowConnection(username, socketId, channel);
 
     case "PLAYING":

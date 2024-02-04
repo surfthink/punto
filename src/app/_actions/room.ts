@@ -47,13 +47,21 @@ export async function getUsernameCookieOrUndefined() {
   return cookies().get("username")?.value as string | undefined;
 }
 
+export async function joinRoom(formData: FormData) {
+  const roomId = formData.get("roomId") as string;
+  const username = formData.get("username") as string;
+
+  await setUsernameCookie(username);
+  await setRoomIdCookie(roomId);
+  redirect(`/room/${roomId}`);
+}
+
 export async function createRoom(formData: FormData) {
   const roomId = await randomUniqueCode(4);
 
   await setUsernameCookie(formData.get("username") as string);
   await db.hset(`room:${roomId}`, {
     state: RoomState.WAITING,
-    turn: 0,
   });
   await db.expire(`room:${roomId}`, 60 * 60); // 1 hr
 
@@ -66,6 +74,14 @@ export async function getColor(roomId: string) {
 }
 export async function getUserColor(roomId: string, username: string) {
   return (await db.get(`room:${roomId}:${username}`)) as Color;
+}
+export async function setUserColor(
+  roomId: string,
+  username: string,
+  color: Color
+) {
+  await db.set(`room:${roomId}:${username}`, color);
+  return;
 }
 
 export async function roomExists(id: string): Promise<boolean> {

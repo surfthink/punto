@@ -21,7 +21,6 @@ export function GetRoomId(name: string) {
 }
 
 export async function broadcastToRoom(roomId: string, event: unknown) {
-  console.log("broadcasting to room", roomId, event);
   await Promise.all([
     revalidateRoom(roomId),
     pusher.trigger(RoomChannelName(roomId), "GAME_EVENT", event),
