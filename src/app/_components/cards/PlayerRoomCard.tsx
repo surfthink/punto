@@ -6,7 +6,6 @@ import { PersonIcon } from "@radix-ui/react-icons";
 import PlacedCard from "../board/PlacedCard";
 
 export default function PlayerRoomCard({
-  color,
   username,
   player,
 }: {
@@ -14,7 +13,7 @@ export default function PlayerRoomCard({
   username?: string;
   player?: string;
 }) {
-  if (!color || !username) return <Skeleton></Skeleton>;
+  if (!username) return <Skeleton></Skeleton>;
   return (
     <Card
       className={cn(
@@ -23,7 +22,7 @@ export default function PlayerRoomCard({
     >
       <CardHeader className="flex justify-center items-center">
         <div className="h-full aspect-square">
-          <PlacedCard value={{ color, value: 3 }}></PlacedCard>
+          <PlacedCard value={{ color: Color.WHITE, value: 3 }}></PlacedCard>
         </div>
         <CardTitle>
           {username == player ? `${username} (You)` : username}

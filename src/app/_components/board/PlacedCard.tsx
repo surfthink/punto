@@ -262,7 +262,8 @@ function Dot(props: { color: Color; className: string }) {
         props.color === Color.RED ? "bg-red-400" : "",
         props.color === Color.GREEN ? "bg-green-400" : "",
         props.color === Color.BLUE ? "bg-blue-400" : "",
-        props.color === Color.YELLOW ? "bg-yellow-400" : ""
+        props.color === Color.YELLOW ? "bg-yellow-400" : "",
+        props.color === Color.WHITE ? "bg-white" : ""
       )}
     ></div>
   );

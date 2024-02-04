@@ -3,6 +3,7 @@ export enum Color {
   BLUE = "BLUE",
   GREEN = "GREEN",
   YELLOW = "YELLOW",
+  WHITE = "WHITE",
 }
 
 export enum RoomState {
