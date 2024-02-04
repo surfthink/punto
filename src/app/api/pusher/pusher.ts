@@ -1,5 +1,6 @@
 import { getUserColor, revalidateRoom } from "@/app/_actions/room";
 import { Color } from "@/app/_shared/gameLogic";
+import { CounterClockwiseClockIcon } from "@radix-ui/react-icons";
 import Pusher from "pusher";
 
 export const pusher = new Pusher({
@@ -41,6 +42,10 @@ export async function userIdsInRoom(channelName: string) {
     ids = body.users.map((u: any) => u.id);
   }
   return ids;
+}
+
+export async function userCountInRoom(channelName: string) {
+  return (await userIdsInRoom(channelName)).length || 0;
 }
 
 export async function getTakenColors(channelName: string) {

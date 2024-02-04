@@ -11,33 +11,11 @@ export interface PlayerInfo {
   username: string;
 }
 
-const COLORS = [Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW];
-
-export async function joinPrivateRoom(formData: FormData) {
-  "use server";
-  const username = formData.get("username");
-  const roomId = formData.get("roomId");
-  await setUsernameCookie(username as string);
-  redirect("/room/" + roomId);
-}
-
 export async function setUsernameCookie(username: string) {
   cookies().set("username", username);
 }
 export async function setRoomIdCookie(roomId: string) {
   cookies().set("roomId", roomId);
-}
-
-export async function revalidateRoom(roomId: string) {
-  revalidatePath(`/room/${roomId}`);
-}
-
-export async function setUsernameCookieRevalidateRoom(
-  roomId: string,
-  formData: FormData
-) {
-  cookies().set("username", formData.get("username") as string);
-  revalidatePath("/room/" + roomId);
 }
 
 export async function getUsernameCookie() {
@@ -51,6 +29,18 @@ export async function getRoomIdCookie() {
     throw new Error("No roomId cookie found");
   }
   return cookies().get("roomId")?.value as string;
+}
+
+export async function revalidateRoom(roomId: string) {
+  revalidatePath(`/room/${roomId}`);
+}
+
+export async function setUsernameCookieRevalidateRoom(
+  roomId: string,
+  formData: FormData
+) {
+  cookies().set("username", formData.get("username") as string);
+  revalidatePath("/room/" + roomId);
 }
 
 export async function getUsernameCookieOrUndefined() {
@@ -70,21 +60,6 @@ export async function createRoom(formData: FormData) {
   redirect(`/room/${roomId}`);
 }
 
-export async function joinRoom(roomId: string, takenColors: Color[]) {
-  //throw errors if room does not exist etc.
-  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
-
-  const username = await getUsernameCookie();
-
-  //TODO:add spectators
-  if (takenColors.length < 4) {
-    setRoomIdCookie(roomId);
-    const availableColors = COLORS.filter((c) => !takenColors.includes(c));
-    await db.set(`room:${roomId}:${username}`, availableColors[0]);
-    await initDeck(roomId, username);
-    await drawCard();
-  }
-}
 export async function getColor(roomId: string) {
   const username = await getUsernameCookie();
   return (await db.get(`room:${roomId}:${username}`)) as Color;
