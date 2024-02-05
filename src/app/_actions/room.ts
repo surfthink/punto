@@ -1,6 +1,6 @@
 "use server";
 import { Color, RoomState } from "../_shared/gameLogic";
-import { db } from "../api/db/redis";
+import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import { drawCard, initDeck } from "./deck";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
@@ -9,6 +9,12 @@ import { revalidatePath } from "next/cache";
 export interface PlayerInfo {
   color: Color;
   username: string;
+}
+
+export async function expireGameKeys(roomId: string) {
+  const keys = await db.keys(`room:${roomId}:*`);
+  console.log(keys);
+  await Promise.all(keys.map((key) => db.expire(key, 60 * 60)));
 }
 
 export async function setUsernameCookie(username: string) {
@@ -60,38 +66,32 @@ export async function createRoom(formData: FormData) {
   const roomId = await randomUniqueCode(4);
 
   await setUsernameCookie(formData.get("username") as string);
-  await db.hset(`room:${roomId}`, {
+  await db.hset(REDIS_GAME_KEY.stateObject(roomId), {
     state: RoomState.WAITING,
   });
-  await db.expire(`room:${roomId}`, 60 * 60); // 1 hr
 
   redirect(`/room/${roomId}`);
 }
 
 export async function getColor(roomId: string) {
   const username = await getUsernameCookie();
-  return (await db.get(`room:${roomId}:${username}`)) as Color;
+  return (await db.get(REDIS_GAME_KEY.playerColor(roomId, username))) as Color;
 }
 export async function getUserColor(roomId: string, username: string) {
-  return (await db.get(`room:${roomId}:${username}`)) as Color;
+  return (await db.get(REDIS_GAME_KEY.playerColor(roomId, username))) as Color;
 }
 export async function setUserColor(
   roomId: string,
   username: string,
   color: Color
 ) {
-  await db.set(`room:${roomId}:${username}`, color);
+  await db.set(REDIS_GAME_KEY.playerColor(roomId, username), color);
   return;
 }
 
-export async function roomExists(id: string): Promise<boolean> {
-  const exists = await db.exists(`room:${id}`);
+export async function roomExists(roomId: string) {
+  const exists = await db.exists(REDIS_GAME_KEY.stateObject(roomId));
   return exists === 1;
-}
-
-export async function leaveRoom(roomId: string, userId: string) {
-  await db.srem(`room:${roomId}:players`, userId);
-  await db.del(`room:${roomId}:${userId}`);
 }
 
 function generateRandomCode(length: number): string {

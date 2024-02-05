@@ -8,12 +8,12 @@ import {
   closeInvalidOpenPlaces,
 } from "../_shared/gameLogic";
 import {
+  expireGameKeys,
   getRoomIdCookie,
   getUsernameCookie,
-  revalidateRoom,
   roomExists,
 } from "./room";
-import { db } from "../api/db/redis";
+import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import { endGame, getTurn, nextTurn, setWinner } from "./gameState";
 import { drawCard, getCurrentCard } from "./deck";
 
@@ -53,6 +53,7 @@ export async function place(x: number, y: number) {
     savePlacedCard(roomId, placedCard),
     nextTurn(roomId),
     drawCard(),
+    expireGameKeys(roomId),
     broadcastToRoom(roomId, { action: "TURN_CHANGED" }),
   ]);
   //batch 4
@@ -205,9 +206,13 @@ function openAdjacentPlaces(board: PlaceDetails[][], x: number, y: number) {
 }
 
 export async function savePlacedCard(roomId: string, card: PlacedCard) {
-  await db.rpush(`room:${roomId}:board`, JSON.stringify(card));
+  await db.rpush(REDIS_GAME_KEY.placedCards(roomId), JSON.stringify(card));
 }
 
 export async function getPlacedCards(roomId: string) {
-  return (await db.lrange(`room:${roomId}:board`, 0, -1)) as PlacedCard[];
+  return (await db.lrange(
+    REDIS_GAME_KEY.placedCards(roomId),
+    0,
+    -1
+  )) as PlacedCard[];
 }

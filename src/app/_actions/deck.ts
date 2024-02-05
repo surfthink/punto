@@ -1,7 +1,7 @@
 "use server";
 
 import { Card } from "../_shared/gameLogic";
-import { db } from "../api/db/redis";
+import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import {
   getColor,
   getRoomIdCookie,
@@ -9,8 +9,6 @@ import {
   getUsernameCookie,
   roomExists,
 } from "./room";
-
-const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export async function drawCard(roomId?: string, username?: string) {
   if (!roomId) {
@@ -20,9 +18,8 @@ export async function drawCard(roomId?: string, username?: string) {
     username = await getUsernameCookie();
   }
 
-  // if (!(await roomExists(roomId))) throw new Error("Room does not exist");
-  const card = (await db.spop(`room:${roomId}:deck:${username}`)) as string;
-  await db.set(`room:${roomId}:currentCard:${username}`, card);
+  const card = (await db.spop(REDIS_GAME_KEY.deck(roomId, username))) as string;
+  await db.set(REDIS_GAME_KEY.currentCard(roomId, username), card);
   return parseCard(card);
 }
 
@@ -42,17 +39,19 @@ export async function getCurrentCard(roomId: string, username?: string) {
   }
 
   const [value, color] = await Promise.all([
-    parseCard(await db.get(`room:${roomId}:currentCard:${username}`)),
+    parseCard(await db.get(REDIS_GAME_KEY.currentCard(roomId, username))),
     getUserColor(roomId, username),
   ]);
 
   return { value, color } as Card;
 }
 
-export async function initDeck(roomId: string, userId: string) {
+const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+export async function initDeck(roomId: string, username: string) {
   if (!(await roomExists(roomId))) throw new Error("Room does not exist");
   POSSIBLE_CARD_VALUES.forEach((value) => {
-    db.sadd(`room:${roomId}:deck:${userId}`, `${value}`);
-    db.sadd(`room:${roomId}:deck:${userId}`, `${value}a`);
+    db.sadd(REDIS_GAME_KEY.deck(roomId, username), `${value}`);
+    db.sadd(REDIS_GAME_KEY.deck(roomId, username), `${value}a`);
   });
 }
