@@ -19,7 +19,6 @@ import { Label } from "@/components/ui/label";
 
 import CreateRoomCard from "./_components/cards/CreateRoomCard";
 import { JoinRoomCard } from "./_components/cards/JoinRoomCard";
-import { JoinPublicRoomCard } from "./_components/cards/JoinPublicRoomCard";
 
 export default function Home() {
   return (
@@ -32,21 +31,13 @@ export default function Home() {
         <TabsList className="flex justify-center">
           <TabsTrigger value="create">Create Room</TabsTrigger>
           <TabsTrigger value="join">Join</TabsTrigger>
-          <TabsTrigger value="public">Join Public</TabsTrigger>
-          <TabsTrigger value="local">Local</TabsTrigger>
         </TabsList>
-        <TabsContent value="local">
-          <LocalGameCard />
-        </TabsContent>
         <TabsContent value="create">
           <CreateRoomCard />
         </TabsContent>
         <TabsContent value="join">
           <JoinRoomCard />
         </TabsContent>
-        {/* <TabsContent value="public">
-          <JoinPublicRoomCard />
-        </TabsContent> */}
       </Tabs>
     </main>
   );
