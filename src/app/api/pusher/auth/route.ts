@@ -18,7 +18,6 @@ export async function POST(request: Request) {
   switch (roomState) {
     case "WAITING":
       const userCount = await userCountInRoom(channel);
-      console.log("user count", userCount);
       if (userCount >= 4) {
         throw new Error("Room is full");
       }

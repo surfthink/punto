@@ -28,7 +28,6 @@ export async function broadcastToRoom(roomId: string, event: unknown) {
 }
 
 export async function userIdsInRoom(channelName: string) {
-  console.log("running user ids in room");
   let ids: string[] = [];
   const res = await pusher.get({
     path: "/channels/" + channelName + "/users",

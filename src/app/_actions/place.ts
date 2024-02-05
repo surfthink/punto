@@ -59,7 +59,6 @@ export async function place(x: number, y: number) {
   //batch 4
   const thisIsWinner = await checkForWin(roomId, x, y, card.color);
   if (thisIsWinner) {
-    console.log("game over!");
     await Promise.all([
       setWinner(roomId, username),
       endGame(roomId),

@@ -13,7 +13,6 @@ export interface PlayerInfo {
 
 export async function expireGameKeys(roomId: string) {
   const keys = await db.keys(`room:${roomId}:*`);
-  console.log(keys);
   await Promise.all(keys.map((key) => db.expire(key, 60 * 60)));
 }
 
