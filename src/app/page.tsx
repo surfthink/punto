@@ -20,6 +20,11 @@ import { Label } from "@/components/ui/label";
 import CreateRoomCard from "./_components/cards/CreateRoomCard";
 import { JoinRoomCard } from "./_components/cards/JoinRoomCard";
 
+export const metadata = {
+  title: "Punto Online - Home",
+  description: "Create or join a room to play Punto Online with friends.",
+};
+
 export default function Home() {
   return (
     <main className="flex h-full flex-col items-center justify-around">
