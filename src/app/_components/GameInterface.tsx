@@ -40,10 +40,10 @@ export default function GameInterface(props: {
   async function formAction(formData: FormData) {
     if (!props.card) return;
     if (!props.board) return;
-    if (props.player !== props.turn) {
+    if (String(props.player) !== String(props.turn)) {
       toast({
         title: "Sneaky! You cannot play out of turn.",
-        description: `It is currently ${props.turn}'s turn.`,
+        description: `It is currently ${props.turn}'s turn. You are ${props.player}.`,
       });
       return;
     }
@@ -93,28 +93,18 @@ export default function GameInterface(props: {
       <div className=" border w-full h-32 flex items-center justify-center">
         <Hand card={optimisticCard}></Hand>
       </div>
-      <div className="grid gap-1 grid-cols-2 border w-full h-72 px-1">
+      <div className="flex items-center justify-center border w-full overflow-hidden">
         {props.players &&
           props.players.length > 0 &&
           //make this responsive
           props.players.map((player, index) => (
-            <div
+            <TurnIndicatorCard
               key={player.username}
-              className={cn(
-                props.turn === player.username ? "ring" : "",
-                index === 0 ? "col-start-1 row-start-1" : "",
-                index === 1 ? "col-start-2 row-start-1" : "",
-                index === 2 ? "col-start-1 row-start-2" : "",
-                index === 3 ? "col-start-2 row-start-2" : ""
-              )}
-            >
-              <TurnIndicatorCard
-                key={player.username}
-                color={player.color}
-                username={player.username}
-                player={props.player}
-              ></TurnIndicatorCard>
-            </div>
+              player={player}
+              index={index}
+              username={props.player || ""}
+              turn={props.turn || ""}
+            ></TurnIndicatorCard>
           ))}
       </div>
     </div>

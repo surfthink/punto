@@ -39,7 +39,7 @@ export async function place(x: number, y: number) {
   ]);
 
   if (!roomExist) throw new Error("Room does not exist");
-  if (currentPlayer !== username) {
+  if (String(currentPlayer) !== String(username)) {
     throw new Error("Forbidden (Not your turn)");
   }
 
