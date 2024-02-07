@@ -51,8 +51,12 @@ export async function getPlayersInRoom(roomId: string) {
   return await db.smembers(REDIS_GAME_KEY.playerSet(roomId));
 }
 
+export async function getOrderOfRoom(roomId: string) {
+  return await db.lrange(REDIS_GAME_KEY.orderList(roomId), 0, -1);
+}
+
 export async function getPlayerColors(roomId: string) {
-  const players = await getPlayersInRoom(roomId);
+  const players = await getOrderOfRoom(roomId);
   const colors: PlayerInfo[] = await Promise.all(
     players.map(async (player) => ({
       username: player,
