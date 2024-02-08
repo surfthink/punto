@@ -1,7 +1,6 @@
-import { getRoomState, getWinner } from "@/app/_actions/gameState";
+import { getRoomState} from "@/app/_actions/gameState";
 import { Lobby } from "@/app/_components/Lobby";
 import MultiplayerPunto from "@/app/_components/MultiplayerPunto";
-import { GameFinishedAlert } from "@/app/_components/dialog/GameFinishedAlert";
 import { RoomState } from "@/app/_shared/gameLogic";
 
 export default async function Page({ params }: { params: { id: string } }) {

@@ -2,22 +2,25 @@ import { Card, PlaceDetails } from "../../_shared/gameLogic";
 import StyleHelper from "./styleHelpers";
 import PlacedCard from "./PlacedCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface BoardProps {
   board?: PlaceDetails[][];
   debug?: boolean;
   card?: Card;
   formAction?: (formData: FormData) => Promise<void>;
+  className?: string;
 }
 
 export default function Board({
   board,
   formAction,
+  className,
   debug = false,
 }: BoardProps) {
   if (!board)
     return (
-      <div className="grid grid-cols-11 gap-1 aspect-square h-full">
+      <div className={cn("grid grid-cols-11 gap-1 aspect-square",className)}>
         {[...Array(121)].map((_, i) => (
           <Skeleton key={i} className="aspect-square" />
         ))}
@@ -26,9 +29,7 @@ export default function Board({
 
   return (
     <form
-      className={`grid ${StyleHelper.numGridColsString(
-        board[0].length
-      )} gap-1 aspect-square h-full`}
+      className={cn(`grid grid-cols-11 gap-1 aspect-square`, className)}
       action={formAction || ((formData: FormData) => {})}
     >
       {board.map((row, i) =>
