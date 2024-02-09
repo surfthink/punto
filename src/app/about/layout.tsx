@@ -1,4 +1,4 @@
-import Layout from "../room/[id]/layout";
+import Layout from "../rules/layout";
 
 export default Layout;
 
