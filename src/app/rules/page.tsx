@@ -1,7 +1,7 @@
 export default function Page() {
   return (
-    <div className="w-full h-full flex flex-col md:items-center">
-    <div className="md:w-2/3 lg:w-1/2 flex flex-col items-center gap-3 md:text-center">
+    <div className="w-full h-full flex flex-col sm:items-center">
+    <div className="md:w-2/3 lg:w-1/2 flex flex-col items-center gap-3 sm:text-center">
       <h1 className="text-3xl">Rules</h1>
       <h2 className="text-2xl">How to play</h2>
       <p>
