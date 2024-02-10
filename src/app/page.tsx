@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import CreateRoomCard from "./_components/cards/CreateRoomCard";
 import { JoinRoomCard } from "./_components/cards/JoinRoomCard";
 import PuntoBanner from "./_components/PuntoBanner";
+import RulesDialog from "./_components/dialog/RulesDialog";
 
 export const metadata = {
   title: "Punto Online - Home",
@@ -29,10 +30,8 @@ export const metadata = {
 export default function Home() {
   return (
     <main className="flex h-full flex-col items-center justify-center gap-9">
+      <RulesDialog />
       <PuntoBanner />
-      {/* <div className="bg-red-200 h-[180px] aspect-square flex items-center justify-center">
-        Placeholder
-      </div> */}
       <Tabs defaultValue="create">
         <TabsList className="flex justify-center">
           <TabsTrigger value="create">Create Room</TabsTrigger>
