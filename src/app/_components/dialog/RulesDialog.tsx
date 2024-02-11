@@ -7,14 +7,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { QuestionMarkCircledIcon } from "@radix-ui/react-icons"
+import { cn } from "@/lib/utils"
+import { QuestionMarkIcon } from "@radix-ui/react-icons"
 
 
-export default function RulesDialog({width = 40,height = 40}:{width?: number, height?: number}){
+export default function RulesDialog({className,width = 40,height = 40,}:{className:string,width?: number, height?: number}){
 return <Dialog>
   <DialogTrigger asChild>
-    <Button className="aspect-square h-auto p-1 rounded rounded-full">
-      <QuestionMarkCircledIcon width={width} height={height}></QuestionMarkCircledIcon>
+    <Button className={cn("aspect-square h-auto p-2 rounded rounded-lg",className)}>
+      {/* <QuestionMarkCircledIcon width={width} height={height}></QuestionMarkCircledIcon> */}
+      <QuestionMarkIcon width={width} height={height}></QuestionMarkIcon>
     </Button>
   </DialogTrigger>
   <DialogContent>
