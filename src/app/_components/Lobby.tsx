@@ -40,7 +40,7 @@ export function Lobby(props: { roomId: string }) {
         roomId={props.roomId}
         onChange={reconnect}
       ></SetUsernameDialog>
-      <Card>
+      <Card className="mt-20 mx-2">
         <CardHeader>
           <CardTitle>{props.roomId}</CardTitle>
           <CardDescription>

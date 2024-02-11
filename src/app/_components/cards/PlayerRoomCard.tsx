@@ -21,7 +21,7 @@ export default function PlayerRoomCard({
       )}
     >
       <CardHeader className="flex justify-center items-center">
-        <div className="h-full aspect-square">
+        <div className="h-full aspect-square max-h-[70px]">
           <PlacedCard value={{ color: Color.WHITE, value: 3 }}></PlacedCard>
         </div>
         <CardTitle>
