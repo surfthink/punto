@@ -81,8 +81,7 @@ export default function GameInterface(props: {
   }
 
   return (
-    <div className="grid h-full max-h-[100vh] lg:grid-cols-4 lg:content-center">
-      <div className="lg:row-span-2 lg:col-span-2">
+    <div className="grid h-full max-h-[100vh] ">
         <Board
           formAction={formAction}
           board={optimisticBoard}
@@ -90,11 +89,10 @@ export default function GameInterface(props: {
           card={optimisticCard}
           
         ></Board>
-      </div>
-      <div className="border w-full flex items-center justify-center lg:col-start-3 lg:row-span-2">
+      <div className="border w-full flex items-center justify-center">
         <Hand card={optimisticCard}></Hand>
       </div>
-      <div className="flex items-center justify-center border w-full lg:col-start-4 lg:row-span-2">
+      <div className="flex items-center justify-center border w-full">
         {props.players &&
           props.players.length > 0 &&
           //make this responsive

@@ -18,10 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + " min-h-screen h-screen overflow-hidden"}>
+      <body className={inter.className + " min-h-screen h-screen overflow-x-hidden flex items-center justify-center"}>
+        <div className="h-full w-full sm:max-w-[400px] md:max-w-[600px]">
           <MainNav></MainNav>
           <Toaster />
         {children}
+        </div>
       </body>
     </html>
   );
