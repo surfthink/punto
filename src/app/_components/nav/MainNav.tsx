@@ -18,15 +18,7 @@ export default function MainNav() {
         </Link>
       )}
       <nav className="w-full flex items-center justify-end gap-6 mx-1">
-        {/* <Link
-          href="/about"
-          className={cn(
-            "transition-colors hover:text-foreground/80",
-            pathname === "/about" ? "text-foreground" : "text-foreground/60"
-          )}
-        >
-          About
-        </Link> */}
+
         <RulesDialog width={20} height={20} className="mr-2"></RulesDialog>
       </nav>
     </div>
