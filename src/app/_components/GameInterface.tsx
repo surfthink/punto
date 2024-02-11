@@ -3,8 +3,6 @@ import Board from "./board/Board";
 import { Card, PlaceDetails } from "../_shared/gameLogic";
 import Hand from "./Hand";
 import { PlayerInfo } from "../_actions/room";
-import PlayerRoomCard from "./cards/PlayerRoomCard";
-import { cn } from "@/lib/utils";
 import { useOptimistic } from "react";
 import { PlacedCard, place } from "../_actions/place";
 import { useToast } from "@/components/ui/use-toast";
