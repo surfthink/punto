@@ -23,7 +23,7 @@ export async function JoinRoomCard() {
       <CardHeader>
         <CardTitle>Join Room</CardTitle>
         <CardDescription>
-          Join a game room your friend has created.
+          Join a room your friend has created.
         </CardDescription>
       </CardHeader>
       <form className="space-y-2" action={joinRoom}>
