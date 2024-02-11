@@ -18,12 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + " min-h-screen h-screen"}>
-        <div className="flex justify-between m-1 absolute top-0 left-0">
+      <body className={inter.className + " min-h-screen h-screen overflow-hidden"}>
           <MainNav></MainNav>
-          {/* <LoginOrOut></LoginOrOut> */}
           <Toaster />
-        </div>
         {children}
       </body>
     </html>
