@@ -46,12 +46,3 @@ export async function getCurrentCard(roomId: string, username?: string) {
   return { value, color } as Card;
 }
 
-const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-export async function initDeck(roomId: string, username: string) {
-  if (!(await roomExists(roomId))) throw new Error("Room does not exist");
-  POSSIBLE_CARD_VALUES.forEach((value) => {
-    db.sadd(REDIS_GAME_KEY.deck(roomId, username), `${value}`);
-    db.sadd(REDIS_GAME_KEY.deck(roomId, username), `${value}a`);
-  });
-}

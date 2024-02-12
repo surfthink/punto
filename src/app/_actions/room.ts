@@ -1,7 +1,6 @@
 "use server";
 import { Color, RoomState } from "../_shared/gameLogic";
 import { REDIS_GAME_KEY, db } from "../api/db/redis";
-import { drawCard, initDeck } from "./deck";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
