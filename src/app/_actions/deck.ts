@@ -3,11 +3,9 @@
 import { Card } from "../_shared/gameLogic";
 import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import {
-  getColor,
   getRoomIdCookie,
   getUserColor,
   getUsernameCookie,
-  roomExists,
 } from "./room";
 
 export async function drawCard(roomId?: string, username?: string) {
