@@ -11,6 +11,7 @@ import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import { Color, RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
 import { drawCard} from "./deck";
+import start_game_script from "./scripts/start_game.lua"
 
 export async function start(
   roomId: string,
@@ -36,29 +37,26 @@ const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 
 async function startGame(roomId: string, players: string[]) {
+
+  // console.log(start_game_script)
+  console.log('running script...')
+
+  const prom1 = db.eval(start_game_script,[
+    REDIS_GAME_KEY.orderList(''),
+    REDIS_GAME_KEY.playerSet(''),
+    REDIS_GAME_KEY.stateObject(''),
+  ],[roomId,players,COLORS,POSSIBLE_CARD_VALUES]);
+  const prom2 = db.eval(start_game_script,[
+    REDIS_GAME_KEY.orderList(''),
+    REDIS_GAME_KEY.playerSet(''),
+    REDIS_GAME_KEY.stateObject(''),
+  ],[roomId,players,COLORS,POSSIBLE_CARD_VALUES]);
+
+  const res = await Promise.all([prom1,prom2])
+
+  console.log('script1 result:',res[0])
+  console.log('script2 result:',res[1])
   
-  const transaction = db.multi()
-    .lpush(REDIS_GAME_KEY.orderList(roomId),...players)
-    .sadd(REDIS_GAME_KEY.playerSet(roomId), ...players)
-    .hset(REDIS_GAME_KEY.stateObject(roomId),{
-      state:RoomState.PLAYING,
-      turn:0
-    })
-    
-  players.forEach((player,i) => {
-    // init decks
-    POSSIBLE_CARD_VALUES.forEach((value) => {
-      transaction.sadd(REDIS_GAME_KEY.deck(roomId, player), `${value}`);
-      transaction.sadd(REDIS_GAME_KEY.deck(roomId, player), `${value}a`);
-    });
-    // set colors
-    transaction.set(REDIS_GAME_KEY.playerColor(roomId, player), COLORS[i]);
-  })
-
-  // show shows the issue... the result of this is that the players are repeated twice.
-  await Promise.all([transaction.exec(),transaction.exec()]);
-
-  await Promise.all([...players.map((player) => drawCard(roomId, player))]);
   await expireGameKeys(roomId);
 }
 
