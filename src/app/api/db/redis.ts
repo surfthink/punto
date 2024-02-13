@@ -28,13 +28,13 @@ export const db = new Redis({
 // Keys
 
 export const REDIS_GAME_KEY = {
-  deck: (roomId: string, username: string) => `room:${roomId}:deck:${username}`,
+  deck: (roomId: string, username: string) => `room:deck:${roomId}:${username}`,
   currentCard: (roomId: string, username: string) =>
-    `room:${roomId}:currentCard:${username}`,
-  orderList: (roomId: string) => `room:${roomId}:order`, // this is a list
-  playerSet: (roomId: string) => `room:${roomId}:players`, // this is a set
-  stateObject: (roomId: string) => `room:${roomId}:state`, // this is an object
-  placedCards: (roomId: string) => `room:${roomId}:placedCards`, // this is a list
+    `room:currentCard:${roomId}:${username}`,
+  orderList: (roomId: string) => `room:order:${roomId}`, // this is a list
+  playerSet: (roomId: string) => `room:players:${roomId}`, // this is a set
+  stateObject: (roomId: string) => `room:state:${roomId}`, // this is an object
+  placedCards: (roomId: string) => `room:placedCards:${roomId}`, // this is a list
   playerColor: (roomId: string, username: string) =>
     `room:${roomId}:${username}`,
 };
