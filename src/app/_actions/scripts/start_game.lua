@@ -1,11 +1,9 @@
 
-
 local roomId = ARGV[1]
-local players = ARGV[2] -- this is a string of player names separated by commas
--- colors should probably be hard coded in
-local colors = ARGV[3]
--- possible cards should probably be hard coded in
-local possibleCards = ARGV[4]
+local player1 = ARGV[2]
+local player2 = ARGV[3]
+local player3 = ARGV[4]
+local player4 = ARGV[5]
 
 local orderListKey = KEYS[1] .. roomId
 local playerSetKey = KEYS[2] .. roomId
@@ -14,12 +12,12 @@ local stateObjectKey = KEYS[3] .. roomId
 local roomState = redis.call("HGET", stateObjectKey, "state")
 if roomState == "WAITING" then
     redis.call("HSET", stateObjectKey, "state", "PLAYING")
-    redis.call("LPUSH", orderListKey, players)
-    redis.call("SADD", playerSetKey, players)
+    redis.call("RPUSH", orderListKey, player1, player2, player3, player4)
+    redis.call("SADD", playerSetKey, player1, player2, player3, player4)
     redis.call("HSET", stateObjectKey, "turn", 0)
-    return "inside"
+    return 1
 end
-return "outside"
+return 0
 
 
 

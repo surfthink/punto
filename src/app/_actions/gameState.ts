@@ -41,21 +41,20 @@ async function startGame(roomId: string, players: string[]) {
   // console.log(start_game_script)
   console.log('running script...')
 
-  const prom1 = db.eval(start_game_script,[
+  const playerArgs = [...players, ...(new Array(4-players.length).fill(null))]
+
+  const transaction = await db.eval(start_game_script,[
     REDIS_GAME_KEY.orderList(''),
     REDIS_GAME_KEY.playerSet(''),
     REDIS_GAME_KEY.stateObject(''),
-  ],[roomId,players,COLORS,POSSIBLE_CARD_VALUES]);
-  const prom2 = db.eval(start_game_script,[
-    REDIS_GAME_KEY.orderList(''),
-    REDIS_GAME_KEY.playerSet(''),
-    REDIS_GAME_KEY.stateObject(''),
-  ],[roomId,players,COLORS,POSSIBLE_CARD_VALUES]);
+  ],[roomId,...playerArgs,COLORS,POSSIBLE_CARD_VALUES]);
 
-  const res = await Promise.all([prom1,prom2])
+  if (transaction === 0){ // if the game has already started
+    throw new Error('Game has already started')
+  }
+  
+  // continue with game start code
 
-  console.log('script1 result:',res[0])
-  console.log('script2 result:',res[1])
   
   await expireGameKeys(roomId);
 }
