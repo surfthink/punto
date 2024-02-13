@@ -12,8 +12,22 @@ local stateObjectKey = KEYS[3] .. roomId
 local roomState = redis.call("HGET", stateObjectKey, "state")
 if roomState == "WAITING" then
     redis.call("HSET", stateObjectKey, "state", "PLAYING")
-    redis.call("RPUSH", orderListKey, player1, player2, player3, player4)
-    redis.call("SADD", playerSetKey, player1, player2, player3, player4)
+    redis.call("RPUSH", orderListKey, player1)
+    redis.call("SADD", playerSetKey, player1)
+    
+    if player2 ~= "null" then
+        redis.call("RPUSH", orderListKey, player2)
+        redis.call("SADD", playerSetKey, player2)
+    end
+    if player3 ~= "null" then
+        redis.call("RPUSH", orderListKey, player3)
+        redis.call("SADD", playerSetKey, player3)
+    end
+    if player4 ~= "null" then
+        redis.call("RPUSH", orderListKey, player4)
+        redis.call("SADD", playerSetKey, player4)
+    end
+
     redis.call("HSET", stateObjectKey, "turn", 0)
     return 1
 end
