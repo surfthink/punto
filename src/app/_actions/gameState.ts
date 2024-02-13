@@ -5,12 +5,13 @@ import {
   expireGameKeys,
   getUserColor,
   roomExists,
+  setUserColor,
 } from "./room";
 import { broadcastToRoom } from "../api/pusher/pusher";
 import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import { Color, RoomState } from "../_shared/gameLogic";
 import { revalidatePath } from "next/cache";
-import { drawCard} from "./deck";
+import { drawCard, initDeck} from "./deck";
 import start_game_script from "./scripts/start_game.lua"
 
 export async function start(
@@ -21,12 +22,14 @@ export async function start(
   if (await !roomExists(roomId)) {
     throw new Error("Room does not exist");
   }
-
-  await startGame(roomId, players);
-  await broadcastToRoom(roomId, {
-    action: "TURN_CHANGED",
-  });
-
+  try{
+    await startGame(roomId, players);
+    await broadcastToRoom(roomId, {
+      action: "TURN_CHANGED",
+    });
+  } catch (e){
+    console.log(e)
+  }
   revalidatePath(`/room/${roomId}`);
 }
 
@@ -38,9 +41,6 @@ const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 async function startGame(roomId: string, players: string[]) {
 
-  // console.log(start_game_script)
-  console.log('running script...')
-
   const playerArgs = [...players, ...(new Array(4-players.length).fill(null))]
 
   const transaction = await db.eval(start_game_script,[
@@ -49,19 +49,20 @@ async function startGame(roomId: string, players: string[]) {
     REDIS_GAME_KEY.stateObject(''),
   ],[roomId,...playerArgs,COLORS,POSSIBLE_CARD_VALUES]);
 
-  if (transaction === 0){ // if the game has already started
+  if (transaction === 0){
     throw new Error('Game has already started')
   }
-  
-  // continue with game start code
 
-  
+  await Promise.all([
+    ...players.map((player, i) => setUserColor(roomId, player, COLORS[i])),
+    ...players.map((player) => initDeck(roomId, player)),
+  ])
+
+  await Promise.all([...players.map((player) => drawCard(roomId, player))])
+
   await expireGameKeys(roomId);
 }
 
-export async function getPlayersInRoom(roomId: string) {
-  return await db.smembers(REDIS_GAME_KEY.playerSet(roomId));
-}
 
 export async function getOrderOfRoom(roomId: string) {
   return await db.lrange(REDIS_GAME_KEY.orderList(roomId), 0, -1);
