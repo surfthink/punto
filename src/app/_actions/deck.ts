@@ -36,7 +36,7 @@ export async function getCurrentCard(roomId: string, username?: string) {
     username = await getUsernameCookie();
   }
 
-  const [value, color] = await Promise.all([
+  const [value,color] = await Promise.all([
     parseCard(await db.get(REDIS_GAME_KEY.currentCard(roomId, username))),
     getUserColor(roomId, username),
   ]);
@@ -44,3 +44,11 @@ export async function getCurrentCard(roomId: string, username?: string) {
   return { value, color } as Card;
 }
 
+const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+export async function initDeck(roomId: string, username: string) {
+    await Promise.all([
+      ...POSSIBLE_CARD_VALUES.map(async (val) => await db.sadd(REDIS_GAME_KEY.deck(roomId, username), `${val}`)),
+      ...POSSIBLE_CARD_VALUES.map(async (val) => await db.sadd(REDIS_GAME_KEY.deck(roomId, username), `${val}_copy`))
+    ]);
+}
