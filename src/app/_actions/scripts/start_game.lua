@@ -12,14 +12,18 @@ local playerSetKey = KEYS[2] .. roomId
 local stateObjectKey = KEYS[3] .. roomId
 
 local roomState = redis.call("HGET", stateObjectKey, "state")
-if not roomState == "WAITING" or not roomState == nil then
-    return roomState
+if roomState == "WAITING" then
+    redis.call("HSET", stateObjectKey, "state", "PLAYING")
+    
+    return "inside"
 end
+return "outside"
 
-redis.call("LPUSH", orderListKey, players)
-redis.call("SADD", playerSetKey, players)
-redis.call("HSET", stateObjectKey, "state", "PLAYING")
-redis.call("HSET", stateObjectKey, "turn", 0)
+
+-- redis.call("LPUSH", orderListKey, players)
+-- redis.call("SADD", playerSetKey, players)
+-- redis.call("HSET", stateObjectKey, "state", "PLAYING")
+-- redis.call("HSET", stateObjectKey, "turn", 0)
 
 
 
