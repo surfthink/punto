@@ -28,7 +28,7 @@ export async function start(
       action: "TURN_CHANGED",
     });
   } catch (e){
-    console.log(e)
+    console.log("the game has already started")
   }
   revalidatePath(`/room/${roomId}`);
 }
@@ -41,21 +41,19 @@ const POSSIBLE_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 async function startGame(roomId: string, players: string[]) {
 
-  const playerArgs = [...players, ...(new Array(4-players.length).fill(null))]
-
   const transaction = await db.eval(start_game_script,[
-    REDIS_GAME_KEY.orderList(''),
-    REDIS_GAME_KEY.playerSet(''),
     REDIS_GAME_KEY.stateObject(''),
-  ],[roomId,...playerArgs,COLORS,POSSIBLE_CARD_VALUES]);
+  ],[roomId]);
 
   if (transaction === 0){
     throw new Error('Game has already started')
   }
 
   await Promise.all([
-    ...players.map((player, i) => setUserColor(roomId, player, COLORS[i])),
-    ...players.map((player) => initDeck(roomId, player)),
+    db.rpush(REDIS_GAME_KEY.orderList(roomId), ...players),
+    db.sadd(REDIS_GAME_KEY.playerSet(roomId), ...players),
+    ...players.map(async (player, i) => await setUserColor(roomId, player, COLORS[i])),
+    ...players.map(async (player) => await initDeck(roomId, player)),
   ])
 
   await Promise.all([...players.map((player) => drawCard(roomId, player))])
