@@ -1,5 +1,4 @@
 import { createRoom, getUsernameCookie } from "@/app/_actions/room";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import FormButton from "../FormButton";
+
 
 export default async function CreateRoomCard() {
   let username: string;
@@ -48,7 +48,6 @@ export default async function CreateRoomCard() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="public">Public</SelectItem>
-              {/* <SelectItem value="private">Private</SelectItem> */}
             </SelectContent>
           </Select>
         </CardContent>

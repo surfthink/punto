@@ -55,6 +55,13 @@ export async function joinRoom(formData: FormData) {
   const roomId = formData.get("roomId") as string;
   const username = formData.get("username") as string;
 
+  try {
+    await validateUsername(username);
+  } catch (e){
+    console.error(e)
+    return
+  }
+
   await setUsernameCookie(username);
   await setRoomIdCookie(roomId);
   redirect(`/room/${roomId}`);
@@ -63,12 +70,29 @@ export async function joinRoom(formData: FormData) {
 export async function createRoom(formData: FormData) {
   const roomId = await randomUniqueCode(4);
 
+
   await setUsernameCookie(formData.get("username") as string);
   await db.hset(REDIS_GAME_KEY.stateObject(roomId), {
     state: RoomState.WAITING,
   });
 
   redirect(`/room/${roomId}`);
+}
+
+function isAlphanumeric(s: string): boolean {
+  const regex = /^[a-z0-9]+$/i;
+  return regex.test(s);
+}
+
+function isUniqueInRoom(username:string){
+  //TODO
+  return true
+}
+
+async function validateUsername(username:string){
+ if(!isAlphanumeric(username)) throw new Error("Username must be alphanumeric");
+  if(await !isUniqueInRoom(username)) throw new Error("Username must be unique in room");
+ return
 }
 
 export async function getColor(roomId: string) {
