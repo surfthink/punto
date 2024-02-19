@@ -20,13 +20,21 @@ import { Label } from "@/components/ui/label";
 import CreateRoomCard from "./_components/cards/CreateRoomCard";
 import { JoinRoomCard } from "./_components/cards/JoinRoomCard";
 import PuntoBanner from "./_components/PuntoBanner";
+import { getUsernameCookie } from "./_actions/room";
 
 export const metadata = {
   title: "Punto Online - Home",
   description: "Create or join a room to play Punto Online with friends.",
 };
 
-export default function Home() {
+export default async function Home() {
+  let username = ""
+  try{
+    username = await getUsernameCookie()
+  } catch (e) { 
+    username = ""
+  }
+
   return (
     <main className="flex h-full flex-col items-center justify-center gap-16">
       <PuntoBanner className="text-5xl p-3" showOnline={true}/>
@@ -38,7 +46,7 @@ export default function Home() {
         </TabsList>
         </div>
         <TabsContent value="create">
-          <CreateRoomCard />
+          <CreateRoomCard username={username} />
         </TabsContent>
         <TabsContent value="join">
           <JoinRoomCard />

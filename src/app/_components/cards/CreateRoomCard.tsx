@@ -1,3 +1,4 @@
+"use client"
 import { createRoom, getUsernameCookie } from "@/app/_actions/room";
 import {
   Card,
@@ -17,22 +18,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import FormButton from "../FormButton";
+import { useFormState } from "react-dom";
 
 
-export default async function CreateRoomCard() {
-  let username: string;
-  try {
-    username = await getUsernameCookie();
-  } catch (e) {
-    username = "";
-  }
+export default function CreateRoomCard({username}:{username:string}) {
+
+  const [formState,formAction] = useFormState(createRoom,{success:true,message:""})
+  
   return (
     <Card>
       <CardHeader>
         <CardTitle>Create Room</CardTitle>
         <CardDescription>Create a room to play with friends.</CardDescription>
       </CardHeader>
-      <form action={createRoom} className="space-y-2">
+      <form action={formAction} className="space-y-2">
         <CardContent className="space-y-1">
           <Label htmlFor="username">Username</Label>
           <Input
@@ -41,6 +40,8 @@ export default async function CreateRoomCard() {
             required
             defaultValue={username}
           ></Input>
+          {formState.success && <CardDescription>{formState.message}</CardDescription>}
+          {formState.message !== "" && !formState.success && <CardDescription className="text-red-400">{formState.message}</CardDescription>}
           <Label htmlFor="roomType">Privacy</Label>
           <Select name="roomType" defaultValue="public">
             <SelectTrigger>

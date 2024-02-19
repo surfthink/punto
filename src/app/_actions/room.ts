@@ -67,16 +67,22 @@ export async function joinRoom(formData: FormData) {
   redirect(`/room/${roomId}`);
 }
 
-export async function createRoom(formData: FormData) {
-  const roomId = await randomUniqueCode(4);
-
-
-  await setUsernameCookie(formData.get("username") as string);
-  await db.hset(REDIS_GAME_KEY.stateObject(roomId), {
-    state: RoomState.WAITING,
+export async function createRoom(prevState:{success:boolean,message:string},formData: FormData) {
+ try{
+  await validateUsername(formData.get("username") as string);
+ } catch (e){
+   return {success:false,message:(e as Error).message}
+ }
+ 
+ const roomId = await randomUniqueCode(4);
+ 
+ await setUsernameCookie(formData.get("username") as string);
+ await db.hset(REDIS_GAME_KEY.stateObject(roomId), {
+   state: RoomState.WAITING,
   });
-
+  
   redirect(`/room/${roomId}`);
+  return {success:true, message:"Room created, redirecting..."}
 }
 
 function isAlphanumeric(s: string): boolean {
