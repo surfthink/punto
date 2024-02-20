@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import { pusher } from "../pusher";
 import { RoomChannelName } from "../api/pusher/pusher";
 import { Color } from "../_shared/gameLogic";
-import { useRouter } from "next/navigation";
 import { revalidateRoom } from "../_actions/room";
 
-// Finish this hook
 
 interface MemberInfo {
   color: Color;
@@ -18,7 +16,6 @@ export default function useRoomChannel(roomId: string) {
   const [channel, setChannel] = useState<PresenceChannel | null>(null);
   const [members, setMembers] = useState<MemberInfo[]>();
   const [attemptReconnect, setAttemptReconnect] = useState(false);
-  const router = useRouter();
 
   function reconnect() {
     console.log("reconnecting");
@@ -31,6 +28,13 @@ export default function useRoomChannel(roomId: string) {
       RoomChannelName(roomId)
     ) as PresenceChannel;
     setChannel(channel);
+
+    channel.bind("pusher:subscription_error", (e:{type:string,error:string,status:number}) => {
+      console.log('subscription error status',e.status)
+      //TODO display this error to the user
+    })
+
+
     return () => {
       console.log("unsubscribing from channel");
       pusher.unsubscribe(RoomChannelName(roomId));

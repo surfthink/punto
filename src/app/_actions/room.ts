@@ -4,6 +4,8 @@ import { REDIS_GAME_KEY, db } from "../api/db/redis";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { getOrderOfRoom } from "./gameState";
+import { ValidationErrorCause } from "../api/pusher/auth/route";
 
 export interface PlayerInfo {
   color: Color;
@@ -56,7 +58,7 @@ export async function joinRoom(formData: FormData) {
   const username = formData.get("username") as string;
 
   try {
-    await validateUsername(username);
+    await validateUsername(username,roomId);
   } catch (e){
     console.error(e)
     return
@@ -82,7 +84,6 @@ export async function createRoom(prevState:{success:boolean,message:string},form
   });
   
   redirect(`/room/${roomId}`);
-  return {success:true, message:"Room created, redirecting..."}
 }
 
 function isAlphanumeric(s: string): boolean {
@@ -90,14 +91,17 @@ function isAlphanumeric(s: string): boolean {
   return regex.test(s);
 }
 
-function isUniqueInRoom(username:string){
-  //TODO
+async function isUniqueInRoom(username:string,roomId:string){
+  const players = await getOrderOfRoom(roomId)
+  if(players.includes(username)) return false
   return true
 }
 
-async function validateUsername(username:string){
- if(!isAlphanumeric(username)) throw new Error("Username must be alphanumeric");
-  if(await !isUniqueInRoom(username)) throw new Error("Username must be unique in room");
+
+export async function validateUsername(username:string,roomId?:string){
+ if(!isAlphanumeric(username)) throw new Error("Username Error",{cause:ValidationErrorCause.ALPHANUMERIC});
+ if(!roomId) return
+ if(await !isUniqueInRoom(username,roomId)) throw new Error("Username Error",{cause:ValidationErrorCause.NOT_UNIQUE} );
  return
 }
 
