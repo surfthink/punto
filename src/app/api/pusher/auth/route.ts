@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
 
   if (!cookies().has("username")) {
-    return rejectDueToNoUsername(channel, socketId);
+    return rejectDueToNoUsername();
   }
   const username = cookies().get("username")?.value as string;
 
@@ -20,21 +20,21 @@ export async function POST(request: Request) {
   try{
   await validateUsername(username, roomId);
   } catch (e){
-    return rejectDueToValidationError(channel, socketId, e as Error);
+    return rejectDueToValidationError();
   }
 
   switch (roomState) {
     case "WAITING":
       const userCount = await userCountInRoom(channel);
       if (userCount >= 4) {
-        return rejectDueToFullRoom(channel, socketId)
+        return rejectDueToFullRoom()
       }
       setRoomIdCookie(roomId);
       return allowConnection(username, socketId, channel);
 
     case "PLAYING":
       if (!(await playerInRoom(roomId, username))) {
-        return rejectDueToPlayerNotInRoom(channel, socketId);
+        return rejectDueToPlayerNotInRoom();
       }
       return allowConnection(username, socketId, channel);
 
@@ -57,22 +57,22 @@ function allowConnection(username: string, socketId: string, channel: string) {
   return Response.json(authResponse);
 }
 
-function rejectDueToNoUsername(channel: string, socketId: string) {
+function rejectDueToNoUsername() {
   const res = new Response("Unauthorized", { status: 401 });
   return res
 }
 
-function rejectDueToFullRoom(channel: string, socketId: string) {
+function rejectDueToFullRoom() {
   const res = new Response("Unauthorized", { status: 403 });
   return res
 }
 
-function rejectDueToValidationError(channel: string, socketId: string, e: Error) {
+function rejectDueToValidationError() {
   const res = new Response("Unauthorized", { status: 403 });
   return res
 }
 
-function rejectDueToPlayerNotInRoom(channel: string, socketId: string) {
+function rejectDueToPlayerNotInRoom() {
   const res = new Response("Unauthorized", { status: 403 });
   return res
 }
