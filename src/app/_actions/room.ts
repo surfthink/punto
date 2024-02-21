@@ -99,9 +99,9 @@ async function isUniqueInRoom(username:string,roomId:string){
 
 
 export async function validateUsername(username:string,roomId?:string){
- if(!isAlphanumeric(username)) throw new Error("Username Error",{cause:ValidationErrorCause.ALPHANUMERIC});
+ if(!isAlphanumeric(username)) throw new Error("Username must include only alphanumeric characters.",{cause:ValidationErrorCause.ALPHANUMERIC});
  if(!roomId) return
- if(await !isUniqueInRoom(username,roomId)) throw new Error("Username Error",{cause:ValidationErrorCause.NOT_UNIQUE} );
+ if(await !isUniqueInRoom(username,roomId)) throw new Error("Username is not unique in the room",{cause:ValidationErrorCause.NOT_UNIQUE} );
  return
 }
 
