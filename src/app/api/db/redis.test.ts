@@ -19,4 +19,4 @@ describe("Redis Tests", () => {
     // Assert that the count value is equal to the expected value
     expect(result).toBe(value);
   }, 5000);
-});
+})
