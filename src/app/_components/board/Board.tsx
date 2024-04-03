@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 interface BoardProps {
   board?: PlaceDetails[][];
   debug?: boolean;
+  interactive?: boolean;
   card?: Card;
   formAction?: (formData: FormData) => Promise<void>;
   className?: string;
@@ -17,6 +18,7 @@ export default function Board({
   formAction,
   className,
   debug = false,
+  interactive = true,
 }: BoardProps) {
   if (!board)
     return (
@@ -37,6 +39,7 @@ export default function Board({
           if (!!place.card) {
             return (
               <PlacedCard
+                interactive={interactive}
                 value={{
                   value: place.card.value,
                   color: place.card.color,
@@ -48,7 +51,7 @@ export default function Board({
             );
           }
           if (!place.card && place.state == "open") {
-            return <OpenPlace key={`x:${j} y:${i}`} x={j} y={i} />;
+            return <OpenPlace  key={`x:${j} y:${i}`} x={j} y={i} interactive={interactive}/>;
           }
           if (!place.card && place.state == "closed") {
             return <ClosedPlace key={`x:${j} y:${i}`} />;
@@ -62,15 +65,18 @@ export default function Board({
 interface OpenPlaceProps {
   x: number;
   y: number;
+  interactive: boolean;
 }
 
-function OpenPlace({ x, y }: OpenPlaceProps) {
+function OpenPlace({ x, y, interactive }: OpenPlaceProps) {
   return (
     <button
-      className="bg-gray-100 rounded-lg aspect-square active:ring active:ring-gray-400 focus:ring focus:ring-gray-400 hover:bg-gray-200 w-full h-full"
+      className={cn("bg-gray-100 rounded-lg aspect-square w-full h-full",
+      interactive ? "active:ring active:ring-gray-400 focus:ring focus:ring-gray-400 hover:bg-gray-200" : "")}
       type="submit"
       name="position"
       value={JSON.stringify({ x, y })}
+      disabled={!interactive}
     ></button>
   );
 }
