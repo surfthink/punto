@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import Board from "../board/Board";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card";
 
 export function GameFinishedAlert(props: {
   roomState: RoomState;
@@ -37,11 +38,16 @@ export function GameFinishedAlert(props: {
             {props.winner} is the winner!
           </AlertDialogTitle>
         </AlertDialogHeader>
-        <Board board={props.board}></Board>
+        <Card>
+          <Board board={props.board} interactive={false}></Board>
+        </Card>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={() => router.push("/")}>
-            Home
-          </AlertDialogAction>
+        <AlertDialogAction onClick={() => router.push("/")}>
+          Start Next Round
+        </AlertDialogAction>
+          <AlertDialogCancel  onClick={() => router.push("/")}>
+            Exit Room
+          </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
